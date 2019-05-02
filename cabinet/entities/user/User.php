@@ -2,6 +2,7 @@
 
 namespace cabinet\entities\user;
 
+use cabinet\entities\user\Profile;
 use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
@@ -27,6 +28,7 @@ use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
  * @property string $password write-only password
  *
  * @property Network[] $networks
+ * @property Profile   $profile
  */
 class User extends ActiveRecord
 {
@@ -61,17 +63,18 @@ class User extends ActiveRecord
         $this->updated_at = time();
     }
 
-    public static function requestSignup(string $username, string $email, string $password): self
+    public static function requestSignup(string $username, string $email): array
     {
         $user = new User();
         $user->username = $username;
         $user->email = $email;
+        $password = Yii::$app->security->generateRandomString(10);
         $user->setPassword($password);
         $user->created_at = time();
-        $user->status = self::STATUS_ACTIVE;
-        $user->verification_token = Yii::$app->security->generateRandomString();
+        $user->status = self::STATUS_INACTIVE;
+        $user->verification_token = Yii::$app->security->generateRandomString(10); // . '_' . time()
         $user->generateAuthKey();
-        return $user;
+        return array('userObject' => $user, 'password' => $password);
     }
 
     public function confirmSignup(): void
@@ -89,6 +92,46 @@ class User extends ActiveRecord
             throw new \DomainException('Password resetting is already requested.');
         }
         $this->password_reset_token = Yii::$app->security->generateRandomString() . '_' . time();
+    }
+
+    /**
+     * @param $network
+     * @param $identity
+     * @param string $username
+     * @param string $email
+     * @param string $profileData
+     * @return array
+     * @throws \yii\base\Exception
+     */
+    public static function signupByNetwork($network, $identity, string $username,
+        string $email, string $profileData): array
+    {
+        $user = new User();
+        $user->username = $username;
+        $user->email = $email;
+        $password = Yii::$app->security->generateRandomString(10);
+        $user->setPassword($password);
+        $user->created_at = time();
+        $user->status = self::STATUS_ACTIVE;
+        $user->verification_token = Yii::$app->security->generateRandomString();
+        $user->generateAuthKey();
+        $user->networks = [Network::create($network, $identity)];
+        $user->profile = Profile::create($profileData);
+
+        return array('userObject' => $user, 'password' => $password);
+    }
+
+    /** Network $current */
+    public function attachNetwork($network, $identity): void
+    {
+        $networks = $this->networks;
+        foreach ($networks as $current) {
+            if ($current->isFor($network, $identity)) {
+                throw new \DomainException('Network is already attached.');
+            }
+        }
+        $networks[] = Network::create($network, $identity);
+        $this->networks = $networks;
     }
 
     public function resetPassword($password): void
@@ -115,6 +158,11 @@ class User extends ActiveRecord
         return $this->hasMany(Network::class, ['user_id' => 'id']);
     }
 
+    public function getProfile(): ActiveQuery
+    {
+        return $this->hasOne(Profile::class, ['user_id' => 'id']);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -132,7 +180,7 @@ class User extends ActiveRecord
             TimestampBehavior::class,
             [
                 'class' => SaveRelationsBehavior::class,
-                'relations' => ['networks'],
+                'relations' => ['networks', 'profile'],
             ]
         ];
     }

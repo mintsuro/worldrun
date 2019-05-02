@@ -68,20 +68,20 @@ class SiteController extends Controller
                 'class' => 'yii\captcha\CaptchaAction',
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
-            'ulogin-auth' => [
+            /*'ulogin-auth' => [
                 'class' => AuthAction::class,
                 'successCallback' => [$this, 'uloginSuccessCallback'],
                 'errorCallback' => function($data){
                     \Yii::error($data['error']);
                 },
-            ],
+            ], */
         ];
     }
 
-    public function uloginSuccessCallback($attributes)
+    /* public function uloginSuccessCallback($attributes)
     {
-        print_r($attributes);
-    }
+        print_r($attributes); die();
+    } */
 
     /**
      * Displays homepage.

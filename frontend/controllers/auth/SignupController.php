@@ -1,21 +1,30 @@
 <?php
 namespace frontend\controllers\auth;
 
-use Yii;
-use yii\web\Controller;
-use yii\filters\AccessControl;
+use common\auth\Identity;
 use cabinet\forms\auth\SignupForm;
 use cabinet\services\auth\SignupService;
+use cabinet\services\auth\NetworkService;
+use Yii;
+use yii\helpers\Json;
+use yii\web\Controller;
+use yii\filters\AccessControl;
 use rmrevin\yii\ulogin\AuthAction;
+use yii\helpers\ArrayHelper;
+
 
 class SignupController extends Controller
 {
-    private $service;
+    public $enableCsrfValidation = false;
 
-    public function __construct($id, $module, SignupService $service, $config = [])
+    private $service;
+    private $network;
+
+    public function __construct($id, $module, SignupService $service, NetworkService $network, $config = [])
     {
         parent::__construct($id, $module, $config);
         $this->service = $service;
+        $this->network = $network;
     }
 
     public function behaviors(): array
@@ -35,7 +44,8 @@ class SignupController extends Controller
         ];
     }
 
-    public function actions(){
+    public function actions()
+    {
         return [
             'ulogin-auth' => [
                 'class' => AuthAction::class,
@@ -43,13 +53,28 @@ class SignupController extends Controller
                 'errorCallback' => function($data){
                     \Yii::error($data['error']);
                 },
-            ],
+            ]
         ];
     }
 
     public function uloginSuccessCallback($attributes)
     {
-        print_r($attributes);
+        $network = ArrayHelper::getValue($attributes, 'network');
+        $identity = ArrayHelper::getValue($attributes, 'uid');
+        $username = ArrayHelper::getValue($attributes, 'first_name');
+        $email = ArrayHelper::getValue($attributes, 'email');
+        $profileData = Json::encode($attributes);
+
+        try {
+             $this->network->auth($network, $identity, $username, $email, $profileData);
+             Yii::$app->session->setFlash('success', 'Проверьте свою почту и следуйте дальнейшим инструкциям.');
+             return $this->goHome();
+        } catch (\DomainException $e) {
+            Yii::$app->errorHandler->logException($e);
+            Yii::$app->session->setFlash('error', $e->getMessage());
+
+            return $this->redirect(['request']);
+        }
     }
 
     /**
@@ -61,7 +86,7 @@ class SignupController extends Controller
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $this->service->signup($form);
-                Yii::$app->session->setFlash('success', 'Check your email for further instructions.');
+                Yii::$app->session->setFlash('success', 'Проверьте свою почту и следуйте дальнейшим инструкциям.');
                 return $this->goHome();
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);

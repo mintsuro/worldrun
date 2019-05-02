@@ -20,7 +20,7 @@ return [
         '@static'   => $params['staticHostInfo'],
     ], */
     'controllerNamespace' => 'frontend\controllers',
-    //'defaultRoute' => '/auth/auth/login', //'site/login',
+    'defaultRoute' =>  '/auth/auth/login',
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-frontend',

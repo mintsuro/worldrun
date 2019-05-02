@@ -4,6 +4,7 @@ namespace cabinet\repositories;
 
 use cabinet\entities\user\User;
 
+
 class UserRepository
 {
     private $dispatcher;
