@@ -31,7 +31,7 @@ class UserRepository
 
     public function getByEmailConfirmToken($token): User
     {
-        return $this->getBy(['email_confirm_token' => $token]);
+        return $this->getBy(['verification_token' => $token]);
     }
 
     public function getByEmail($email): User
@@ -52,7 +52,7 @@ class UserRepository
     public function save(User $user): void
     {
         if (!$user->save()) {
-            throw new \RuntimeException('Saving error.');
+            throw new \RuntimeException('Ошибка сохранения.');
         }
         // $this->dispatcher->dispatchAll($user->releaseEvents());
     }
@@ -60,7 +60,7 @@ class UserRepository
     public function remove(User $user): void
     {
         if (!$user->delete()) {
-            throw new \RuntimeException('Removing error.');
+            throw new \RuntimeException('Ошибка удаления.');
         }
         // $this->dispatcher->dispatchAll($user->releaseEvents());
     }
@@ -68,7 +68,7 @@ class UserRepository
     private function getBy(array $condition): User
     {
         if (!$user = User::find()->andWhere($condition)->limit(1)->one()) {
-            throw new NotFoundException('User not found.');
+            throw new NotFoundException('Пользователь не найден.');
         }
         return $user;
     }

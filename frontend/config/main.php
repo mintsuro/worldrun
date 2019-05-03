@@ -20,7 +20,6 @@ return [
         '@static'   => $params['staticHostInfo'],
     ], */
     'controllerNamespace' => 'frontend\controllers',
-    'defaultRoute' =>  '/auth/auth/login',
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-frontend',
@@ -28,7 +27,7 @@ return [
             'baseUrl' => '/worldrun',
         ],
         'user' => [
-            'identityClass' => 'common\auth\Identity', //'common\models\User',
+            'identityClass' => 'common\auth\Identity',
             'enableAutoLogin' => true,
             'identityCookie' => [
                 'name' => '_identity',

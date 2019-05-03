@@ -17,9 +17,8 @@ class Email
         return Yii::$app
             ->mailer
             ->compose(
-                ['html' => 'emailVerify-html', 'text' => 'emailVerify-text'],
-                ['user' => $user],
-                ['password' => $password]
+                ['html' => 'auth/signup/emailVerify-html', 'text' => 'auth/signup/emailVerify-text'],
+                ['user' => $user, 'password' => $password]
             )
             ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name . ' robot'])
             ->setTo($user->email)

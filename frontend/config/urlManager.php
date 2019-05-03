@@ -13,8 +13,9 @@ return [
         '' => 'site/index',
         'contact' => 'contact/index',
         'signup' => 'auth/signup/request',
-        //'signup/test' => 'auth/signup/test',
         'signup/<_a:[\w-]+>' => 'auth/signup/<_a>',
+
+        'profile/<_a:[\w-]+>' => 'cabinet/profile/<_a>',
         '<_a:login|logout>' => 'auth/auth/<_a>',
         'login/<service:google|facebook|etc>' => 'site/login',
 

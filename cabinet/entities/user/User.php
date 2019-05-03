@@ -11,6 +11,7 @@ use yii\web\IdentityInterface;
 use yii\base\ErrorException;
 use yii\db\ActiveQuery;
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
+use yii\helpers\Json;
 
 /**
  * User model
@@ -46,6 +47,7 @@ class User extends ActiveRecord
         $user->created_at = time();
         $user->status = self::STATUS_INACTIVE;
         $user->auth_key = Yii::$app->security->generateRandomString();
+
         return $user;
     }
 
@@ -74,24 +76,9 @@ class User extends ActiveRecord
         $user->status = self::STATUS_INACTIVE;
         $user->verification_token = Yii::$app->security->generateRandomString(10); // . '_' . time()
         $user->generateAuthKey();
+        $user->profile = Profile::createLight($username);
+
         return array('userObject' => $user, 'password' => $password);
-    }
-
-    public function confirmSignup(): void
-    {
-        if (!$this->isWait()) {
-            throw new \DomainException('User is already active.');
-        }
-        $this->status = self::STATUS_ACTIVE;
-        $this->email_confirm_token = null;
-    }
-
-    public function requestPasswordReset(): void
-    {
-        if (!empty($this->password_reset_token) && self::isPasswordResetTokenValid($this->password_reset_token)) {
-            throw new \DomainException('Password resetting is already requested.');
-        }
-        $this->password_reset_token = Yii::$app->security->generateRandomString() . '_' . time();
     }
 
     /**
@@ -112,7 +99,7 @@ class User extends ActiveRecord
         $password = Yii::$app->security->generateRandomString(10);
         $user->setPassword($password);
         $user->created_at = time();
-        $user->status = self::STATUS_ACTIVE;
+        $user->status = self::STATUS_INACTIVE;
         $user->verification_token = Yii::$app->security->generateRandomString();
         $user->generateAuthKey();
         $user->networks = [Network::create($network, $identity)];
@@ -132,6 +119,23 @@ class User extends ActiveRecord
         }
         $networks[] = Network::create($network, $identity);
         $this->networks = $networks;
+    }
+
+    public function confirmSignup(): void
+    {
+        if (!$this->isWait()) {
+            throw new \DomainException('Этот пользователь уже активен.');
+        }
+        $this->status = self::STATUS_ACTIVE;
+        $this->verification_token = null;
+    }
+
+    public function requestPasswordReset(): void
+    {
+        if (!empty($this->password_reset_token) && self::isPasswordResetTokenValid($this->password_reset_token)) {
+            throw new \DomainException('Password resetting is already requested.');
+        }
+        $this->password_reset_token = Yii::$app->security->generateRandomString() . '_' . time();
     }
 
     public function resetPassword($password): void
@@ -189,6 +193,14 @@ class User extends ActiveRecord
     {
         return [
             self::SCENARIO_DEFAULT => self::OP_ALL,
+        ];
+    }
+
+    public function rules()
+    {
+        return [
+            ['status', 'default', 'value' => self::STATUS_INACTIVE],
+            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE, self::STATUS_DELETED]],
         ];
     }
 
@@ -266,12 +278,4 @@ class User extends ActiveRecord
     {
         $this->auth_key = Yii::$app->security->generateRandomString();
     }
-
-    /* public function rules()
-    {
-        return [
-            ['status', 'default', 'value' => self::STATUS_INACTIVE],
-            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE, self::STATUS_DELETED]],
-        ];
-    } */
 }

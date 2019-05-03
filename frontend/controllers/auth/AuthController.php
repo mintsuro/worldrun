@@ -6,6 +6,8 @@ use cabinet\services\auth\AuthService;
 use cabinet\forms\auth\LoginForm;
 use Yii;
 use yii\web\Controller;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 
 class AuthController extends Controller
 {
@@ -15,6 +17,35 @@ class AuthController extends Controller
     {
         parent::__construct($id, $module, $config);
         $this->service = $service;
+    }
+
+
+    public function behaviors(): array
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'only' => ['login', 'logout'],
+                'rules' => [
+                    [
+                        'actions' => ['login'],
+                        'allow' => true,
+                        'roles' => ['?'],
+                    ],
+                    [
+                        'actions' => ['logout'],
+                        'allow'   => true,
+                        'roles'   => ['@'],
+                    ]
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'logout' => ['post'],
+                ],
+            ]
+        ];
     }
 
     /**

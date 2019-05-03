@@ -27,15 +27,15 @@ class NetworkService
         $this->email = $email;
     }
 
-    public function auth($network, $identity, $username, $email, $profileData): User
+    public function auth($network, $identity, $username, $email, $profileData)
     {
         if($this->users->findByUsernameOrEmail($email)){
             throw new \DomainException('Пользователь с таким email уже существует!');
         }
 
         /**
-         * @example  \cabinet\entities\user\User $user['userObject']
-         * @example   string $user['password']
+         * @var $user['userObject']  \cabinet\entities\user\User
+         * @var $user['password'] string
          */
         $user = User::signupByNetwork($network, $identity, $username, $email, $profileData);
 

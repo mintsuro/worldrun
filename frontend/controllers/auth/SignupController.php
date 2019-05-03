@@ -32,10 +32,9 @@ class SignupController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['index'],
+                'only' => ['request', 'confirm', 'ulogin-auth'],
                 'rules' => [
                     [
-                        'actions' => ['index'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
@@ -107,7 +106,7 @@ class SignupController extends Controller
     {
         try {
             $this->service->confirm($token);
-            Yii::$app->session->setFlash('success', 'Your email is confirmed.');
+            Yii::$app->session->setFlash('success', 'Ваш email подтвержден.');
             return $this->redirect(['auth/auth/login']);
         } catch (\DomainException $e) {
             Yii::$app->errorHandler->logException($e);

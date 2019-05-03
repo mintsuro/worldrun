@@ -35,17 +35,16 @@ AppAsset::register($this);
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
-    $menuItems = [
-        ['label' => 'Home', 'url' => ['/site/index']],
-    ];
+
     if (Yii::$app->user->isGuest) {
-        $menuItems[] = ['label' => 'Signup', 'url' => ['/auth/signup/request']];
-        $menuItems[] = ['label' => 'Login', 'url' => ['/auth/auth/login']];
+        $menuItems[] = ['label' => 'Регистрация', 'url' => ['/auth/signup/request']];
+        $menuItems[] = ['label' => 'Авторизация', 'url' => ['/auth/auth/login']];
     } else {
+        $menuItems[] = ['label' => 'Профиль', 'url' => ['/cabinet/profile/edit']];
         $menuItems[] = '<li>'
             . Html::beginForm(['/auth/auth/logout'], 'post')
             . Html::submitButton(
-                'Logout',
+                'Выйти',
                 ['class' => 'btn btn-link logout']
             )
             . Html::endForm()
