@@ -12,7 +12,6 @@ class SignupForm extends Model
 {
     public $username;
     public $email;
-    public $password;
 
     /**
      * @inheritdoc
@@ -20,9 +19,6 @@ class SignupForm extends Model
     public function rules()
     {
         return [
-            /*['password', 'required'],
-            ['password', 'string', 'min' => 6], */
-
             ['username', 'trim'],
             ['username', 'required'],
             ['username', 'string', 'min' => 2, 'max' => 255],
@@ -32,6 +28,14 @@ class SignupForm extends Model
             ['email', 'email'],
             ['email', 'string', 'max' => 255],
             ['email', 'unique', 'targetClass' => User::class, 'message' => 'Такой email адрес уже зарегистрирован.'],
+        ];
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'username' => 'Имя',
+            'Email' => 'Email'
         ];
     }
 }

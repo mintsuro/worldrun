@@ -36,6 +36,11 @@ class Profile extends ActiveRecord
         return $item;
     }
 
+    public function editLight(string $firstname): void
+    {
+        $this->first_name = $firstname;
+    }
+
     /**
      * Create in network data
      * @param string $profileData
@@ -58,8 +63,8 @@ class Profile extends ActiveRecord
     public function edit($firstname, $lastname, $sex, $age, $city, $phone,
         $postal_code, $address_delivery, $size_costume): void
     {
-        $this->first_name = $firstname;
-        $this->last_name = $lastname;
+        $this->first_name = ucfirst($firstname);
+        $this->last_name = ucfirst($lastname);
         $this->sex = $sex;
         $this->age = $age;
         $this->city = $city;
@@ -71,5 +76,20 @@ class Profile extends ActiveRecord
 
     public static function tableName(){
         return '{{%user_profile}}';
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'first_name' => 'Имя',
+            'last_name'  => 'Фамилия',
+            'sex' => 'Пол',
+            'age' => 'Возраст',
+            'city' => 'Город',
+            'phone' => 'Телефон',
+            'postal_code' => 'Индекс',
+            'address_delivery' => 'Адрес доставки',
+            'size_costume' => 'Размер одежды',
+        ];
     }
 }

@@ -38,7 +38,7 @@ class ProfileController extends Controller
         ];
     }
 
-    public function actionEdit(): string
+    public function actionEdit()
     {
         $profile = $this->findModel(Yii::$app->user->identity->getId());
         $form = new ProfileEditForm($profile);
@@ -46,7 +46,7 @@ class ProfileController extends Controller
         if($form->load(Yii::$app->request->post()) && $form->validate()){
             try{
                 $this->service->edit($profile->user_id, $form);
-                return $this->redirect(['/cabinet/tracking/index', 'id' => $profile->user_id]);
+                return $this->redirect(['/cabinet/participation/index']);
             }catch(\DomainException $e){
                 Yii::$app->errorHandler->logException($e);
                 Yii::$app->session->setFlash('error', $e->getMessage());

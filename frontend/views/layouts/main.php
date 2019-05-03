@@ -9,6 +9,7 @@ use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use frontend\assets\AppAsset;
 use common\widgets\Alert;
+use cabinet\access\Rbac;
 
 AppAsset::register($this);
 ?>
@@ -41,6 +42,9 @@ AppAsset::register($this);
         $menuItems[] = ['label' => 'Авторизация', 'url' => ['/auth/auth/login']];
     } else {
         $menuItems[] = ['label' => 'Профиль', 'url' => ['/cabinet/profile/edit']];
+        if(Yii::$app->user->can(Rbac::ROLE_PARTICIPANT)){
+            $menuItems[] = ['label' => 'Мои участия', 'url' => ['/cabinet/participation/index']];
+        }
         $menuItems[] = '<li>'
             . Html::beginForm(['/auth/auth/logout'], 'post')
             . Html::submitButton(
@@ -58,11 +62,6 @@ AppAsset::register($this);
     ?>
 
     <div class="container">
-        <?php if (Yii::$app->user->isGuest) {
-            echo 'user guest';
-        }else{
-            echo 'user login';
-        } ?>
         <?php /* echo Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) */ ?>

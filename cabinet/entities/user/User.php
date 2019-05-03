@@ -3,6 +3,7 @@
 namespace cabinet\entities\user;
 
 use cabinet\entities\user\Profile;
+use cabinet\helpers\ProfileHelper;
 use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
@@ -38,7 +39,7 @@ class User extends ActiveRecord
     const STATUS_ACTIVE = 10;
 
 
-    public function create(string $username, string $email, string $password): self
+    public static function create(string $username, string $email, string $password): self
     {
         $user = new User();
         $user->username = $username;
@@ -47,21 +48,39 @@ class User extends ActiveRecord
         $user->created_at = time();
         $user->status = self::STATUS_INACTIVE;
         $user->auth_key = Yii::$app->security->generateRandomString();
+        $user->profile = Profile::createLight($username);
 
         return $user;
     }
 
+    /**
+     * @param string $username
+     * @param string $email
+     * Edit data for admin page user
+     */
     public function edit(string $username, string $email): void
     {
         $this->username = $username;
         $this->email = $email;
         $this->updated_at = time();
+
+        $this->profile->first_name = $username;
+        $this->profile->save();
     }
 
-    public function editProfile(string $email, string $phone): void
+    /**
+     * @param string $email
+     * Edit data for cabinet user
+     */
+    public function editProfile(string $email): void
     {
         $this->email = $email;
-        $this->phone = $phone;
+        $this->updated_at = time();
+    }
+
+    public function editUsername(string $username): void
+    {
+        $this->username = $username;
         $this->updated_at = time();
     }
 
@@ -277,5 +296,14 @@ class User extends ActiveRecord
     private function generateAuthKey()
     {
         $this->auth_key = Yii::$app->security->generateRandomString();
+    }
+
+    public function attributeLabels(){
+        return [
+            'username' => 'Имя',
+            'created_at' => 'Дата создания',
+            'updated_at' => 'Дата добавления',
+            'status' => 'Статус',
+        ];
     }
 }
