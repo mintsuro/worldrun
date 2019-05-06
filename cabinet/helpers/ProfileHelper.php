@@ -16,6 +16,11 @@ class ProfileHelper
         ];
     }
 
+    public static function sizeCostumeList(): array
+    {
+        return ['XXS','XS','S','M','L','XL','XXL'];
+    }
+
     public static function sexLabel($status): string
     {
         switch ($status) {

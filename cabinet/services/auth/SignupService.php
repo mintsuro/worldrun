@@ -52,7 +52,7 @@ class SignupService
 
 
 
-    public function confirm($token): void
+    public function confirm($token): User
     {
         if (empty($token)) {
             throw new \DomainException('Пустой токен для подтверждения.');
@@ -60,5 +60,7 @@ class SignupService
         $user = $this->users->getByEmailConfirmToken($token);
         $user->confirmSignup();
         $this->users->save($user);
+
+        return $user;
     }
 }

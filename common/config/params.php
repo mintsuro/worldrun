@@ -4,7 +4,7 @@ return [
     'supportEmail' => 'mintsuro@gmail.com',
     'senderEmail' => 'noreply@example.com',
     'senderName' => 'Example.com mailer',
-    'user.passwordResetTokenExpire' => 3600 * 24 * 7,
+    'user.passwordResetTokenExpire' => 3600,
     'user.rememberMeDuration' => 3600 * 24 * 30,
     'cookieDomain' => '.worldrun.test',
     'frontendHostInfo' => 'http://localhost/worldrun',

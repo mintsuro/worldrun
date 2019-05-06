@@ -5,6 +5,7 @@ namespace cabinet\entities\user;
 use yii\db\ActiveRecord;
 use yii\helpers\Json;
 use yii\helpers\ArrayHelper;
+use Yii;
 
 /**
  * @property string first_name
@@ -41,6 +42,21 @@ class Profile extends ActiveRecord
         $this->first_name = $firstname;
     }
 
+    protected  static function calculateAge(string $bDate): string
+    {
+
+        try{
+            $birthday = date_create($bDate);
+            $date = date_create('now');
+            $interval = $birthday->diff($date);
+
+            return $interval->format('%y');
+        }catch(\InvalidArgumentException $e){
+            Yii::$app->errorHandler->logException($e);
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        }
+    }
+
     /**
      * Create in network data
      * @param string $profileData
@@ -53,7 +69,7 @@ class Profile extends ActiveRecord
         $item->first_name = ArrayHelper::getValue($profileData, 'first_name');
         $item->last_name = ArrayHelper::getValue($profileData,'last_name');
         $item->sex = ArrayHelper::getValue($profileData, 'sex');
-        $item->age = ArrayHelper::getValue($profileData, 'bdate');
+        $item->age = !empty($profileData['bdate']) ? Profile::calculateAge($profileData['bdate']) : null;
         $item->city = ArrayHelper::getValue($profileData, 'city');
         $item->phone = ArrayHelper::getValue($profileData, 'phone');
 

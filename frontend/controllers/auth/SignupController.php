@@ -12,7 +12,6 @@ use yii\filters\AccessControl;
 use rmrevin\yii\ulogin\AuthAction;
 use yii\helpers\ArrayHelper;
 
-
 class SignupController extends Controller
 {
     public $enableCsrfValidation = false;
@@ -58,6 +57,7 @@ class SignupController extends Controller
 
     public function uloginSuccessCallback($attributes)
     {
+        //print_r($attributes); die();
         $network = ArrayHelper::getValue($attributes, 'network');
         $identity = ArrayHelper::getValue($attributes, 'uid');
         $username = ArrayHelper::getValue($attributes, 'first_name');
@@ -105,9 +105,9 @@ class SignupController extends Controller
     public function actionConfirm($token)
     {
         try {
-            $this->service->confirm($token);
+            $user = $this->service->confirm($token);
             Yii::$app->session->setFlash('success', 'Ваш email подтвержден.');
-            return $this->redirect(['auth/auth/login']);
+            Yii::$app->user->login(new Identity($user), Yii::$app->params['user.rememberMeDuration']);
         } catch (\DomainException $e) {
             Yii::$app->errorHandler->logException($e);
             Yii::$app->session->setFlash('error', $e->getMessage());

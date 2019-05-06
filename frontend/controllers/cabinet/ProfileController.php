@@ -16,6 +16,8 @@ class ProfileController extends Controller
 {
     private $service;
 
+    public $layout = 'cabinet';
+
     public function __construct($id, $module, ProfileService $service, $config = [])
     {
         parent::__construct($id, $module, $config);

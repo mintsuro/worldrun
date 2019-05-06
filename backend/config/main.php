@@ -27,7 +27,7 @@ return [
             'identityClass' => 'common\auth\Identity',
             'enableAutoLogin' => true,
             'identityCookie' => [
-                'name' => '_identity',
+                'name' => '_identity-backend',
                 'httpOnly' => true,
                 //'domain' => $params['cookieDomain'],
             ],
@@ -35,7 +35,7 @@ return [
         ],
         'session' => [
             // this is the name of the session cookie used for login on the backend
-            'name' => '_session',
+            'name' => '_session-backend',
             'cookieParams' => [
                 //'domain' => $params['cookieDomain'],
                 'httpOnly' => true,

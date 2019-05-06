@@ -4,8 +4,8 @@
 
 return [
     'class' => 'yii\web\UrlManager',
-    'hostInfo' => $params['frontendHostInfo'],
-    'baseUrl' => $params['frontendHostInfo'],
+    //'hostInfo' => $params['frontendHostInfo'],
+    //'baseUrl' => $params['frontendHostInfo'],
     'enablePrettyUrl' => true,
     'showScriptName' => false,
     'cache' => false,
@@ -14,9 +14,10 @@ return [
         'contact' => 'contact/index',
         'signup' => 'auth/signup/request',
         'signup/<_a:[\w-]+>' => 'auth/signup/<_a>',
+        'reset/<_a:[\w-]+>' => 'auth/reset/<_a>',
+        '<_a:login|logout>' => 'auth/auth/<_a>',
 
         'profile/<_a:[\w-]+>' => 'cabinet/profile/<_a>',
-        '<_a:login|logout>' => 'auth/auth/<_a>',
         'login/<service:google|facebook|etc>' => 'site/login',
 
         '<_c:[\w\-]+>' => '<_c>/index',

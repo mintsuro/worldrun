@@ -3,9 +3,17 @@ namespace common\mail\services;
 
 use cabinet\entities\user\User;
 use Yii;
+use yii\mail\MailerInterface;
 
 class Email
 {
+    private $mailer;
+
+    public function __construct(MailerInterface $mailer)
+    {
+        $this->mailer = $mailer;
+    }
+
     /**
      * Sends confirmation email to user
      * @param User $user user model to with email should be send
@@ -14,8 +22,7 @@ class Email
      */
     public function sendEmailSignup($user, $password)
     {
-        return Yii::$app
-            ->mailer
+        return $this->mailer
             ->compose(
                 ['html' => 'auth/signup/emailVerify-html', 'text' => 'auth/signup/emailVerify-text'],
                 ['user' => $user, 'password' => $password]

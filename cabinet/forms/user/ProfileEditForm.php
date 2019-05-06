@@ -39,9 +39,10 @@ class ProfileEditForm extends Model
         return [
             [['first_name', 'last_name', 'sex', 'age', 'city', 'phone'], 'required'],
             [['first_name', 'last_name', 'age', 'city', 'phone', 'address_delivery', 'size_costume'], 'string', 'max' => 255],
-            [['age', 'size_costume'], 'string', 'max' => 10],
+            [['age'], 'integer', 'min' => 5, 'max' => 99],
             [['phone'], 'string', 'max' => 20],
             [['sex', 'postal_code'], 'integer'],
+            //['phone', 'match', 'pattern' => '/^\+7\([0-9]{3}\)\[0-9]{3}\-[0-9]{2}\-[0-9]{2}$/', 'message' => 'Неправильный формат телефонного номера']
         ];
     }
 

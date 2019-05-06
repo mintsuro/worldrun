@@ -89,7 +89,7 @@ class User extends ActiveRecord
         $user = new User();
         $user->username = $username;
         $user->email = $email;
-        $password = Yii::$app->security->generateRandomString(10);
+        $password = mt_rand(1000, 9999);
         $user->setPassword($password);
         $user->created_at = time();
         $user->status = self::STATUS_INACTIVE;
@@ -115,7 +115,7 @@ class User extends ActiveRecord
         $user = new User();
         $user->username = $username;
         $user->email = $email;
-        $password = Yii::$app->security->generateRandomString(10);
+        $password = mt_rand(1000, 9999);
         $user->setPassword($password);
         $user->created_at = time();
         $user->status = self::STATUS_INACTIVE;
@@ -152,7 +152,7 @@ class User extends ActiveRecord
     public function requestPasswordReset(): void
     {
         if (!empty($this->password_reset_token) && self::isPasswordResetTokenValid($this->password_reset_token)) {
-            throw new \DomainException('Password resetting is already requested.');
+            throw new \DomainException('Сброс пароля уже запрошен.');
         }
         $this->password_reset_token = Yii::$app->security->generateRandomString() . '_' . time();
     }
@@ -160,7 +160,7 @@ class User extends ActiveRecord
     public function resetPassword($password): void
     {
         if (empty($this->password_reset_token)) {
-            throw new \DomainException('Password resetting is not requested.');
+            throw new \DomainException('Сброс пароля не требуется.');
         }
         $this->setPassword($password);
         $this->password_reset_token = null;

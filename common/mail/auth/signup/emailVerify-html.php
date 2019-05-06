@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /* @var $user cabinet\entities\user\User */
 /* @var $password string */
 
-$verifyLink = Yii::$app->urlManager->createAbsoluteUrl(['auth/signup/confirm', 'token' => $user->verification_token]);
+$verifyLink = Yii::$app->urlManager->createAbsoluteUrl(['/auth/signup/confirm', 'token' => $user->verification_token]);
 ?>
 <div class="verify-email">
     <p>Здравствуйте, <?= Html::encode($user->username) ?>,</p>
@@ -14,5 +14,5 @@ $verifyLink = Yii::$app->urlManager->createAbsoluteUrl(['auth/signup/confirm', '
 
     <p>Перейдите по ссылке для подтверждения вашей электронной почты:</p>
 
-    <p><?= Html::a(Html::encode($verifyLink), $verifyLink) ?></p>
+    <p><?= Html::a(Html::encode('Войти в кабинет'), $verifyLink) ?></p>
 </div>

@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
 
-            <?= $form->field($model, 'username')->textInput() ?>
+            <?= $form->field($model, 'username')->textInput(['placeholder' => 'Введите email'])->label('Email') ?>
 
             <?= $form->field($model, 'password')->passwordInput() ?>
 
@@ -27,6 +27,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <div>
                 <?= Html::submitButton('Войти', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
+                <span>или <?= Html::a('Зарегистрируйтесь', Url::to(['/auth/signup/request'])) ?></span>
+            </div>
+
+            <div style="margin-top: 1em">
+                <?= Html::a('Забыли пароль?', Url::to(['/auth/reset/request'])) ?>
             </div>
 
             <?php ActiveForm::end(); ?>

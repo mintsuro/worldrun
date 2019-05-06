@@ -9,6 +9,8 @@ use yii\filters\AccessControl;
 
 class ParticipationController extends Controller
 {
+    public $layout = 'cabinet';
+
     public function behaviors(){
         return [
             'access' => [

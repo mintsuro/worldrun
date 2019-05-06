@@ -18,11 +18,11 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="user-update">
     <div class="row">
         <div class="col-sm-12">
-            <h3><?= Html::encode($this->title) ?></h3>
-
+            <h3 style="margin-top: 0"><?= Html::encode($this->title) ?></h3>
             <?= GridView::widget([
                 'dataProvider' => $dataProvider,
                 'layout' => "{items}\n{pager}",
+                'tableOptions' => ['class' => 'table table-striped table-bordered table-participant'],
                 'columns' => [
                     [
                         'attribute' => 'id',
@@ -35,6 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             return 'Период с ' . date('d.m.Y', $model->date_start) . ' по ' . date('d.m.Y', $model->date_end);
                         },
                         'format' => 'raw',
+                        'options' => ['width', '100px']
                     ],
                     [
                         'attribute' => 'status',
@@ -69,6 +70,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                 ],
             ]) ?>
+            <div style="margin-bottom: 20px" class=""><?= Html::a(Html::encode('Новое участие'), Url::to(['#']), ['class' => 'btn btn-success']); ?></div>
         </div>
     </div>
 
