@@ -5,7 +5,7 @@
 return [
     'class' => 'yii\web\UrlManager',
     //'hostInfo' => $params['frontendHostInfo'],
-    //'baseUrl' => $params['frontendHostInfo'],
+    'baseUrl' => $params['frontendHostInfo'],
     'enablePrettyUrl' => true,
     'showScriptName' => false,
     'cache' => false,
@@ -18,6 +18,7 @@ return [
         '<_a:login|logout>' => 'auth/auth/<_a>',
 
         'profile/<_a:[\w-]+>' => 'cabinet/profile/<_a>',
+        'participation/<_a:[\w-]+>' => 'cabinet/participation/<_a>',
         'login/<service:google|facebook|etc>' => 'site/login',
 
         '<_c:[\w\-]+>' => '<_c>/index',

@@ -6,7 +6,9 @@ return [
     'senderName' => 'Example.com mailer',
     'user.passwordResetTokenExpire' => 3600,
     'user.rememberMeDuration' => 3600 * 24 * 30,
-    'cookieDomain' => '.worldrun.test',
+    'cookieDomain' => '.worldrun.online',
     'frontendHostInfo' => 'http://localhost/worldrun',
     'backendHostInfo' => 'http://localhost/worldrun/backend/web',
+    'uploadsRoot' => \Yii::getAlias('@uploadsRoot'),
+    //'uploadsPath' => \Yii::getAlias('@uploadsPath'),
 ];

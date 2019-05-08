@@ -53,7 +53,15 @@ $this->params['breadcrumbs'][] = $this->title;
                         },
                         'format' => 'raw',
                     ],
-                    'photo',
+                    [
+                        'attribute' => 'photo',
+                        'value' => function(Race $model){
+                            return $model->photo ? Html::img(\Yii::$app->get('frontendUrlManager')->baseUrl . '/uploads/origin/race/' . $model->photo,
+                                ['style' => ['width' => '100px', 'height' => '70px']]) : null;
+                        },
+                        'format' => 'raw',
+                        'contentOptions' => ['style' => 'width: 100px'],
+                    ],
                     [
                         'attribute' => 'status',
                         'filter' => RaceHelper::statusList(),

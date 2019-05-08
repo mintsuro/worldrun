@@ -6,6 +6,7 @@ use cabinet\entities\cabinet\Race;
 use yii\base\Model;
 use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
+use yii\web\UploadedFile;
 
 class RaceForm extends Model
 {
@@ -21,10 +22,9 @@ class RaceForm extends Model
     {
         if($race){
             $this->name = $race->name;
-            $this->photo = $race->photo;
             $this->status = $race->status;
-            $this->date_start = $race->date_start;
-            $this->date_end = $race->date_end;
+            $this->date_start = date('d.m.Y', $race->date_start);
+            $this->date_end = date('d.m.Y', $race->date_end);
             $this->_race = $race;
         }
         parent::__construct($config);
@@ -37,7 +37,7 @@ class RaceForm extends Model
             [['date_start', 'date_end'], 'date', 'format' => 'php:d.m.Y'],
             [['name'], 'string'],
             ['status', 'integer'],
-            [['photo'], 'image'],
+            [['photo'], 'file', 'extensions' => 'jpeg, png, jpg', /*'on' => ['insert', 'update']*/],
         ];
     }
 
@@ -50,5 +50,24 @@ class RaceForm extends Model
             'date_start' => 'Дата начала',
             'date_end' => 'Дата завершения',
         ];
+    }
+
+    public function beforeValidate(): bool
+    {
+        if (parent::beforeValidate()) {
+            $this->photo = UploadedFile::getInstance($this, 'photo');
+            return true;
+        }
+        return false;
+    }
+
+    public function upload()
+    {
+        if ($this->validate()) {
+            $this->photo->saveAs(\Yii::getAlias('@uploadsRoot') . '/origin/race/' . $this->photo->baseName . '.' . $this->photo->extension);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

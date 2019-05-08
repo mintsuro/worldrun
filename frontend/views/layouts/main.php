@@ -41,10 +41,6 @@ AppAsset::register($this);
         $menuItems[] = ['label' => 'Регистрация', 'url' => ['/auth/signup/request']];
         $menuItems[] = ['label' => 'Авторизация', 'url' => ['/auth/auth/login']];
     } else {
-        $menuItems[] = ['label' => 'Профиль', 'url' => ['/cabinet/profile/edit']];
-        if(Yii::$app->user->can(Rbac::ROLE_PARTICIPANT)){
-            $menuItems[] = ['label' => 'Мои участия', 'url' => ['/cabinet/participation/index']];
-        }
         $menuItems[] = '<li>'
             . Html::beginForm(['/auth/auth/logout'], 'post')
             . Html::submitButton(

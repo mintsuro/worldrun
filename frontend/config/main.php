@@ -16,8 +16,8 @@ return [
         'frontend\bootstrap\SetUp',
     ],
     /* 'aliases' => [
-        '@staticRoot' => $params['staticPath'],
-        '@static'   => $params['staticHostInfo'],
+        '@uploadRoot' => $params['uploadRoot'],
+        '@upload'   =>  (string) \Yii::$app->get('frontendUrlManager')->baseUrl . '/uploads',
     ], */
     'controllerNamespace' => 'frontend\controllers',
     'components' => [

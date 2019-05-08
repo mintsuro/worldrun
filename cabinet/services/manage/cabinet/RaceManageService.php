@@ -26,6 +26,10 @@ class RaceManageService
             $form->date_end
         );
 
+        if ($form->photo) {
+            $race->setPhoto($form->photo);
+        }
+
         $this->repository->save($race);
 
         return $race;
@@ -40,6 +44,10 @@ class RaceManageService
             $form->date_start,
             $form->date_end
         );
+
+        if ($form->photo) {
+            $race->setPhoto($form->photo);
+        }
 
         $this->repository->save($race);
     }

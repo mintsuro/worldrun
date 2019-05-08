@@ -99,6 +99,7 @@ class RaceController extends Controller
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $this->service->edit($race->id, $form);
+                $form->upload();
                 return $this->redirect(['view', 'id' => $race->id]);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);

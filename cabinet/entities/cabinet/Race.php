@@ -2,8 +2,13 @@
 
 namespace cabinet\entities\cabinet;
 
+use cabinet\entities\user\User;
+use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use yii\db\ActiveRecord;
 use yii\web\UploadedFile;
+use cabinet\entities\cabinet\queries\RaceQuery;
+use yii\db\ActiveQuery;
+//use yiidreamteam\upload\ImageUploadBehavior;
 
 /**
  * @property integer $id
@@ -12,6 +17,8 @@ use yii\web\UploadedFile;
  * @property integer $status
  * @property integer $date_start
  * @property integer $date_end
+ *
+ * @property UserAssignments[] $userAssignments
  */
 class Race extends ActiveRecord
 {
@@ -40,6 +47,25 @@ class Race extends ActiveRecord
         $this->date_end = strtotime($date_end);
     }
 
+    public function setPhoto(UploadedFile $photo): void
+    {
+        $this->photo = $photo;
+    }
+
+    ##########################
+
+    public function getUserAssignments(): ActiveQuery
+    {
+        return $this->hasMany(UserAssignments::class, ['race_id' => 'id']);
+    }
+
+    public function getParticipants(): ActiveQuery
+    {
+        return $this->hasMany(User::class, ['id' => 'user_id'])->via('userAssignments');
+    }
+
+    ##########################
+
     public function attributeLabels()
     {
         return [
@@ -56,12 +82,39 @@ class Race extends ActiveRecord
         return '{{%cabinet_race}}';
     }
 
-    public function beforeValidate(): bool
+    public function behaviors(): array
     {
-        if (parent::beforeValidate()) {
-            $this->photo = UploadedFile::getInstance($this, 'photo');
-            return true;
-        }
-        return false;
+        return [
+            [
+                'class' => SaveRelationsBehavior::class,
+                'relations' => ['userAssignments'],
+            ],
+            [
+                'class' => \mohorev\file\UploadImageBehavior::class,
+                'attribute' => 'photo',
+                'scenarios' => ['insert', 'update'],
+                'placeholder' => '@app/modules/user/assets/images/userpic.jpg',
+                'path' => \Yii::getAlias('@uploadsRoot') . '/origin/race',
+                'url' => \Yii::$app->get('frontendUrlManager')->baseUrl . '/uploads/origin/race',
+                'thumbPath' => '@webroot/upload/{id}/images/thumb',
+                'thumbUrl' => '@web/upload/{id}/images/thumb',
+                'thumbs' => [
+                    'thumb' => ['width' => 640, 'height' => 480],
+                    'preview' => ['width' => 100, 'height' => 70],
+                ],
+            ],
+        ];
+    }
+
+    public function transactions(): array
+    {
+        return [
+            self::SCENARIO_DEFAULT => self::OP_ALL,
+        ];
+    }
+
+    public static function find(): RaceQuery
+    {
+        return new RaceQuery(static::class);
     }
 }
