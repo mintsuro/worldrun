@@ -30,12 +30,13 @@
             [
                 'options' => ['class' => 'sidebar-menu'],
                 'items' => [
-                    ['label' => 'Management', 'options' => ['class' => 'header']],
+                    ['label' => 'Администрирование', 'options' => ['class' => 'header']],
                     ['label' => 'Забеги', 'icon' => 'file-o', 'url' => ['/cabinet/race/index'], 'active' => $this->context->id == 'race/index'],
+                    ['label' => 'Продукты', 'icon' => 'file-o', 'url' => ['/shop/product/index'], 'active' => $this->context->id == 'product/index'],
                     ['label' => 'Пользователи', 'icon' => 'user', 'url' => ['/user/index'], 'active' => $this->context->id == 'user/index'],
                 ],
             ]
-        ) ?>
+        ); ?>
 
     </section>
 

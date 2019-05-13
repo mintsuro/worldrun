@@ -70,7 +70,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                 ],
             ]) ?>
-            <div style="margin-bottom: 20px" class=""><?= Html::a(Html::encode('Новое участие'), Url::to(['all']), ['class' => 'btn btn-success']); ?></div>
+            <div style="margin-bottom: 20px" class="">
+                <?= Html::a(Html::encode('Новое участие'),
+                    Url::to(['all', 'userId' => Yii::$app->user->identity->getId()]),
+                    ['class' => 'btn btn-success']
+                ); ?>
+            </div>
         </div>
     </div>
 

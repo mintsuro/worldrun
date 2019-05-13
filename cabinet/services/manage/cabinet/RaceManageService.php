@@ -57,5 +57,4 @@ class RaceManageService
         $race = $this->repository->get($id);
         $this->repository->remove($race);
     }
-
 }

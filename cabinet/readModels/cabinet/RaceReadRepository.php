@@ -10,15 +10,18 @@ use yii\db\ActiveQuery;
 
 class RaceReadRepository
 {
-    public function getAll(): DataProviderInterface
+    public function getAll(User $user): DataProviderInterface
     {
-        $query = Race::find()->active();
+        $query = Race::find()->alias('r')->active('r');
+        $query->joinWith(['userAssignments us'], false);
+        $query->andWhere(['not', 'us.user_id' => $user->id]);
+        $query->orderBy('r.date_end');
         return $this->getProvider($query);
     }
 
     public function getAllByUser(User $user): DataProviderInterface
     {
-        $query = Race::find()->alias('r')->active('r');
+        $query = Race::find()->alias('r');
         $query->joinWith(['userAssignments us'], false);
         $query->andWhere(['us.user_id' => $user->id]);
         $query->orderBy('r.id');

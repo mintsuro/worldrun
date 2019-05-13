@@ -8,12 +8,13 @@ use yii\db\ActiveRecord;
  * @property integer $race_id;
  * @property integer $user_id;
  */
-class UserAssignments extends ActiveRecord
+class UserAssignment extends ActiveRecord
 {
-    public static function create($userId): self
+    public static function create($userId, $raceId): self
     {
         $assignment = new static();
         $assignment->user_id = $userId;
+        $assignment->race_id = $raceId;
         return $assignment;
     }
 

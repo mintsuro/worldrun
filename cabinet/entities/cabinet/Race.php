@@ -18,7 +18,7 @@ use yii\db\ActiveQuery;
  * @property integer $date_start
  * @property integer $date_end
  *
- * @property UserAssignments[] $userAssignments
+ * @property UserAssignment[] $userAssignments
  */
 class Race extends ActiveRecord
 {
@@ -52,14 +52,30 @@ class Race extends ActiveRecord
         $this->photo = $photo;
     }
 
+    /**
+     * @param integer $userId
+     * @param integer $raceId
+     */
+    public function assignUser(int $userId, int $raceId)
+    {
+        $assignments = $this->userAssignments;
+        foreach($assignments as $assignment){
+            if($assignment->isForUser($userId)){
+                throw new \DomainException('Пользователь уже зарегистрирован');
+            }
+        }
+        $assignment = UserAssignment::create($userId, $raceId);
+        $assignment->save();
+    }
+
     ##########################
 
     public function getUserAssignments(): ActiveQuery
     {
-        return $this->hasMany(UserAssignments::class, ['race_id' => 'id']);
+        return $this->hasMany(UserAssignment::class, ['race_id' => 'id']);
     }
 
-    public function getParticipants(): ActiveQuery
+    public function getUsers(): ActiveQuery
     {
         return $this->hasMany(User::class, ['id' => 'user_id'])->via('userAssignments');
     }

@@ -9,15 +9,32 @@ use yii\helpers\Url;
 $url = Url::to(['race', 'id' =>$model->id]);
 ?>
 
-<div class="blog-posts-item">
-    <?php if ($model->photo): ?>
-        <div>
-            <a href="<?= Html::encode($url) ?>">
-                <img src="" alt="" class="img-responsive" />
-            </a>
+<div class="race-item col-sm-6">
+    <h4 class="tit"><?= Html::encode($model->name) ?></h4>
+    <div class="thumbnail">
+        <?php if ($model->photo): ?>
+            <?= Html::img(\Yii::$app->get('frontendUrlManager')->baseUrl . '/uploads/origin/race/' . $model->photo,
+                ['style' => ['width' => '200px', 'height' => '200px'], 'class' => 'img-responsive']) ?>
+        <?php endif; ?>
+    </div>
+    <div class="info-race">
+        <div class="info-text">
+            <h4>Дата проведения:</h4>
+            <span><strong><?= date('d.m.Y', $model->date_start) ?></strong></span> -
+                <span><strong><?= date('d.m.Y', $model->date_end) ?></strong></span>
         </div>
-    <?php endif; ?>
-    <div class="h2"><a href="<?= Html::encode($url) ?>"><?= Html::encode($model->name) ?></a></div>
+        <div class="info-text">
+            <h4>Статус:</h4>
+            <span><?= \cabinet\helpers\RaceHelper::statusLabel($model->status) ?></span>
+        </div>
+        <div class="info-text">
+            <h4>Количество участников:</h4>
+            <span>1</span>
+        </div>
+        <div class="info-text">
+            <?= Html::a('Участвовать', Url::to(['add', 'raceId' => $model->id]), ['class' => 'btn btn-success']) ?>
+        </div>
+    </div>
 </div>
 
 

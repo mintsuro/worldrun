@@ -104,6 +104,38 @@ a.desc:after {
     border: none;
 }
 
+.race-item{
+    box-shadow: 0 3px 7px #ccc;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow: hidden;
+}
+.race-item .tit
+{
+    margin: 15px 0;
+}
+.race-item .info-race h4{
+    margin: 0 0 5px 0;
+    font-size: 15px;
+}
+.race-item .info-text{
+    border-bottom: 1px solid lightskyblue;
+    margin-bottom: 5px;
+    padding-bottom: 10px;
+}
+.race-item .info-race > .info-text:last-child{
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border: none;
+}
+.race-item .thumbnail{
+    float: left;
+    margin-right: 5px;
+}
+.race-item .info-text span{
+    font-size: 14px;
+}
+
 @media(max-width:767px) {
     .nav li > form > button.logout {
         display:block;

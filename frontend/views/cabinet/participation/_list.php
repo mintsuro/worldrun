@@ -5,8 +5,10 @@
 
 ?>
 
-<?= \yii\widgets\ListView::widget([
-    'dataProvider' => $dataProvider,
-    'layout' => "{items}\n{pager}",
-    'itemView' => '_race',
-]) ?>
+<div class="row">
+    <?= \yii\widgets\ListView::widget([
+        'dataProvider' => $dataProvider,
+        'layout' => "{items}\n{pager}",
+        'itemView' => '_race',
+    ]) ?>
+</div>

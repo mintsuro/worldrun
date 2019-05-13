@@ -35,11 +35,12 @@ use kartik\file\FileInput;
     <div class="box box-default">
         <div class="box-header with-border">Фотография</div>
         <div class="box-body">
-            <?php echo $form->field($model, 'photo')->label(false)->widget(FileInput::class, [
+            <?php echo $form->field($model, 'photo')->widget(FileInput::class, [
                 'options' => [
                     'accept' => 'image/*',
+                    'multiple' => false,
                 ]
-            ]) ?>
+            ])->label(false) ?>
         </div>
     </div>
 
