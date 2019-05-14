@@ -14,8 +14,8 @@ class RaceReadRepository
     {
         $query = Race::find()->alias('r')->active('r');
         $query->joinWith(['userAssignments us'], false);
-        $query->andWhere(['not', 'us.user_id' => $user->id]);
-        $query->orderBy('r.date_end');
+        //$query->where(['not', ['us.user_id' => $user->id]]);
+        $query->orderBy('r.date_end')->all();
         return $this->getProvider($query);
     }
 

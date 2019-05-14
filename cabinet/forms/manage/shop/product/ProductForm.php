@@ -5,7 +5,7 @@ namespace cabinet\forms\manage\shop\product;
 use yii\base\Model;
 use cabinet\entities\shop\product\Product;
 use yii\web\UploadedFile;
-
+use yii\imagine\Image;
 
 class ProductForm extends Model
 {
@@ -38,15 +38,6 @@ class ProductForm extends Model
         ];
     }
 
-    public function beforeValidate(): bool
-    {
-        if(parent::beforeValidate()){
-            $this->photo = UploadedFile::getInstance($this, 'photo');
-            return true;
-        }
-        return false;
-    }
-
     public function attributeLabels(){
         return [
             'name' => 'Название',
@@ -57,5 +48,30 @@ class ProductForm extends Model
             'created_at' => 'Дата создания',
             'quantity' => 'Количество'
         ];
+    }
+
+    public function beforeValidate(): bool
+    {
+        if(parent::beforeValidate()){
+            $this->photo = UploadedFile::getInstance($this, 'photo');
+            return true;
+        }
+        return false;
+    }
+
+    public function upload()
+    {
+        $width = 300;
+        $height = 300;
+        $originPath = \Yii::getAlias('@uploadsRoot') . '/origin/product/' . $this->photo->baseName . '.' . $this->photo->extension;
+        $thumbPath = \Yii::getAlias('@uploadsRoot') . '/origin/product/' . $this->photo->baseName . "x$width-$height" . '.' . $this->photo->extension;
+
+        if ($this->validate()) {
+            $this->photo->saveAs($originPath);
+            Image::thumbnail($originPath, $width, $height)->save($thumbPath, ['quality' => 90]);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

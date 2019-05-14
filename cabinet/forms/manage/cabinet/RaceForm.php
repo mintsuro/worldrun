@@ -7,6 +7,7 @@ use yii\base\Model;
 use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
+use yii\imagine\Image;
 
 class RaceForm extends Model
 {
@@ -63,8 +64,14 @@ class RaceForm extends Model
 
     public function upload()
     {
+        $width = 300;
+        $height = 300;
+        $originPath = \Yii::getAlias('@uploadsRoot') . '/origin/race/' . $this->photo->baseName . '.' . $this->photo->extension;
+        $thumbPath = \Yii::getAlias('@uploadsRoot') . '/origin/race/' . $this->photo->baseName . "x$width-$height" . '.' . $this->photo->extension;
+
         if ($this->validate()) {
-            $this->photo->saveAs(\Yii::getAlias('@uploadsRoot') . '/origin/race/' . $this->photo->baseName . '.' . $this->photo->extension);
+            $this->photo->saveAs($originPath);
+            Image::thumbnail($originPath, $width, $height)->save($thumbPath, ['quality' => 90]);
             return true;
         } else {
             return false;

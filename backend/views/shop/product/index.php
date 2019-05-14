@@ -25,9 +25,9 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= GridView::widget([
                 'dataProvider' => $dataProvider,
                 'filterModel' => $searchModel,
-                'rowOptions' => function (Product $model) {
+                /* 'rowOptions' => function (Product $model) {
                     return $model->quantity <= 0 ? ['style' => 'background: #fdc'] : [];
-                },
+                }, */
                 'columns' => [
                     [
                         'attribute' => 'id',
@@ -35,8 +35,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     [
                         'value' => function (Product $model) {
-                            return $model->photo ? Html::img(\Yii::$app->get('frontendUrlManager')->baseUrl . '/uploads/origin/race/' . $model->photo,
-                                ['style' => ['width' => '100px', 'height' => '70px']]) : null;
+                            return $model->photo ? Html::img(\Yii::$app->get('frontendUrlManager')->baseUrl . '/uploads/origin/product/' . $model->photo,
+                                ['style' => ['width' => '100px', 'height' => '100px']]) : null;
                         },
                         'format' => 'raw',
                         'contentOptions' => ['style' => 'width: 100px'],

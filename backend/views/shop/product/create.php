@@ -30,17 +30,6 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 
     <div class="box box-default">
-        <div class="box-header with-border">Склад</div>
-        <div class="box-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <?= $form->field($model->quantity, 'quantity')->textInput(['maxlength' => true]) ?>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="box box-default">
         <div class="box-header with-border">Цена (руб.)</div>
         <div class="box-body">
             <div class="row">
@@ -57,7 +46,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= $form->field($model, 'photo')->widget(FileInput::class, [
                 'options' => [
                     'accept' => 'image/*',
-                    'multiple' => true,
+                    'multiple' => false,
                 ]
             ])->label(false) ?>
         </div>

@@ -72,6 +72,7 @@ class ProductController extends Controller
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $product = $this->service->create($form);
+                $form->upload();
                 return $this->redirect(['view', 'id' => $product->id]);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
@@ -97,6 +98,7 @@ class ProductController extends Controller
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $this->service->edit($product->id, $form);
+                $form->upload();
                 return $this->redirect(['view', 'id' => $product->id]);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
@@ -107,6 +109,47 @@ class ProductController extends Controller
             'model' => $form,
             'product' => $product,
         ]);
+    }
+
+    /**
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionDelete($id){
+        try{
+            $this->service->remove($id);
+        }catch(\DomainException $e){
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        }
+        return $this->redirect(['index']);
+    }
+
+    /**
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionActivate($id)
+    {
+        try {
+            $this->service->activate($id);
+        } catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        }
+        return $this->redirect(['view', 'id' => $id]);
+    }
+
+    /**
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionDraft($id)
+    {
+        try {
+            $this->service->draft($id);
+        } catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        }
+        return $this->redirect(['view', 'id' => $id]);
     }
 
     /**
