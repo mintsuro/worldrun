@@ -19,7 +19,8 @@ return [
 
         'profile/<_a:[\w-]+>' => 'cabinet/profile/<_a>',
         'participation/<_a:[\w-]+>' => 'cabinet/participation/<_a>',
-        'login/<service:google|facebook|etc>' => 'site/login',
+        'checkout' => 'shop/checkout/index',
+        //'login/<service:google|facebook|etc>' => 'site/login',
 
         '<_c:[\w\-]+>' => '<_c>/index',
         '<_c:[\w\-]+>/<id:\d+>' => '<_c>/view',

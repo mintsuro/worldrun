@@ -11,9 +11,9 @@ class OrderForm extends CompositeForm
 {
     public $note;
 
-    public function __construct(int $weight, array $config = [])
+    public function __construct(array $config = [])
     {
-        $this->delivery = new DeliveryForm($weight);
+        $this->delivery = new DeliveryForm();
         $this->customer = new CustomerForm();
         parent::__construct($config);
     }

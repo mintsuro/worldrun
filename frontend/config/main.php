@@ -62,24 +62,6 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        'eauth' => [
-            'class' => 'nodge\eauth\EAuth',
-            'popup' => true,
-            'cache' => false,
-            'cacheExpire' => 0,
-            'httpClient' => [
-                // uncomment this to use streams in safe_mode
-                //'useStreamsFallback' => true,
-            ],
-            'services' => [
-                'vkontakte' => [
-                    // register your app here: https://vk.com/editapp?act=create&site=1
-                    'class' => 'nodge\eauth\services\VKontakteOAuth2Service',
-                    'clientId' => '6965561',
-                    'clientSecret' => 'FbGjk44ojzrAbYEqRiDP',
-                ],
-            ],
-        ],
 
         'i18n' => [
             'translations' => [

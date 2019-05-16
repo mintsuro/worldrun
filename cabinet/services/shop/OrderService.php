@@ -45,7 +45,6 @@ class OrderService
 
         $items = array_map(function (CartItem $item){
             $product = $item->getProduct();
-            // $product->checkout($item->getModificationId(), $item->getQuantity());
             $products[] = $product;
             return OrderItem::create(
                 $product,
@@ -60,8 +59,7 @@ class OrderService
                 $form->customer->phone
             ),
             $items,
-            $this->cart->getCost()->getTotal(),
-            $form->note
+            $this->cart->getCost()->getTotal()
         );
 
         $order->setDeliveryInfo(
@@ -71,11 +69,8 @@ class OrderService
             )
         );
 
-        $this->transaction->wrap(function() use ($order, $products){
+        $this->transaction->wrap(function() use ($order){
             $this->orders->save($order);
-            foreach($products as $product){
-                $this->products->save($product);
-            }
             $this->cart->clear();
         });
 

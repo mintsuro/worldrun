@@ -9,6 +9,7 @@ use yii\db\Exception;
 use yii\web\UploadedFile;
 use cabinet\entities\shop\product\queries\ProductQuery;
 use cabinet\entities\shop\product\events\ProductAppearedInStock;
+use cabinet\cart\Cart;
 
 /**
  * @property integer $id

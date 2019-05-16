@@ -10,7 +10,6 @@ use yii\db\Query;
 /**
  * @property user_id
  * @property product_id
- * @property $modification_id
  * @property $quantity
  */
 class DbStorage implements StorageInterface
@@ -30,7 +29,7 @@ class DbStorage implements StorageInterface
             ->select('*')
             ->from('{{%shop_cart_items}}')
             ->where(['user_id' => $this->userId])
-            ->orderBy(['product_id' => SORT_ASC, 'modification_id' => SORT_ASC])
+            ->orderBy(['product_id' => SORT_ASC])
             ->all($this->db);
 
         return array_map(function (array $row){
@@ -53,8 +52,6 @@ class DbStorage implements StorageInterface
             [
                 'user_id',
                 'product_id',
-                'modification_id',
-                'quantity'
             ],
             array_map(function (CartItem $item){
                 return [

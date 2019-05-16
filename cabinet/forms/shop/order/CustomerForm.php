@@ -2,7 +2,9 @@
 
 namespace cabinet\forms\shop\order;
 
-class CustomerForm
+use yii\base\Model;
+
+class CustomerForm extends Model
 {
     public $firstName;
     public $lastName;
@@ -14,9 +16,20 @@ class CustomerForm
     public function rules(): array
     {
         return [
-            [['firstName', 'lastName', 'city', 'sex', 'age'], 'required'],
+            [['firstName', 'lastName', 'city'], 'required'],
             [['firstName', 'lastName', 'city', 'phone'], 'string', 'max' => 255],
             [['sex', 'age'], 'integer'],
+        ];
+    }
+
+    public function attributeLabels(){
+        return [
+            'firstName' => 'Имя',
+            'lastName'  => 'Фамилия',
+            'city' => 'Город',
+            'sex'  => 'Пол',
+            'age'  => 'Возраст',
+            'phone' => 'Телефон'
         ];
     }
 }

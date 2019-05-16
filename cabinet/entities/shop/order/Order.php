@@ -29,7 +29,7 @@ class Order extends ActiveRecord
     public $deliveryData;
     public $statuses = [];
 
-    public static function create($userId, CustomerData $customerData, array $items, $cost, $note): self
+    public static function create($userId, CustomerData $customerData, array $items, $cost): self
     {
         $order = new static();
         $order->user_id = $userId;
