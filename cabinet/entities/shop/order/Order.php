@@ -14,6 +14,7 @@ use cabinet\entities\user\User;
  * @property int $created_at
  * @property int $user_id
  * @property string $payment_method
+ * @property string $payment_id
  * @property int $cost
  * @property int $current_status
  * @property string $cancel_reason
@@ -49,6 +50,11 @@ class Order extends ActiveRecord
     public function setDeliveryInfo(DeliveryData $deliveryData): void
     {
         $this->deliveryData = $deliveryData;
+    }
+
+    public function setPaymentId($paymentId): void
+    {
+        $this->payment_id = $paymentId;
     }
 
     public function pay($method): void
@@ -130,7 +136,8 @@ class Order extends ActiveRecord
 
     public function getUser(): ActiveQuery
     {
-        return $this->hasMany(User::class, ['id' => 'user_id']);
+        //return $this->hasMany(User::class, ['id' => 'user_id']);
+        return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 
     public function getItems(): ActiveQuery
@@ -139,6 +146,18 @@ class Order extends ActiveRecord
     }
 
     ##############################
+
+    public function attributeLabels(){
+        return [
+            'created_at' => 'Дата создания',
+            'current_status' => 'Текущий статус',
+            'user_id' => 'ID пользователя',
+            'deliveryData.index' => 'Индекс',
+            'deliveryData.address' => 'Адрес',
+            'user.username' => 'Имя пользователя',
+            'cost' => 'Стоимость (руб.)',
+        ];
+    }
 
     public static function tableName(): string
     {

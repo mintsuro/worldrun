@@ -13,9 +13,11 @@ class RaceReadRepository
     public function getAll(User $user): DataProviderInterface
     {
         $query = Race::find()->alias('r')->active('r');
-        $query->joinWith(['userAssignments us'], false);
-        //$query->where(['not', ['us.user_id' => $user->id]]);
-        $query->orderBy('r.date_end')->all();
+        //$query->join('INNER JOIN', 'cabinet_user_participation us', 'us.user_id != :user_id', [':user_id' => $user->id]);
+        $query->andWhere(['>=', 'date_start', time()]);
+        //$query->andOnCondition(['!=', 'us.user_id', $user->id]);
+        $query->orderBy('r.date_end');
+        $query->all();
         return $this->getProvider($query);
     }
 

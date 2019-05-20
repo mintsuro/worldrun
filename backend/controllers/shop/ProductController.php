@@ -72,7 +72,9 @@ class ProductController extends Controller
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $product = $this->service->create($form);
-                $form->upload();
+                if(!empty($form->photo)){
+                    $form->upload();
+                }
                 return $this->redirect(['view', 'id' => $product->id]);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
@@ -98,7 +100,9 @@ class ProductController extends Controller
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $this->service->edit($product->id, $form);
-                $form->upload();
+                if(!empty($form->photo)){
+                    $form->upload();
+                }
                 return $this->redirect(['view', 'id' => $product->id]);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);

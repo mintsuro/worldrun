@@ -3,6 +3,7 @@
 /* @var $this  yii\web\View */
 /* @var $cart  \cabinet\cart\Cart */
 /* @var $model \cabinet\forms\Shop\Order\OrderForm */
+/* @var $modelCode \cabinet\forms\shop\order\PromoCodeForm */
 /* @var $race  \cabinet\entities\cabinet\Race */
 /* @var $dataProvider \yii\data\DataProviderInterface */
 /* @var $user \cabinet\entities\user\User */
@@ -18,19 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="cabinet-index">
     <h3 style="margin-top: 0px;"><?= Html::encode($this->title) ?></h3>
-
-    <div class="product-list">
-        <div class="row">
-            <h4 style="padding-left: 15px;">Подарки</h4>
-            <?php  echo \yii\widgets\ListView::widget([
-                'dataProvider' => $dataProvider,
-                'layout' => "{items}",
-                'itemView' => '_product',
-                'viewParams' => ['cart' => $cart],
-            ])  ?>
-
-        </div>
-    </div>
+    <h4><?= $race->name ?></h4>
 
     <?php $form = ActiveForm::begin() ?>
 
@@ -46,6 +35,19 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 
+    <div class="product-list">
+        <div class="row">
+            <h4 style="padding-left: 15px;">Подарки</h4>
+            <?php  echo \yii\widgets\ListView::widget([
+                'dataProvider' => $dataProvider,
+                'layout' => "{items}",
+                'itemView' => '_product',
+                'viewParams' => ['cart' => $cart],
+            ])  ?>
+
+        </div>
+    </div>
+
     <div class="panel panel-default">
         <div class="panel-heading">Доставка</div>
         <div class="panel-body">
@@ -54,20 +56,37 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 
-    <div class="panel panel-default">
-        <?= $form->field($model, 'note')->textInput() ?>
-    </div>
+    <!-- <div class="panel panel-default">
+        <div class="panel-heading">Купоны на скидку</div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-sm-6">
+                    <?php // echo $form->field($modelCode, 'code')->textInput() ?>
+                </div>
+                <div style="padding-top: 25px" class="col-sm-3">
+                    <?php // echo Html::submitButton('Активировать', ['class' => 'btn btn-success']) ?>
+                </div>
+            </div>
+        </div>
+    </div> -->
 
-    <?php $cost = $cart->getCost() ?>
+    <?= $form->field($model, 'note')->hiddenInput(['value' => 'text'])->label(false) ?>
+
+    <?php $cost = $cart->getCost();
+          $items = $cart->getItems(); ?>
     <table class="table table-bordered">
         <tr>
             <td class="text-right"><strong>Скидка:</strong></td>
-            <td class="text-right">0</td>
+            <?php if($items) : ?>
+                <td class="text-right"><?= PriceHelper::format($cost->getValueDisc($cart->getAmount())) ?></td>
+            <?php else : ?>
+                <td class="text-right">0</td>
+            <?php endif; ?>
         </tr>
         <tr>
             <td class="text-right"><strong>Итого:</strong></td>
-            <?php if($cart->getItems()) : ?>
-                <td class="text-right"><?= PriceHelper::format($cost->getOrigin()) . ' руб.' ?></td>
+            <?php if($items) : ?>
+                <td class="text-right"><?= PriceHelper::format($cost->getTotalDiscSizeProd($cart->getAmount())) . ' руб.' ?></td>
             <?php else : ?>
                 <td class="text-right">0 руб.(бесплатно)</td>
             <?php endif; ?>
@@ -75,10 +94,13 @@ $this->params['breadcrumbs'][] = $this->title;
     </table>
 
     <div class="form-group text-center">
-        <?= Html::submitButton('Зарегистрироваться', ['class' => 'btn btn-primary btn-lg']) ?>
+        <?php if($items) : ?>
+            <?= Html::submitButton('Зарегистрироваться', ['class' => 'btn btn-primary btn-lg']) ?>
+        <?php else : ?>
+            <?= Html::a('Зарегистрироваться', Html::encode(Url::to(['/cabinet/participation/add', 'raceId' => $race->id])),
+                ['class' => 'btn btn-primary btn-lg']) ?>
+        <?php endif; ?>
     </div>
-
-    <?php ActiveForm::end() ?>
-
+    <?php $form::end() ?>
 </div>
 

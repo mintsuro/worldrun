@@ -4,7 +4,7 @@
 
 return [
     'class' => 'yii\web\UrlManager',
-    //'hostInfo' => $params['frontendHostInfo'],
+    'hostInfo' => $params['frontendHostInfo'],
     'baseUrl' => $params['frontendHostInfo'],
     'enablePrettyUrl' => true,
     'showScriptName' => false,

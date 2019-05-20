@@ -38,5 +38,4 @@ class ProductHelper
             'class' => $class,
         ]);
     }
-
 }

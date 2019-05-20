@@ -4,6 +4,7 @@ namespace frontend\controllers\shop;
 
 use cabinet\entities\shop\product\Product;
 use cabinet\forms\shop\order\OrderForm;
+use cabinet\forms\shop\order\PromoCodeForm;
 use cabinet\readModels\UserReadRepository;
 use cabinet\readModels\shop\ProductReadRepository;
 use cabinet\services\cabinet\ParticipationService;
@@ -69,17 +70,27 @@ class CheckoutController extends Controller
         }
 
         $form = new OrderForm();
+        $formCode = new PromoCodeForm();
 
-        /* @var Product $dataProvider */
+        /* @var Product[] $dataProvider */
         $dataProvider = $this->products->getAll();
         $user = $this->users->findActiveById(\Yii::$app->user->id);
 
+        /* if($formCode->load(Yii::$app->request->post()) && $formCode->validate()){
+            try{
+                $this->service->calcCode($formCode->code);
+                return $this->redirect(['index', 'raceId' => $race->id]);
+            }catch(\DomainException $e){
+                Yii::$app->errorHandler->logException($e);
+                Yii::$app->session->setFlash('error', $e->getMessage());
+            }
+        } */
 
         if($form->load(Yii::$app->request->post()) && $form->validate()){
             try{
-                $this->service->checkout(Yii::$app->user->id, $form);
+                $order = $this->service->checkout(Yii::$app->user->id, $form);
                 $this->participation->registrationUser(Yii::$app->user->id, $raceId);
-                return $this->redirect(['/cabinet/participation/index', 'userId' => Yii::$app->user->id]);
+                return $this->redirect(['/cabinet/order/view', 'id' => $order->id]);
             } catch(\DomainException $e){
                 Yii::$app->errorHandler->logException($e);
                 Yii::$app->session->setFlash('error', $e->getMessage());
@@ -92,6 +103,7 @@ class CheckoutController extends Controller
             'race' => $race,
             'dataProvider' => $dataProvider,
             'user' => $user,
+            'modelCode' => $formCode,
         ]);
     }
 }

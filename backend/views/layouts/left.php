@@ -32,7 +32,9 @@
                 'items' => [
                     ['label' => 'Администрирование', 'options' => ['class' => 'header']],
                     ['label' => 'Забеги', 'icon' => 'file-o', 'url' => ['/cabinet/race/index'], 'active' => $this->context->id == 'race/index'],
-                    ['label' => 'Продукты', 'icon' => 'file-o', 'url' => ['/shop/product/index'], 'active' => $this->context->id == 'product/index'],
+                    ['label' => 'Товары', 'icon' => 'file-o', 'url' => ['/shop/product/index'], 'active' => $this->context->id == 'product/index'],
+                    ['label' => 'Заказы', 'icon' => 'file-o', 'url' => ['/shop/order/index'], 'active' => $this->context->id == 'order/index'],
+                    ['label' => 'Скидки', 'icon' => 'file-o', 'url' => ['/shop/discount/index'], 'active' => $this->context->id == 'discount-size/index'],
                     ['label' => 'Пользователи', 'icon' => 'user', 'url' => ['/user/index'], 'active' => $this->context->id == 'user/index'],
                 ],
             ]

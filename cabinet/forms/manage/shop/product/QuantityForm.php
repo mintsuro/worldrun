@@ -2,16 +2,20 @@
 
 namespace cabinet\forms\manage\shop\product;
 
+use cabinet\entities\shop\Discount as Discount;
 use cabinet\entities\shop\product\Product;
 use yii\base\Model;
 
 class QuantityForm extends Model
 {
     public $quantity;
+    public $name;
+    public $value;
+    public $sizeProducts;
 
-    public function __construct(Product $product = null, array $config = [])
+    public function __construct(Discount $discount = null, array $config = [])
     {
-        if($product){
+        if($discount){
             $this->quantity = $product->quantity;
         }
         parent::__construct($config);

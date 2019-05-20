@@ -57,15 +57,11 @@ $this->params['breadcrumbs'][] = $this->title;
                             ],
                             [
                                 'attribute' => 'price',
-                                'label' => 'Цена',
+                                'label' => 'Цена (руб.)',
                                 'value' => PriceHelper::format($product->price),
                             ],
                         ],
                     ]) ?>
-                    <br />
-                    <p>
-                        <?= Html::a('Изменить количество', ['quantity', 'id' => $product->id], ['class' => 'btn btn-primary']) ?>
-                    </p>
                 </div>
             </div>
         </div>

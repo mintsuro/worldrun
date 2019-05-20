@@ -50,19 +50,6 @@ class Cart
         $this->saveItems();
     }
 
-    /* public function set($id, $quantity): void
-    {
-        $this->loadItems();
-        foreach($this->items as $i => $current){
-            if($current->getId() == $id){
-                $this->items[$i] = $current->changeQuantity($quantity);
-                $this->saveItems();
-                return;
-            }
-        }
-        throw new \DomainException('Items is not found.');
-    } */
-
     public function remove($id): void
     {
         $this->loadItems();

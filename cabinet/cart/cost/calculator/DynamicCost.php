@@ -21,11 +21,23 @@ class DynamicCost implements CalculatorInterface
         $discounts = EntityDiscount::find()->active()->orderBy('sort')->all();
 
         $cost = $this->next->getCost($items);
+        $countItems = count($items);
 
         foreach($discounts as $discount){
             if($discount->isEnabled()){
-                $new = new CartDiscount($cost->getOrigin() * $discount->percent / 100, $discount->name);
+                /* if($countItems == 2){
+                    $new = new CartDiscount($cost->getOrigin() - 200, $discount->name);
+                    $cost = $cost->withDiscount($new);
+                    var_dump($cost->getOrigin() - 200);
+                    break;
+                }elseif($countItems <= 3){
+                    $new = new CartDiscount($cost->getOrigin() - 300, $discount->name);
+                    $cost = $cost->withDiscount($new);
+                    break;
+                } */
+                $new = new CartDiscount($cost->getOrigin(), $discount->name);
                 $cost = $cost->withDiscount($new);
+                //var_dump($discount->value);
             }
         }
 

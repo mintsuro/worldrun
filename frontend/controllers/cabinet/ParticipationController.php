@@ -96,9 +96,8 @@ class ParticipationController extends Controller
         if(Yii::$app->request->get()){
             try{
                 $this->service->registrationUser(Yii::$app->user->identity->getId(), $raceId);
-                //Yii::$app->session->setFlash('success', 'Вы успешно зарегистрировались.');
-                //return $this->redirect(['index', 'userId' => Yii::$app->user->identity->getId()]);
-                return $this->redirect('registration', ['']);
+                Yii::$app->session->setFlash('success', 'Вы успешно зарегистрировались.');
+                return $this->redirect(['index', 'userId' => Yii::$app->user->identity->getId()]);
             }catch(\DomainException $e){
                 Yii::$app->errorHandler->logException($e);
                 Yii::$app->session->setFlash('error', $e->getMessage());

@@ -7,7 +7,7 @@ class CustomerData
     public $name;
     public $phone;
 
-    public function __construct($name, $phone)
+    public function __construct($phone, $name)
     {
         $this->name = $name;
         $this->phone = $phone;

@@ -74,7 +74,9 @@ class RaceController extends Controller
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $race = $this->service->create($form);
-                $form->upload();
+                if(!empty($form->photo)) {
+                    $form->upload();
+                }
                 return $this->redirect(['view', 'id' => $race->id]);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
@@ -100,7 +102,9 @@ class RaceController extends Controller
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $this->service->edit($race->id, $form);
-                $form->upload();
+                if(!empty($form->photo)) {
+                    $form->upload();
+                }
                 return $this->redirect(['view', 'id' => $race->id]);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);

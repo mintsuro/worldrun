@@ -27,7 +27,8 @@
         "kartik-v/yii2-widgets": "*",
         "kartik-v/yii2-field-range": "*",
         "mohorev/yii2-upload-behavior": "*",
-        "yiisoft/yii2-imagine": "~2.1.0"
+        "yiisoft/yii2-imagine": "~2.1.0",
+        "yandex-money/yandex-checkout-sdk-php": "*"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

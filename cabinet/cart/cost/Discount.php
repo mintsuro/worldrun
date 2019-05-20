@@ -7,13 +7,13 @@ final class Discount
     private $value;
     private $name;
 
-    public function __construct(float $value, string $name)
+    public function __construct($value, string $name)
     {
         $this->value = $value;
         $this->name = $name;
     }
 
-    public function getValue(): float
+    public function getValue()
     {
         return $this->value;
     }
