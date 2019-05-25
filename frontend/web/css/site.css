@@ -117,6 +117,7 @@ a.desc:after {
     border: 1px solid #ccc;
     border-radius: 15px;
     position: relative;
+    min-height: 380px;
 }
 .product-item .thumb{
     display: inline-block;
@@ -137,7 +138,6 @@ a.desc:after {
 .product-item .btn-choice{
     display: inline-block;
     vertical-align: top;
-    position: relative;
     height: 40px;
     width: 40%;
     line-height: 38px;
@@ -149,11 +149,13 @@ a.desc:after {
     border-radius: 40px;
     margin-top: 15px;
     text-decoration-line: none;
+    cursor: pointer;
+    position: absolute;
+    left: 30%;
 }
 .product-item .btn-choice.active{
     background-color: #ced900;
     color: #fff;
-    position: absolute;
     z-index: 100;
 }
 .product-item .btn-choice::before{
@@ -178,12 +180,19 @@ a.desc:after {
     background-color: transparent;
 }
 
+.index-race{
+    display: inline-block;
+    float: none !important;
+    vertical-align: top;
+    margin-left: -3px;
+}
 .race-item{
     box-shadow: 0 1px 1px #ccc;
     padding: 10px 5px;
     margin-bottom: 15px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    min-height: 300px;
 }
 .race-item .tit
 {
@@ -195,8 +204,11 @@ a.desc:after {
 }
 .race-item .info-text{
     border-bottom: 1px solid lightskyblue;
-    margin-bottom: 5px;
+    margin: 10px 0;
     padding-bottom: 10px;
+}
+.race-item.detail .info-text{
+    margin-bottom: 10px;
 }
 .race-item .info-race > .info-text:last-child{
     margin-bottom: 0;
@@ -205,10 +217,73 @@ a.desc:after {
 }
 .race-item .thumbnail{
     float: left;
-    margin-right: 5px;
+    margin-right: 10px;
+    width: 210px;
+    height: 210px;
+    background-color: lightskyblue;
+    background-image: url("../images/default_thumb.png");
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+}
+.race-item.detail .thumbnail {
+    margin-bottom: 0;
 }
 .race-item .info-text span{
     font-size: 14px;
+}
+.race-item .desc-race{
+    clear: left;
+}
+
+.title-race-detail{
+    margin: 0 0 10px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #ccc;
+}
+.race-item.detail{
+    min-height: auto;
+    box-shadow: none;
+    margin-bottom: 0;
+    border: none;
+}
+.table-users-list td{
+    padding: .75rem;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+    font-size: 16px;
+}
+.table-users-list thead td {
+    color: #fff;
+    background: #5C5C76;
+}
+.table-users-list tbody tr:nth-of-type(2n+1) {
+    background-color: rgba(0,0,0,.05);
+}
+.code-status{
+    display: none;
+    padding-left: 10px;
+}
+.code-status.active{
+    display: block;
+}
+
+/* .list-group-item:hover{
+    z-index: 2;
+    color: #fff;
+    background-color: #337ab7;
+    border-color: #337ab7;
+    border-top-color: #fff;
+    border-bottom-color: #fff;
+} */
+ .list-group-item:hover a{
+     text-decoration: underline;
+}
+.list-group-item a{
+    display: block;
+}
+.list-group-item.active a{
+    color: #fff;
+    text-decoration: none;
 }
 
 @media(max-width:767px) {

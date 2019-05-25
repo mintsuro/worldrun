@@ -15,6 +15,7 @@ use cabinet\readModels\shop\OrderReadRepository;
 use cabinet\repositories\shop\ProductRepository;
 use cabinet\repositories\UserRepository;
 use cabinet\services\TransactionManager;
+use phpDocumentor\Reflection\DocBlock\Tags\Throws;
 
 class OrderService
 {
@@ -48,8 +49,22 @@ class OrderService
     public function checkout($userId, OrderForm $form): Order
     {
         $user = $this->users->get($userId);
+        $session = \Yii::$app->session;
 
         $products = [];
+        $cost = function() use ($session){
+            if(!$session->has('promo_code')) {
+                if ($this->cart->getItems() > 1) {
+                    return (int) $this->cart->getCost()->getTotalDiscSizeProd($this->cart->getAmount());
+                } else {
+                    return (int) $this->cart->getCost()->getOrigin();
+                }
+            }else{
+                $valuePromoCode = (int) $session->get('promo_code');
+                $discountValue = (int) $this->cart->getCost()->getTotalDiscSizeProd($this->cart->getAmount());
+                return $discountValue - $valuePromoCode;
+            }
+        };
 
         $items = array_map(function (CartItem $item){
             $product = $item->getProduct();
@@ -67,7 +82,9 @@ class OrderService
                 $form->customer->phone
             ),
             $items,
-            ($this->cart->getItems() > 1) ? $this->cart->getCost()->getTotalDiscSizeProd($this->cart->getAmount()) : $this->cart->getCost()->getOrigin() // $this->cart->getCost()->getTotal()
+            ($this->cart->getItems() > 1) ?
+                $this->cart->getCost()->getTotalDiscSizeProd($this->cart->getAmount()) :
+                $this->cart->getCost()->getOrigin() // $this->cart->getCost()->getTotal()
         );
 
         $order->setDeliveryInfo(
@@ -77,18 +94,26 @@ class OrderService
             )
         );
 
-        $this->transaction->wrap(function() use ($order){
+        $this->transaction->wrap(function() use ($order, $session){
             $this->orders->save($order);
             $this->cart->clear();
+            if($session->has('promo_code')){
+                $session->remove('promo_code');
+            }
         });
 
         return $order;
     }
 
-    public function calcCode($code): float
+    public function calcPromoCode($code, $size): float
     {
         $discount = $this->discounts->getByCode($code);
-        return $this->cart->getCost()->getTotalDiscCode($discount->code);
+        $session = \Yii::$app->session;
+        if(!$session->has('promo_code')) {
+            return $this->cart->getCost()->getTotalDiscCode($discount->code, $size);
+        }else{
+            throw new \DomainException('Такой промокод уже активирован.');
+        }
     }
 
     public function pay($id, $payment_method): void

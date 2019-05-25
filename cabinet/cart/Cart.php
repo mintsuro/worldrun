@@ -29,7 +29,6 @@ class Cart
         return $this->items;
     }
 
-
     public function getAmount(): int
     {
         $this->loadItems();

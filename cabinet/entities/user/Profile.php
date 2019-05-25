@@ -2,6 +2,7 @@
 
 namespace cabinet\entities\user;
 
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\helpers\Json;
 use yii\helpers\ArrayHelper;
@@ -107,5 +108,9 @@ class Profile extends ActiveRecord
             'address_delivery' => 'Адрес доставки',
             'size_costume' => 'Размер одежды',
         ];
+    }
+
+    public function getUser(): ActiveQuery{
+        return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 }

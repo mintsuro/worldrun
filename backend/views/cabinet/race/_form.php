@@ -15,6 +15,7 @@ use kartik\file\FileInput;
 
     <?= $form->field($model, 'name')->textInput(['maxLength' => true]) ?>
     <?= $form->field($model, 'status')->dropDownList(\cabinet\helpers\RaceHelper::statusList()) ?>
+    <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
     <?= $form->field($model, 'date_start')->widget(DatePicker::class, [
         'value' => date('d.m.Y'),
         'options' => ['placeholder' => 'Выберите дату начала забега'],

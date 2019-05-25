@@ -3,10 +3,14 @@
 namespace cabinet\cart\cost;
 
 use cabinet\entities\shop\Discount as EntityDiscount;
+use cabinet\cart\Cart;
+use cabinet\services\shop\CartService;
+use yii\helpers\Json;
 
 final class Cost
 {
     private $value;
+    private $cart;
     private $discounts = [];
 
     public function __construct($value, array $discounts = [])
@@ -32,6 +36,11 @@ final class Cost
             }, $this->discounts));
     }
 
+    /**
+     * @param int $size
+     * @return float
+     * Calculate Discount to select products
+     */
     public function getTotalDiscSizeProd(int $size): float
     {
         if($size == 1){
@@ -43,12 +52,13 @@ final class Cost
             if($size == $discount->size_products){
                 return $this->getOrigin() - $discount->value;
             }
-            elseif($size <= $discount->size_products){
+            /*elseif($size <= $discount->size_products){
                 return $this->getOrigin() - $discount->value;
-            }
+            }*/
         }
 
-        return $this->getOrigin() - 300;
+        //return $this->getOrigin() - 300;
+        return $this->getOrigin();
     }
 
     public function getValueDisc(int $size): float
@@ -57,6 +67,8 @@ final class Cost
         foreach($this->getEntityDiscounts() as $discount){
             if($size == $discount->size_products){
                 return $discount->value;
+            }elseif($size > 3){
+                return 300; // временная загушка (добавить поле скидка по умолчанию)
             }
         }
 
@@ -65,31 +77,42 @@ final class Cost
 
     /**
      * @param string $code
-     * @return float|int
+     * @param integer $size
+     * @return string
+     * Calculate Discount to activate promo code
      */
-    public function getTotalDiscCode($code): float
+    public function getTotalDiscCode($code, $size)
     {
         /** @var $discount EntityDiscount */
-        if($discount = EntityDiscount::find()->active()
-            ->andWhere(['AND',
-                'type' => EntityDiscount::TYPE_PROMO_CODE,
-                'type_value' => EntityDiscount::TYPE_VALUE_PERCENT])
-            ->andWhere(['code' => $code])
-            ->one())
-        {
-            return $this->getOrigin() * $discount->value / 100;
+        try{
+            if($discount = EntityDiscount::find()->active()
+                ->andWhere(['AND',
+                    'type' => EntityDiscount::TYPE_PROMO_CODE,
+                    'type_value' => EntityDiscount::TYPE_VALUE_PERCENT])
+                ->andWhere(['code' => $code])
+                ->one())
+            {
+                $sum = ceil($this->getTotalDiscSizeProd($size) * $discount->value / 100); // (int) 35
+                $total = $this->getTotalDiscSizeProd($size) - $sum;
+                \Yii::$app->session->set('promo_code', $sum);
+                return Json::encode($sum);
 
-        }else if($discount = EntityDiscount::find()->active()
-            ->andWhere(['AND',
-                'type' => EntityDiscount::TYPE_PROMO_CODE,
-                'type_value' => EntityDiscount::TYPE_VALUE_NUMBER])
-            ->andWhere(['code' => $code])
-            ->one())
-        {
-            return $this->getOrigin() - $discount->value;
+            }else if($discount = EntityDiscount::find()->active()
+                ->andWhere(['AND',
+                    'type' => EntityDiscount::TYPE_PROMO_CODE,
+                    'type_value' => EntityDiscount::TYPE_VALUE_NUMBER])
+                ->andWhere(['code' => $code])
+                ->one())
+            {
+                $sum = ceil($this->getTotalDiscSizeProd($size) - $discount->value);
+                \Yii::$app->session->set('promo_code', $sum);
+                return Json::encode($sum);
+            }
+        }catch(\DomainException $e){
+            throw new \DomainException('Такой промокод не найден.');
         }
 
-        return 0;
+
     }
 
     /**
@@ -102,7 +125,6 @@ final class Cost
 
     public function getEntityDiscounts(): array
     {
-
         if($discounts = EntityDiscount::find()->active()
             ->andWhere(['AND', // ? where
                 'type' => EntityDiscount::TYPE_SIZE_PROD,

@@ -12,6 +12,7 @@ use yii\imagine\Image;
 class RaceForm extends Model
 {
     public $name;
+    public $description;
     public $photo;
     public $status;
     public $date_start;
@@ -36,7 +37,7 @@ class RaceForm extends Model
         return [
             [['name', 'status', 'date_start', 'date_end'], 'required'],
             [['date_start', 'date_end'], 'date', 'format' => 'php:d.m.Y'],
-            [['name'], 'string'],
+            [['name', 'description'], 'string'],
             ['status', 'integer'],
             [['photo'], 'file', 'extensions' => 'jpeg, png, jpg', /*'on' => ['insert', 'update']*/],
         ];
@@ -50,6 +51,7 @@ class RaceForm extends Model
             'status' => 'Статус',
             'date_start' => 'Дата начала',
             'date_end' => 'Дата завершения',
+            'description' => 'Краткое описание',
         ];
     }
 

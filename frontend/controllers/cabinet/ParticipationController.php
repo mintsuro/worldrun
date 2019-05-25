@@ -2,16 +2,15 @@
 
 namespace frontend\controllers\cabinet;
 
-use cabinet\entities\cabinet\UserAssignment;
-use Yii;
 use cabinet\entities\cabinet\Race;
 use cabinet\readModels\cabinet\RaceReadRepository;
 use cabinet\services\cabinet\ParticipationService;
+use cabinet\readModels\UserReadRepository;
+use Yii;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
-use cabinet\readModels\UserReadRepository;
 
 class ParticipationController extends Controller
 {
@@ -43,7 +42,6 @@ class ParticipationController extends Controller
                 'only' => ['index'],
                 'rules' => [
                     [
-                        'actions' => ['index'],
                         'allow' => true,
                         'roles' => ['participant'],
                     ],
@@ -104,5 +102,18 @@ class ParticipationController extends Controller
             }
         }
         return $this->redirect(['all']);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function actionUsers($raceId)
+    {
+        $model = Race::findOne($raceId);
+        $users = $model->getUsers()->orderBy('id')->all();
+
+        return $this->render('users', [
+            'users' => $users,
+        ]);
     }
 }

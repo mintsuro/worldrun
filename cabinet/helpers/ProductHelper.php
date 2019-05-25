@@ -38,4 +38,9 @@ class ProductHelper
             'class' => $class,
         ]);
     }
+
+    public static function buttonCart(): string
+    {
+        return '';
+    }
 }

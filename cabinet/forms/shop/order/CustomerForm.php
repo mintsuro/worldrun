@@ -18,7 +18,8 @@ class CustomerForm extends Model
         return [
             [['firstName', 'lastName', 'city'], 'required'],
             [['firstName', 'lastName', 'city', 'phone'], 'string', 'max' => 255],
-            [['sex', 'age'], 'integer'],
+            [['age', 'sex'], 'integer'],
+
         ];
     }
 

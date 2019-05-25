@@ -48,7 +48,7 @@ class ProfileController extends Controller
         if($form->load(Yii::$app->request->post()) && $form->validate()){
             try{
                 $this->service->edit($profile->user_id, $form);
-                return $this->redirect(['/cabinet/participation/index']);
+                return $this->redirect(['/cabinet/participation/index', 'userId' => Yii::$app->user->getId()]);
             }catch(\DomainException $e){
                 Yii::$app->errorHandler->logException($e);
                 Yii::$app->session->setFlash('error', $e->getMessage());

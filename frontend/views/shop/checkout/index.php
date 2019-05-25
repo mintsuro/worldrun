@@ -10,6 +10,7 @@
 /* @var $products \cabinet\entities\shop\product\Product[] */
 
 use cabinet\helpers\PriceHelper;
+use cabinet\helpers\ProfileHelper;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -18,20 +19,45 @@ $this->title = 'Регистрация на забег';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="cabinet-index">
-    <h3 style="margin-top: 0px;"><?= Html::encode($this->title) ?></h3>
-    <h4><?= $race->name ?></h4>
+    <?php $cost = $cart->getCost();
+    $items = $cart->getItems();
+    $session = Yii::$app->session;
+    ?>
+
+    <h3 class="title-race-detail"><?= Html::encode($this->title) ?></h3>
+    <div class="panel panel-default">
+        <div class="panel-heading"><?= $race->name ?></div>
+        <div class="panel-body race-item detail">
+            <div class="thumbnail">
+                <?php if ($race->photo): ?>
+                    <?= Html::img(\Yii::$app->get('frontendUrlManager')->baseUrl . '/uploads/origin/race/' . $race->photo,
+                        ['style' => ['width' => '200px', 'height' => '200px'], 'class' => 'img-responsive']) ?>
+                <?php endif; ?>
+            </div>
+            <div class="info-race">
+                <div class="info-text">
+                    <h4>Дата проведения:</h4>
+                    <span><strong><?= date('d.m.Y', $race->date_start) ?></strong></span> -
+                    <span><strong><?= date('d.m.Y', $race->date_end) ?></strong></span>
+                </div>
+                <div class="info-text">
+                    <span><?= \cabinet\helpers\RaceHelper::statusLabel($race->status) ?></span>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <?php $form = ActiveForm::begin() ?>
 
     <div class="panel panel-default">
-        <div class="panel-heading">Участник</div>
+        <div class="panel-heading">Данные для регистрации</div>
         <div class="panel-body">
-            <?= $form->field($model->customer, 'firstName')->textInput(['value' => $user->profile->first_name]) ?>
-            <?= $form->field($model->customer, 'lastName')->textInput(['value' => $user->profile->last_name]) ?>
-            <?= $form->field($model->customer, 'city')->textInput(['value' => $user->profile->city]) ?>
-            <?= $form->field($model->customer, 'sex')->textInput(['value' => $user->profile->sex]) ?>
-            <?= $form->field($model->customer, 'age')->textInput(['value' => $user->profile->age]) ?>
-            <?= $form->field($model->customer, 'phone')->textInput(['value' => $user->profile->phone]) ?>
+            <?= $form->field($model->customer, 'firstName')->textInput(['value' => $user->profile->first_name, 'readonly' => true]) ?>
+            <?= $form->field($model->customer, 'lastName')->textInput(['value' => $user->profile->last_name, 'readonly' => true]) ?>
+            <?= $form->field($model->customer, 'city')->textInput(['value' => $user->profile->city, 'readonly' => true]) ?>
+            <?= $form->field($model->customer, 'sex')->textInput(['value' => $user->profile->sex, 'readonly' => true]) ?>
+            <?= $form->field($model->customer, 'age')->textInput(['value' => $user->profile->age, 'readonly' => true]) ?>
+            <?= $form->field($model->customer, 'phone')->textInput(['value' => $user->profile->phone, 'readonly' => true]) ?>
         </div>
     </div>
 
@@ -51,44 +77,64 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="panel panel-default">
         <div class="panel-heading">Доставка</div>
         <div class="panel-body">
-            <?= $form->field($model->delivery, 'index')->textInput(['value' => $user->profile->postal_code]) ?>
-            <?= $form->field($model->delivery, 'address')->textInput(['value' => $user->profile->address_delivery]) ?>
+            <?= $form->field($model->delivery, 'index')->textInput(['value' => $user->profile->postal_code, 'readonly' => true]) ?>
+            <?= $form->field($model->delivery, 'address')->textInput(['value' => $user->profile->address_delivery, 'readonly' => true]) ?>
         </div>
     </div>
 
-    <!-- <div class="panel panel-default">
-        <div class="panel-heading">Купоны на скидку</div>
+    <div class="panel panel-default">
+        <div class="panel-heading">Купон на скидку</div>
         <div class="panel-body">
             <div class="row">
-                <div class="col-sm-6">
-                    <?php // echo $form->field($modelCode, 'code')->textInput() ?>
+                <div class="col-sm-4">
+                    <?php $disabled = $items ? false : true; ?>
+                    <?= Html::activeTextInput($modelCode, 'code', [
+                        'class' => 'form-control',
+                        'id' => 'input-value-code',
+                        'disabled' => $disabled
+                    ]); ?>
                 </div>
-                <div style="padding-top: 25px" class="col-sm-3">
-                    <?php // echo Html::submitButton('Активировать', ['class' => 'btn btn-success']) ?>
+                <div class="col-sm-3">
+                    <?php $class = $items ? 'show' : 'hidden'; ?>
+                    <?php echo Html::button('Активировать', ['class' => 'active-promocode btn btn-success ' . $class]) ?>
+                </div>
+                <div class="col-sm-4">
+                    <div class="code-status">Неверный промокод или он уже активирован.</div>
                 </div>
             </div>
+            <p style="padding-top: 10px">Для активации промокода выберите подарок</p>
         </div>
-    </div> -->
+    </div>
 
     <?= $form->field($model, 'note')->hiddenInput(['value' => 'text'])->label(false) ?>
 
-    <?php $cost = $cart->getCost();
-          $items = $cart->getItems(); ?>
     <table class="table table-bordered">
         <tr>
             <td class="text-right"><strong>Скидка:</strong></td>
-            <?php if($items) : ?>
-                <td class="text-right"><?= PriceHelper::format($cost->getValueDisc($cart->getAmount())) ?></td>
+            <?php if($session->has('promo_code') && $items) : ?>
+                <td class="text-right"><span class="discount-info">
+                        <span class="numb"><?= PriceHelper::format($cost->getValueDisc($cart->getAmount()) + $session->get('promo_code')) ?></span> руб.
+                </span></td>
+            <?php  elseif($items) : ?>
+                <td class="text-right"><span class="discount-info">
+                    <span class="numb"><?= PriceHelper::format($cost->getValueDisc($cart->getAmount())) ?></span> руб.
+                </span></td>
             <?php else : ?>
-                <td class="text-right">0</td>
+                <td class="text-right"><span class="discount-info"><span class="numb">0</span> руб.</span></td>
             <?php endif; ?>
         </tr>
         <tr>
             <td class="text-right"><strong>Итого:</strong></td>
-            <?php if($items) : ?>
-                <td class="text-right"><?= PriceHelper::format($cost->getTotalDiscSizeProd($cart->getAmount())) . ' руб.' ?></td>
+            <?php if($session->has('promo_code') && $items) : ?>
+                <td class="text-right"><span class="total-info">
+                    <span class="numb"><?= PriceHelper::format($cost->getTotalDiscSizeProd($cart->getAmount()) - $session->get('promo_code')) ?></span> руб.
+                </span></td>
+            <?php elseif($items) : ?>
+                <td class="text-right"><span class="total-info">
+                    <span class="numb"><?= PriceHelper::format($cost->getTotalDiscSizeProd($cart->getAmount())) ?></span> руб.
+                </span></td>
             <?php else : ?>
-                <td class="text-right">0 руб.(бесплатно)</td>
+                <td class="text-right"><span class="total-info"><span class="numb">0</span> руб.(бесплатно)</span></td>
             <?php endif; ?>
         </tr>
     </table>
@@ -104,3 +150,35 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php $form::end() ?>
 </div>
 
+<?php
+
+$this->registerJs('
+    jQuery(".active-promocode").click(function(e){
+       var path = "'. (string) Url::to(['/shop/checkout/code']) .'";
+       var element = this;
+       var valueCode = jQuery("#input-value-code").val();
+        
+        $.ajax({
+            url: path,
+            type: "POST",
+            data: { code: valueCode },
+            dataType: "json",
+            success: function(data){
+                if(data == null){
+                    $(".code-status").addClass("show bg-danger");
+                }else{
+                    $(".code-status").addClass("show bg-success").removeClass("bg-danger").text("Промокод активирован.");
+                    
+                    $(".total-info .numb").text(parseFloat($(".total-info .numb").text())) - parseFloat(data);
+                    
+                }
+                
+                console.log(data);
+            },
+            error: function(err){
+               console.log("Ошибка запроса активации.");
+            }
+        });
+    });    
+', $this::POS_END);
+?>

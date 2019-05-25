@@ -13,8 +13,11 @@ use cabinet\cart\Cart;
 use cabinet\entities\cabinet\Race;
 use Yii;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\helpers\Json;
+use yii\web\Response;
 
 class CheckoutController extends Controller
 {
@@ -49,12 +52,17 @@ class CheckoutController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['index'],
                         'allow' => true,
                         'roles' => ['participant'],
                     ],
                 ],
             ],
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'code' => ['POST'],
+                ],
+            ]
         ];
     }
 
@@ -76,16 +84,6 @@ class CheckoutController extends Controller
         $dataProvider = $this->products->getAll();
         $user = $this->users->findActiveById(\Yii::$app->user->id);
 
-        /* if($formCode->load(Yii::$app->request->post()) && $formCode->validate()){
-            try{
-                $this->service->calcCode($formCode->code);
-                return $this->redirect(['index', 'raceId' => $race->id]);
-            }catch(\DomainException $e){
-                Yii::$app->errorHandler->logException($e);
-                Yii::$app->session->setFlash('error', $e->getMessage());
-            }
-        } */
-
         if($form->load(Yii::$app->request->post()) && $form->validate()){
             try{
                 $order = $this->service->checkout(Yii::$app->user->id, $form);
@@ -106,4 +104,19 @@ class CheckoutController extends Controller
             'modelCode' => $formCode,
         ]);
     }
+
+    public function actionCode()
+    {
+        $code = Yii::$app->request->post('code');
+
+        if (Yii::$app->request->isAjax) {
+            try {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return Json::decode($this->service->calcPromoCode($code, $this->cart->getAmount()));
+            } catch (\DomainException $e) {
+                Yii::$app->errorHandler->logException($e);
+            }
+        }
+    }
+
 }

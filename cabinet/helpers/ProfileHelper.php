@@ -16,6 +16,15 @@ class ProfileHelper
         ];
     }
 
+    public static function sexConvertString($value): string
+    {
+        if($value == Profile::SEX_MALE){
+            return 'Мужчина';
+        }else{
+            return 'Женщина';
+        }
+    }
+
     public static function sizeCostumeList(): array
     {
         return ['XXS','XS','S','M','L','XL','XXL'];

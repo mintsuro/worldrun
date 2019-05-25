@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = 'Редактировать';
     <div class="box box-default">
         <div class="box-header with-border">Заказчик</div>
         <div class="box-body">
-            <?= $form->field($model, 'note')->hiddenInput(['value' => 'text']) ?>
+            <?= $form->field($model, 'note')->hiddenInput(['value' => 'text'])->label(false) ?>
             <?= $form->field($model->customer, 'phone')->textInput() ?>
             <?= $form->field($model->customer, 'name')->textInput() ?>
         </div>

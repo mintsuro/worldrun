@@ -27,7 +27,7 @@ class Email
                 ['html' => 'auth/signup/emailVerify-html', 'text' => 'auth/signup/emailVerify-text'],
                 ['user' => $user, 'password' => $password]
             )
-            ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name . ' robot'])
+            ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name])
             ->setTo($user->email)
             ->setSubject('Регистрация аккаунта на ' . Yii::$app->name)
             ->send();

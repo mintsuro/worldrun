@@ -13,6 +13,7 @@ use yii\db\ActiveQuery;
 /**
  * @property integer $id
  * @property string  $name
+ * @property string $description
  * @property string  $photo
  * @property integer $status
  * @property integer $date_start
@@ -26,11 +27,12 @@ class Race extends ActiveRecord
     const STATUS_WAIT = 10;
     const STATUS_COMPLETE = 20;
 
-    public static function create(string $name, int $status,
+    public static function create(string $name, string $description, int $status,
         string $date_start, string $date_end): self
     {
         $item = new static();
         $item->name = $name;
+        $item->description = $description;
         $item->status = $status;
         $item->date_start = strtotime($date_start);
         $item->date_end = strtotime($date_end);
@@ -38,10 +40,11 @@ class Race extends ActiveRecord
         return $item;
     }
 
-    public function edit(string $name, int $status,
+    public function edit(string $name, string $description, int $status,
         string $date_start, string $date_end): void
     {
         $this->name = $name;
+        $this->description = $description;
         $this->status = $status;
         $this->date_start = strtotime($date_start);
         $this->date_end = strtotime($date_end);
@@ -80,12 +83,18 @@ class Race extends ActiveRecord
         return $this->hasMany(User::class, ['id' => 'user_id'])->via('userAssignments');
     }
 
+    public function getUser()
+    {
+        return $this->hasOne(User::class, ['id' => 'user_id'])->via('userAssignments');
+    }
+
     ##########################
 
     public function attributeLabels()
     {
         return [
             'name' => 'Название забега',
+            'description' => 'Краткое описание',
             'photo' => 'Фото',
             'status' => 'Статус',
             'date_start' => 'Дата начала',
@@ -105,7 +114,7 @@ class Race extends ActiveRecord
                 'class' => SaveRelationsBehavior::class,
                 'relations' => ['userAssignments'],
             ],
-            [
+            /* [
                 'class' => \mohorev\file\UploadImageBehavior::class,
                 'attribute' => 'photo',
                 'scenarios' => ['insert', 'update'],
@@ -118,7 +127,7 @@ class Race extends ActiveRecord
                     'thumb' => ['width' => 640, 'height' => 480],
                     'preview' => ['width' => 100, 'height' => 70],
                 ],
-            ],
+            ], */
         ];
     }
 

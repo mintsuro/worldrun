@@ -37,9 +37,9 @@ class PasswordResetService
                 ['html' => 'auth/reset/confirm-html', 'text' => 'auth/reset/confirm-text'],
                 ['user' => $user, 'password' => $generatePassword]
             )
-            ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name . ' robot'])
+            ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name])
             ->setTo($user->email)
-            ->setSubject('Password reset for ' . Yii::$app->name)
+            ->setSubject('Восстановление пароля ' . Yii::$app->name)
             ->send();
 
         if (!$sent) {

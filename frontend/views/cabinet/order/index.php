@@ -24,6 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'created_at:datetime',
                     [
                         'attribute' => 'status',
+                        'label' => 'Статус',
                         'value' => function (Order $model) {
                             return OrderHelper::statusLabel($model->current_status);
                         },

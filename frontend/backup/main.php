@@ -24,7 +24,7 @@ return [
         'request' => [
             'csrfParam' => '_csrf-frontend',
             //'cookieValidationKey' => $params['cookieValidationKey'],
-            'baseUrl' => '/worldrun',
+            //'baseUrl' => '/',
         ],
         'user' => [
             'identityClass' => 'common\auth\Identity',
@@ -39,7 +39,7 @@ return [
         'session' => [
             // this is the name of the session cookie used for login on the frontend
             'name' => '_session-frontend',
-            /*'cookieParams' => [
+            /* 'cookieParams' => [
                 'domain' => $params['cookieDomain'],
                 'httpOnly' => true,
             ], */

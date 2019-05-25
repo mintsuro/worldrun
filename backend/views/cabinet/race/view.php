@@ -32,6 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'model' => $race,
                 'attributes' => [
                     'name',
+                    'description',
                     [
                         'attribute' => 'status',
                         'value' => function(Race $race){

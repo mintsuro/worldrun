@@ -11,12 +11,12 @@ class PromoCodeForm extends Model
     public function rules(){
         return [
             //[['code'], 'required'],
-            [['code'], 'string'],
+            [['code'], 'string', 'min' => 3, 'max' => 10],
         ];
     }
 
     public function attributeLabels()
     {
-        return ['code' => 'Промкод'];
+        return ['code' => 'Промокод'];
     }
 }

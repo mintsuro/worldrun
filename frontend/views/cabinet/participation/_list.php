@@ -5,10 +5,12 @@
 
 ?>
 
-<div class="row">
+<div>
     <?= \yii\widgets\ListView::widget([
         'dataProvider' => $dataProvider,
         'layout' => "{items}\n{pager}",
         'itemView' => '_race',
+        'itemOptions' => ['class' => 'col-sm-12 index-race'],
+        'options' => ['class' => 'row'],
     ]) ?>
 </div>

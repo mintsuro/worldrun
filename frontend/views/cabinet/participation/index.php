@@ -58,7 +58,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     [
                         'value' => function(){
-                            return Html::a('Подарки', Url::to(['#']));
+                            return Html::a('Подарки', Url::to(['/cabinet/order/index']));
                         },
                         'format' => 'raw',
                     ],

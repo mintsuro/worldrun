@@ -17,6 +17,7 @@ $this->title = 'Редактирование профиля';
 //$this->params['breadcrumbs'][] = ['label' => 'Кабинет', 'url' => ['cabinet/default/index']];
 $this->params['breadcrumbs'][] =  $this->title;
 ?>
+
 <div class="user-update">
     <div class="row">
         <div class="col-sm-9">

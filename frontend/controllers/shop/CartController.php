@@ -2,13 +2,20 @@
 
 namespace frontend\controllers\shop;
 
-use Yii;
-//use cabinet\forms\shop\AddToCartForm;
+use cabinet\repositories\NotFoundException;
 use cabinet\readModels\shop\ProductReadRepository;
 use cabinet\services\shop\CartService;
+use cabinet\cart\CartItem;
+use cabinet\entities\shop\product\Product;
+use cabinet\forms\shop\order\PromoCodeForm;
+use Yii;
 use yii\filters\VerbFilter;
+use yii\helpers\Json;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
+use cabinet\helpers\PriceHelper;
+use yii\helpers\Url;
 
 class CartController extends Controller
 {
@@ -50,41 +57,53 @@ class CartController extends Controller
     }
 
     /**
-     * @param $id
+     * @param Product[id] $id
      * @return mixed
      * @throws NotFoundHttpException
      */
     public function actionAdd($id)
     {
-        $this->layout = 'cabinet';
-
         if (!$product = $this->products->find($id)) {
             throw new NotFoundHttpException('Запрашиваемый подарок не найден.');
         }
 
-        try {
-            $this->service->add($product->id);
-            Yii::$app->session->setFlash('success', 'Подарок добавлен.');
-            return $this->redirect(Yii::$app->request->referrer);
-        } catch (\DomainException $e) {
-            Yii::$app->errorHandler->logException($e);
-            Yii::$app->session->setFlash('error', $e->getMessage());
+        if(Yii::$app->request->isAjax){
+            try {
+                $this->service->add($product->id);
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return Json::decode($this->service->ajaxCalculateTotal(
+                    Yii::$app->request->post('product_id')
+                ));
+            } catch (\DomainException $e) {
+                Yii::$app->errorHandler->logException($e);
+            }
         }
+
+        $this->service->add($product->id);
+        Yii::$app->session->setFlash('success', 'Подарок добавлен');
+        return $this->redirect(Yii::$app->request->referrer);
     }
 
     /**
-     * @param $id
+     * @param CartItem['id'] $id
      * @return mixed
      */
     public function actionRemove($id)
     {
-        try {
-            $this->service->remove($id);
-            Yii::$app->session->setFlash('success', 'Подарок удален');
-            return $this->redirect(Yii::$app->request->referrer);
-        } catch (\DomainException $e) {
-            Yii::$app->errorHandler->logException($e);
-            Yii::$app->session->setFlash('error', $e->getMessage());
+        if(Yii::$app->request->isAjax) {
+            try {
+                $this->service->remove($id);
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return Json::decode($this->service->ajaxCalculateTotal(
+                    Yii::$app->request->post('product_id')
+                ));
+            } catch (\DomainException $e) {
+                Yii::$app->errorHandler->logException($e);
+            }
         }
+
+        $this->service->remove($id);
+        Yii::$app->session->setFlash('success', 'Подарок удален');
+        return $this->redirect(Yii::$app->request->referrer);
     }
 }

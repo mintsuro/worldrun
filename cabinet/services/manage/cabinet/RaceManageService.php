@@ -21,6 +21,7 @@ class RaceManageService
     {
         $race = Race::create(
             $form->name,
+            $form->description,
             $form->status,
             $form->date_start,
             $form->date_end
@@ -40,6 +41,7 @@ class RaceManageService
         $race = $this->repository->get($id);
         $race->edit(
             $form->name,
+            $form->description,
             $form->status,
             $form->date_start,
             $form->date_end
