@@ -28,7 +28,10 @@
         "kartik-v/yii2-field-range": "*",
         "mohorev/yii2-upload-behavior": "*",
         "yiisoft/yii2-imagine": "~2.1.0",
-        "yandex-money/yandex-checkout-sdk-php": "*"
+        "yandex-money/yandex-checkout-sdk-php": "*",
+        "basvandorst/StravaPHP": "1.2.0",
+        "spipu/html2pdf": "*"
+
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

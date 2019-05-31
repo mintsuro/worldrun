@@ -34,8 +34,8 @@ class Race extends ActiveRecord
         $item->name = $name;
         $item->description = $description;
         $item->status = $status;
-        $item->date_start = strtotime($date_start);
-        $item->date_end = strtotime($date_end);
+        $item->date_start = date('Y-m-d', strtotime($date_start)) . ' 00:00:00';
+        $item->date_end = date('Y-m-d', strtotime($date_end)) . '  23:59:59';
 
         return $item;
     }
@@ -46,8 +46,8 @@ class Race extends ActiveRecord
         $this->name = $name;
         $this->description = $description;
         $this->status = $status;
-        $this->date_start = strtotime($date_start);
-        $this->date_end = strtotime($date_end);
+        $this->date_start = date('Y-m-d', strtotime($date_start)) . ' 00:00:00';
+        $this->date_end = date('Y-m-d', strtotime($date_end)) . ' 23:59:59';
     }
 
     public function setPhoto(UploadedFile $photo): void
@@ -83,9 +83,14 @@ class Race extends ActiveRecord
         return $this->hasMany(User::class, ['id' => 'user_id'])->via('userAssignments');
     }
 
-    public function getUser()
+    public function getUser(): ActiveQuery
     {
         return $this->hasOne(User::class, ['id' => 'user_id'])->via('userAssignments');
+    }
+
+    public function getTracks(): ActiveQuery
+    {
+        return $this->hasMany(Track::class, ['race_id' => 'id'])->where(['user_id' => \Yii::$app->user->identity->getId()]);
     }
 
     ##########################

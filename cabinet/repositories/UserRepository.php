@@ -24,6 +24,11 @@ class UserRepository
         return User::find()->joinWith('networks n')->andWhere(['n.network' => $network, 'n.identity' => $identity])->one();
     }
 
+    public function findByStrava($token): ?User
+    {
+        return User::find()->joinWith('strava s')->andWhere(['s.token' => $token])->one();
+    }
+
     public function get($id): User
     {
         return $this->getBy(['id' => $id]);

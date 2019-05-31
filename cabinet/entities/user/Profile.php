@@ -45,7 +45,6 @@ class Profile extends ActiveRecord
 
     protected  static function calculateAge(string $bDate): string
     {
-
         try{
             $birthday = date_create($bDate);
             $date = date_create('now');

@@ -51,12 +51,11 @@ class ParticipationController extends Controller
     }
 
     /**
-     * @param $userId
      * @return mixed
      * @throws NotFoundHttpException
      */
-    public function actionIndex($userId){
-        if(!$user = $this->users->find($userId)){
+    public function actionIndex(){
+        if(!$user = $this->users->find(Yii::$app->user->identity->getId())){
             throw new NotFoundHttpException('Запрашиваемая страница не найдена');
         }
 
@@ -69,13 +68,12 @@ class ParticipationController extends Controller
     }
 
     /**
-     * @param integer $userId
      * @throws NotFoundHttpException
      * @return mixed
      */
-    public function actionAll($userId)
+    public function actionAll()
     {
-        if(!$user = $this->users->find($userId)){
+        if(!$user = $this->users->find(Yii::$app->user->identity->getId())){
             throw new NotFoundHttpException('Запрашиваемая страница не найдена');
         }
 

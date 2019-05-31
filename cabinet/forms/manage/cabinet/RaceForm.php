@@ -25,8 +25,8 @@ class RaceForm extends Model
         if($race){
             $this->name = $race->name;
             $this->status = $race->status;
-            $this->date_start = date('d.m.Y', $race->date_start);
-            $this->date_end = date('d.m.Y', $race->date_end);
+            $this->date_start = date('d.m.Y', strtotime($race->date_start));
+            $this->date_end = date('d.m.Y', strtotime($race->date_end));
             $this->_race = $race;
         }
         parent::__construct($config);

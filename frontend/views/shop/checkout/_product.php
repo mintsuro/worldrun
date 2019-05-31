@@ -10,6 +10,7 @@ use cabinet\helpers\ProductHelper;
 
 ?>
 
+<?php if(Yii::$app->session->has('promo_code')) Yii::$app->session->remove('promo_code') ?>
 <div class="col-sm-6">
     <div class="product-item">
         <div class="center thumb">

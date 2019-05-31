@@ -31,6 +31,7 @@ use yii\helpers\Json;
  *
  * @property Network[] $networks
  * @property Profile   $profile
+ * @property Strava  $strava
  */
 class User extends ActiveRecord
 {
@@ -133,11 +134,23 @@ class User extends ActiveRecord
         $networks = $this->networks;
         foreach ($networks as $current) {
             if ($current->isFor($network, $identity)) {
-                throw new \DomainException('Network is already attached.');
+                throw new \DomainException('Соц. сеть уже были привязана.');
             }
         }
         $networks[] = Network::create($network, $identity);
         $this->networks = $networks;
+    }
+
+    public function attachStrava($token): void
+    {
+        $strava = $this->strava;
+
+        /*if($strava->isFor($token)){
+            throw new \DomainException('Профиль Strava уже была привязан.');
+        } */
+
+        $strava = Strava::create($token);
+        $this->strava = $strava;
     }
 
     public function confirmSignup(): void
@@ -186,6 +199,11 @@ class User extends ActiveRecord
         return $this->hasOne(Profile::class, ['user_id' => 'id']);
     }
 
+    public function getStrava(): ActiveQuery
+    {
+        return $this->hasOne(Strava::class, ['user_id' => 'id']);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -203,7 +221,7 @@ class User extends ActiveRecord
             TimestampBehavior::class,
             [
                 'class' => SaveRelationsBehavior::class,
-                'relations' => ['networks', 'profile'],
+                'relations' => ['networks', 'profile', 'strava'],
             ]
         ];
     }

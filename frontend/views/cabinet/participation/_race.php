@@ -22,8 +22,8 @@ $url = Url::to(['race', 'id' => $model->id]);
     <div class="info-race">
         <div class="info-text">
             <h4>Период проведения:</h4>
-            <span><strong><?= date('d.m.Y', $model->date_start) ?></strong></span> -
-                <span><strong><?= date('d.m.Y', $model->date_end) ?></strong></span>
+            <span><strong><?= date('d.m.Y', strtotime($model->date_start)) ?></strong></span> -
+                <span><strong><?= date('d.m.Y', strtotime($model->date_end)) ?></strong></span>
         </div>
         <div class="info-text">
             <span><?= \cabinet\helpers\RaceHelper::statusLabel($model->status) ?></span>
@@ -38,7 +38,7 @@ $url = Url::to(['race', 'id' => $model->id]);
                 <span>0</span>
             <?php endif; ?>
         </div>
-        <?php if(!$model->user['id'] == Yii::$app->user->identity->getId()): ?>
+            <?php if($model->user['id'] !== Yii::$app->user->identity->getId()): ?>
             <div class="info-text">
                 <?= Html::a('Участвовать', Url::to(['/shop/checkout', 'raceId' => $model->id]), ['class' => 'btn btn-success']) ?>
             </div>

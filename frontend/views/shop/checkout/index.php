@@ -37,8 +37,8 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="info-race">
                 <div class="info-text">
                     <h4>Дата проведения:</h4>
-                    <span><strong><?= date('d.m.Y', $race->date_start) ?></strong></span> -
-                    <span><strong><?= date('d.m.Y', $race->date_end) ?></strong></span>
+                    <span><strong><?= date('d.m.Y', strtotime($race->date_start)) ?></strong></span> -
+                    <span><strong><?= date('d.m.Y', strtotime($race->date_end)) ?></strong></span>
                 </div>
                 <div class="info-text">
                     <span><?= \cabinet\helpers\RaceHelper::statusLabel($race->status) ?></span>
@@ -169,8 +169,7 @@ $this->registerJs('
                 }else{
                     $(".code-status").addClass("show bg-success").removeClass("bg-danger").text("Промокод активирован.");
                     
-                    $(".total-info .numb").text(parseFloat($(".total-info .numb").text())) - parseFloat(data);
-                    
+                    $(".total-info .numb").text(parseFloat($(".total-info .numb").text())) - parseFloat(data);   
                 }
                 
                 console.log(data);

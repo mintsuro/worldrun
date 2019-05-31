@@ -1,13 +1,14 @@
 <?php
 /**
  * @var $this \yii\web\View
+ * @var $user \cabinet\entities\user\User
  * @var $dataProvider \yii\data\ActiveDataProvider
+ * @var $urlOAuth \Strava\API\OAuth
  */
 
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\GridView;
-use cabinet\entities\cabinet\Track;
 
 $this->title= 'Мои треки';
 $this->params['breadcrumbs'][] = $this->title;
@@ -23,17 +24,32 @@ $this->params['breadcrumbs'][] = $this->title;
                 'layout' => "{items}\n{pager}",
                 'tableOptions' => ['class' => 'table table-striped table-bordered table-participant'],
                 'columns' => [
-                    'created_at',
-                    'time_race',
+                    [
+                        'attribute' => 'created_at',
+                        'format' => 'date',
+                    ],
+                    'date_start',
                     'distance',
                     'pace',
                 ],
             ]) ?>
+            <?php  ?>
             <div style="margin-bottom: 20px" class="">
-                <?= Html::a(Html::encode('Загрузить трек'),
-                    Url::to(['#']),
-                    ['class' => 'btn btn-success']
-                ); ?>
+                <?php if(!$user->strava) : ?>
+                    <?= Html::a(Html::encode('Подключить Strava'),
+                            Url::to($urlOAuth),
+                        ['class' => 'btn btn-success']
+                    ); ?>
+                <?php else : ?>
+                    <?= Html::a(Html::encode('Загрузить трек'),
+                        Url::to(['/cabinet/track/add', 'raceId' => \Yii::$app->request->getQueryParam('raceId')]),
+                        ['class' => 'btn btn-success']
+                    ); ?>
+                    <?= Html::a(Html::encode('Сменить аккаунт Strava'),
+                        Url::to($urlOAuth),
+                        ['class' => 'btn btn-success']
+                    ); ?>
+                <?php endif; ?>
             </div>
         </div>
     </div>

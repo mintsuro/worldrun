@@ -32,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'label' => 'Дата проведения',
                         'value' => function(Race $model){
-                            return 'Период с ' . date('d.m.Y', $model->date_start) . ' по ' . date('d.m.Y', $model->date_end);
+                            return 'Период с ' . date('d.m.Y', strtotime($model->date_start)) . ' по ' . date('d.m.Y', strtotime($model->date_end));
                         },
                         'format' => 'raw',
                         'options' => ['width', '100px']
@@ -45,8 +45,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         'format' => 'raw',
                     ],
                     [
-                        'value' => function(){
-                            return Html::a('Мои треки', Url::to(['#']));
+                        'value' => function(Race $model){
+                            return Html::a('Мои треки', Url::to(['/cabinet/track/index', 'raceId' => $model->id]));
                         },
                         'format' => 'raw',
                     ],
@@ -72,7 +72,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ]) ?>
             <div style="margin-bottom: 20px" class="">
                 <?= Html::a(Html::encode('Новое участие'),
-                    Url::to(['all', 'userId' => Yii::$app->user->identity->getId()]),
+                    Url::to(['all']),
                     ['class' => 'btn btn-success']
                 ); ?>
             </div>

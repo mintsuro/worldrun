@@ -7,12 +7,14 @@ use cabinet\cart\Cart;
 use cabinet\cart\cost\calculator\DynamicCost;
 use cabinet\cart\cost\calculator\SimpleCost;
 use cabinet\cart\storage\HybridStorage;
+use Strava\API\Oauth;
 use Yii;
 use yii\base\BootstrapInterface;
 use yii\base\ErrorHandler;
 use yii\caching\Cache;
 use yii\di\Container;
 use yii\di\Instance;
+use yii\helpers\Url;
 use yii\mail\MailerInterface;
 use yii\rbac\ManagerInterface;
 

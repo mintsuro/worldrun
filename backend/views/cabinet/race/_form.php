@@ -17,7 +17,7 @@ use kartik\file\FileInput;
     <?= $form->field($model, 'status')->dropDownList(\cabinet\helpers\RaceHelper::statusList()) ?>
     <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
     <?= $form->field($model, 'date_start')->widget(DatePicker::class, [
-        'value' => date('d.m.Y'),
+        'value' => date('Y-m-d'),
         'options' => ['placeholder' => 'Выберите дату начала забега'],
         'pluginOptions' => [
             'format' => 'dd.mm.yyyy',
@@ -25,7 +25,7 @@ use kartik\file\FileInput;
         ]
     ]) ?>
     <?= $form->field($model, 'date_end')->widget(DatePicker::class, [
-        'value' => date('d.m.Y'),
+        'value' => date('Y-m-d'),
         'options' => ['placeholder' => 'Выберите дату окончания забега'],
         'pluginOptions' => [
             'format' => 'dd.mm.yyyy',
