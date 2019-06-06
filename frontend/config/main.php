@@ -62,15 +62,6 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-
-        'i18n' => [
-            'translations' => [
-                'eauth' => [
-                    'class' => 'yii\i18n\PhpMessageSource',
-                    'basePath' => '@eauth/messages',
-                ],
-            ],
-        ],
         'backendUrlManager' => require __DIR__ . '/../../backend/config/urlManager.php',
         'frontendUrlManager' => require __DIR__ . '/urlManager.php',
         'urlManager' => function () {

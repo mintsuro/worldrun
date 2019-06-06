@@ -146,7 +146,7 @@ class User extends ActiveRecord
         $strava = $this->strava;
 
         /*if($strava->isFor($token)){
-            throw new \DomainException('Профиль Strava уже была привязан.');
+            throw new \DomainException('Профиль Strava уже был привязан.');
         } */
 
         $strava = Strava::create($token);
@@ -189,6 +189,8 @@ class User extends ActiveRecord
         return $this->status === self::STATUS_ACTIVE;
     }
 
+    ##############################
+
     public function getNetworks(): ActiveQuery
     {
         return $this->hasMany(Network::class, ['user_id' => 'id']);
@@ -203,6 +205,8 @@ class User extends ActiveRecord
     {
         return $this->hasOne(Strava::class, ['user_id' => 'id']);
     }
+
+    ###############################
 
     /**
      * {@inheritdoc}

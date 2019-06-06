@@ -23,8 +23,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'layout' => "{items}\n{pager}",
                 'tableOptions' => ['class' => 'table table-striped table-bordered table-participant'],
                 'columns' => [
-                    'created_at',
-                    'time_race',
+                    [
+                        'attribute' => 'created_at',
+                        'format' => 'date',
+                    ],
+                    'date_start',
                     'distance',
                     'pace',
                 ],

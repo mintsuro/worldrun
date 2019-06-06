@@ -4,7 +4,7 @@ namespace frontend\controllers\cabinet;
 
 use cabinet\entities\cabinet\Race;
 use cabinet\readModels\cabinet\RaceReadRepository;
-use cabinet\services\cabinet\ParticipationService;
+use cabinet\services\cabinet\RaceService;
 use cabinet\readModels\UserReadRepository;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -25,7 +25,7 @@ class ParticipationController extends Controller
         $module,
         RaceReadRepository $races,
         UserReadRepository $users,
-        ParticipationService $service,
+        RaceService $service,
         $config = []
     )
     {

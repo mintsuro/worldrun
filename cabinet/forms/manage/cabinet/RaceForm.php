@@ -3,20 +3,27 @@
 namespace cabinet\forms\manage\cabinet;
 
 use cabinet\entities\cabinet\Race;
+use cabinet\forms\CompositeForm;
 use yii\base\Model;
 use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
 use yii\imagine\Image;
 
-class RaceForm extends Model
+/**
+ * @property TemplateForm $template
+ */
+class RaceForm extends CompositeForm
 {
     public $name;
     public $description;
     public $photo;
     public $status;
+    public $temp_start_number;
+    public $temp_diploma;
     public $date_start;
     public $date_end;
+    public $type;
 
     private $_race;
 
@@ -27,7 +34,11 @@ class RaceForm extends Model
             $this->status = $race->status;
             $this->date_start = date('d.m.Y', strtotime($race->date_start));
             $this->date_end = date('d.m.Y', strtotime($race->date_end));
+            $this->type = $race->type;
+            $this->template = new TemplateForm();
             $this->_race = $race;
+        }else{
+            $this->template = new TemplateForm($race);
         }
         parent::__construct($config);
     }
@@ -38,7 +49,7 @@ class RaceForm extends Model
             [['name', 'status', 'date_start', 'date_end'], 'required'],
             [['date_start', 'date_end'], 'date', 'format' => 'php:d.m.Y'],
             [['name', 'description'], 'string'],
-            ['status', 'integer'],
+            [['status', 'type'], 'integer'],
             [['photo'], 'file', 'extensions' => 'jpeg, png, jpg', /*'on' => ['insert', 'update']*/],
         ];
     }
@@ -51,6 +62,7 @@ class RaceForm extends Model
             'status' => 'Статус',
             'date_start' => 'Дата начала',
             'date_end' => 'Дата завершения',
+            'type' => 'Тип забега',
             'description' => 'Краткое описание',
         ];
     }
@@ -78,5 +90,10 @@ class RaceForm extends Model
         } else {
             return false;
         }
+    }
+
+    protected function internalForms(): array
+    {
+        return ['template'];
     }
 }

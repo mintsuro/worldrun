@@ -1,5 +1,6 @@
 # Если frontend запрос
 RewriteEngine on
+AddDefaultCharset UTF-8
 
 # если это папка или файл, открываем его
 RewriteCond %{REQUEST_FILENAME} !-f

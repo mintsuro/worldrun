@@ -30,8 +30,8 @@
         "yiisoft/yii2-imagine": "~2.1.0",
         "yandex-money/yandex-checkout-sdk-php": "*",
         "basvandorst/StravaPHP": "1.2.0",
-        "spipu/html2pdf": "*"
-
+        "kartik-v/yii2-mpdf": "dev-master",
+        "spipu/html2pdf": "5.*"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

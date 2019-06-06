@@ -246,6 +246,12 @@ a.desc:after {
     margin-bottom: 0;
     border: none;
 }
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus{
+    background-color: #337ab7;
+    color: #fff;
+    outline: none;
+}
+
 .table-users-list td{
     padding: .75rem;
     vertical-align: top;

@@ -18,5 +18,13 @@ return [
             'assignmentTable' => '{{%auth_assignments}}',
             'ruleTable' => '{{%auth_rules}}',
         ],
+        'formatter' => [
+            'dateFormat' => 'php:d.m.Y',
+            'datetimeFormat' => 'php:d.m.Y H:i:s',
+            'timeFormat' => 'H:i:s',
+
+            'locale' => 'ru-RU', //your language locale
+            'defaultTimeZone' => 'Europe/Moscow', // time zone
+        ],
     ],
 ];

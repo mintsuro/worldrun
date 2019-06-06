@@ -7,7 +7,7 @@ use cabinet\forms\shop\order\OrderForm;
 use cabinet\forms\shop\order\PromoCodeForm;
 use cabinet\readModels\UserReadRepository;
 use cabinet\readModels\shop\ProductReadRepository;
-use cabinet\services\cabinet\ParticipationService;
+use cabinet\services\cabinet\RaceService;
 use cabinet\services\shop\OrderService;
 use cabinet\cart\Cart;
 use cabinet\entities\cabinet\Race;
@@ -24,14 +24,14 @@ class CheckoutController extends Controller
     public $layout = 'cabinet';
 
     private $service;
-    private $participation;
+    private $race;
     private $cart;
     private $products;
     private $users;
 
     public function __construct(string $id, $module,
         OrderService $service,
-        ParticipationService $participation,
+        RaceService $race,
         Cart $cart,
         ProductReadRepository $products,
         UserReadRepository $users,
@@ -39,7 +39,7 @@ class CheckoutController extends Controller
     {
         parent::__construct($id, $module, $config);
         $this->service = $service;
-        $this->participation = $participation;
+        $this->race = $race;
         $this->cart = $cart;
         $this->products = $products;
         $this->users = $users;
@@ -87,7 +87,7 @@ class CheckoutController extends Controller
         if($form->load(Yii::$app->request->post()) && $form->validate()){
             try{
                 $order = $this->service->checkout(Yii::$app->user->id, $form);
-                $this->participation->registrationUser(Yii::$app->user->id, $raceId);
+                $this->race->registrationUser(Yii::$app->user->id, $raceId);
                 return $this->redirect(['/cabinet/order/view', 'id' => $order->id]);
             } catch(\DomainException $e){
                 Yii::$app->errorHandler->logException($e);

@@ -24,12 +24,15 @@ class RaceManageService
             $form->description,
             $form->status,
             $form->date_start,
-            $form->date_end
+            $form->date_end,
+            $form->type
         );
 
         if ($form->photo) {
             $race->setPhoto($form->photo);
         }
+
+        $race->addTemplate($form->template);
 
         $this->repository->save($race);
 
@@ -44,12 +47,15 @@ class RaceManageService
             $form->description,
             $form->status,
             $form->date_start,
-            $form->date_end
+            $form->date_end,
+            $form->type
         );
 
         if ($form->photo) {
             $race->setPhoto($form->photo);
         }
+
+        $race->editTemplate($race->id, $form->template);
 
         $this->repository->save($race);
     }

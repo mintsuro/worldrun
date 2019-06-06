@@ -51,8 +51,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         'format' => 'raw',
                     ],
                     [
-                        'value' => function(){
-                            return Html::a('Ссылка на стартовый номер', Url::to(['#']));
+                        'value' => function(Race $model){
+                            return Html::a('Ссылка на стартовый номер', Url::to(['/cabinet/pdf-generator/generate-start-number', 'raceId' => $model->id]));
                         },
                         'format' => 'raw',
                     ],
@@ -63,8 +63,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         'format' => 'raw',
                     ],
                     [
-                        'value' => function(){
-                            return Html::a('Диплом', Url::to(['#']));
+                        'value' => function(Race $model){
+                            return Html::a('Диплом', Url::to(['/cabinet/pdf-generator/generate-diploma', 'raceId' => $model->id]));
                         },
                         'format' => 'raw',
                     ],

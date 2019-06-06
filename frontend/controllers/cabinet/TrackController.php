@@ -7,6 +7,7 @@ use cabinet\entities\cabinet\Race;
 use cabinet\entities\user\User;
 use cabinet\services\auth\StravaService;
 use cabinet\services\cabinet\TrackService;
+use cabinet\forms\cabinet\DownloadScreenForm;
 use Strava\API\OAuth;
 use Strava\API\Exception;
 use Yii;
@@ -61,7 +62,9 @@ class TrackController extends Controller
     public function actionIndex($raceId){
         $race = $this->findRace($raceId);
         $dataProvider = new ActiveDataProvider([
-            'query' => $race->getTracks(),
+            'query' => $race->getTracks()
+                ->andWhere(['user_id' => \Yii::$app->user->identity->getId()])
+                ->andWhere(['status' => Track::STATUS_ACTIVE]),
         ]);
         $user = User::findOne(Yii::$app->user->identity->getId());
         $urlOAuth = '';
@@ -70,9 +73,16 @@ class TrackController extends Controller
             'clientSecret' => Yii::$app->params['stravaClientSecret'],
             'redirectUri'  => Url::to(['/cabinet/track/index', 'raceId' => $raceId])
         ];
+        $screenForm = new DownloadScreenForm();
         $oAuth = new OAuth($options);
 
         try{
+            if($screenForm->load(Yii::$app->request->post()) && $screenForm->validate()){
+                $this->service->addFromScreen($raceId, $screenForm);
+                Yii::$app->session->setFlash('success', 'Скриншот отправлен на модерацию.');
+                return $this->redirect(['index', 'raceId' => $raceId]);
+            }
+
             if(!isset($_GET['code'])){
                 $urlOAuth = $oAuth->getAuthorizationUrl([
                     'scope' => [
@@ -98,6 +108,7 @@ class TrackController extends Controller
             'dataProvider' => $dataProvider,
             'urlOAuth' => $urlOAuth,
             'user' => $user,
+            'screenForm' => $screenForm,
         ]);
     }
 

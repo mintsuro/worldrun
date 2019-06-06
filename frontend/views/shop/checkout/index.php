@@ -55,7 +55,6 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= $form->field($model->customer, 'firstName')->textInput(['value' => $user->profile->first_name, 'readonly' => true]) ?>
             <?= $form->field($model->customer, 'lastName')->textInput(['value' => $user->profile->last_name, 'readonly' => true]) ?>
             <?= $form->field($model->customer, 'city')->textInput(['value' => $user->profile->city, 'readonly' => true]) ?>
-            <?= $form->field($model->customer, 'sex')->textInput(['value' => $user->profile->sex, 'readonly' => true]) ?>
             <?= $form->field($model->customer, 'age')->textInput(['value' => $user->profile->age, 'readonly' => true]) ?>
             <?= $form->field($model->customer, 'phone')->textInput(['value' => $user->profile->phone, 'readonly' => true]) ?>
         </div>

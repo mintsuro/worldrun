@@ -18,6 +18,7 @@ class m190520_214657_create_cabinet_tracks_table extends Migration
             'pace' => $this->float(),
             'elapsed_time' => $this->integer()->comment('Длительность пробежки'),
             'download_method' => $this->smallInteger()->notNull(),
+            'file_screen' => $this->string(),
             'date_start' => $this->dateTime()->notNull()->comment('Дата старта пробежки'),
             'created_at' => $this->integer()->notNull()->comment('Дата-время загрузки'),
             'status' => $this->integer()->notNull()->defaultValue(1),

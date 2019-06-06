@@ -2,6 +2,7 @@
 
 namespace cabinet\services\cabinet;
 
+use cabinet\forms\cabinet\DownloadScreenForm;
 use cabinet\repositories\cabinet\TrackRepository;
 use cabinet\readModels\cabinet\TrackReadRepository;
 use cabinet\entities\cabinet\Track;
@@ -29,23 +30,22 @@ class TrackService
                 if ($activity['manual'] === false && $activity['type'] == 'Run') {
                     if (!$this->readRepository->getByTrackId($activity['id'])) {
                         $track = Track::create($activity['distance'], $activity['average_speed'],
-                            $activity['elapsed_time'], Track::STRAVA_DOWNLOAD,
-                            $activity['start_date_local'], $activity['id'], $raceId
+                            $activity['elapsed_time'], $activity['start_date_local'],
+                            $activity['id'], $raceId
                         );
                         $this->tracks->save($track);
                         break;
-                    }/* else{
-                        // предусмотреть логику если нет новых загруженных треков в Strava
-                        Yii::$app->session->setFlash('error','Новых загруженных треков не обнаружено');
-                        return false;
-                    } */
-                }else{
-                    Yii::$app->session->setFlash('error','Новых загруженных треков не обнаружено');
-                    return false;
+                    }
                 }
             }
         }catch(\DomainException $e){
             Yii::$app->errorHandler->logException($e);
         }
+    }
+
+    public function addFromScreen($raceId, DownloadScreenForm $form): void
+    {
+        $track = Track::createFromScreen($form->file, $form->distance, $form->date_start, $form->elapsed_time, $raceId);
+        $this->tracks->save($track);
     }
 }
