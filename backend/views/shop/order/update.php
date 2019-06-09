@@ -17,6 +17,15 @@ $this->params['breadcrumbs'][] = 'Редактировать';
     <?php $form = ActiveForm::begin() ?>
 
     <div class="box box-default">
+        <div class="box-header with-border">Основное</div>
+        <div class="box-body">
+            <?= $form->field($model, 'weight')->textInput() ?>
+            <?= $form->field($model, 'track_post')->textInput() ?>
+            <?= $form->field($model, 'status')->dropDownList(\cabinet\helpers\OrderHelper::statusList()) ?>
+        </div>
+    </div>
+
+    <div class="box box-default">
         <div class="box-header with-border">Заказчик</div>
         <div class="box-body">
             <?= $form->field($model, 'note')->hiddenInput(['value' => 'text'])->label(false) ?>

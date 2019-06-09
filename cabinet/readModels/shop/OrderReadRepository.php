@@ -23,6 +23,11 @@ class OrderReadRepository
         return Order::find()->andWhere(['user_id' => $userId, 'id' => $id])->one();
     }
 
+    public function findByRace($raceId): ?Order
+    {
+        return Order::find()->andWhere(['race_id' => $raceId])->one();
+    }
+
     public function findByPaymentId(string $paymentId): ?Order
     {
         if(!$order = Order::find()->andWhere(['payment_id' => $paymentId])->limit(1)->one())

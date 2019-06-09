@@ -8,21 +8,31 @@ use yii\helpers\Json;
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 //use shop\entities\shop\DeliveryMethod;
 use cabinet\entities\user\User;
+use cabinet\entities\cabinet\Race;
 
 /**
  * @property int $id
  * @property int $created_at
  * @property int $user_id
+ * @property int $race_id
  * @property string $payment_method
  * @property string $payment_id
  * @property int $cost
  * @property int $current_status
  * @property string $cancel_reason
+ * @property string $track_post
+ * @property integer $weight
+ * @property string $delivery_address
+ * @property string $delivery_index
+ * @property string $customer_name
+ * @property string $customer_phone
  * @property CustomerData $customerData
  * @property DeliveryData $deliveryData
  *
  * @property OrderItem[] $items
  * @property Status[] $statuses
+ * @property User $user
+ * @property Race $race
  */
 class Order extends ActiveRecord
 {
@@ -30,9 +40,10 @@ class Order extends ActiveRecord
     public $deliveryData;
     public $statuses = [];
 
-    public static function create($userId, CustomerData $customerData, array $items, $cost): self
+    public static function create($raceId, $userId, CustomerData $customerData, array $items, $cost): self
     {
         $order = new static();
+        $order->race_id = $raceId;
         $order->user_id = $userId;
         $order->customerData = $customerData;
         $order->items = $items;
@@ -42,9 +53,12 @@ class Order extends ActiveRecord
         return $order;
     }
 
-    public function edit(CustomerData $customerData): void
+    public function edit(CustomerData $customerData, $weight, $track_post, $status): void
     {
         $this->customerData = $customerData;
+        $this->weight = $weight;
+        $this->track_post = $track_post;
+        $this->current_status = $status;
     }
 
     public function setDeliveryInfo(DeliveryData $deliveryData): void
@@ -136,7 +150,6 @@ class Order extends ActiveRecord
 
     public function getUser(): ActiveQuery
     {
-        //return $this->hasMany(User::class, ['id' => 'user_id']);
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 
@@ -145,15 +158,29 @@ class Order extends ActiveRecord
         return $this->hasMany(OrderItem::class, ['order_id' => 'id']);
     }
 
+    public function getRace(): ActiveQuery
+    {
+        return $this->hasOne(Race::class, ['id' => 'race_id']);
+    }
+
     ##############################
 
     public function attributeLabels(){
         return [
             'created_at' => 'Дата создания',
             'current_status' => 'Текущий статус',
+            'payment_method' => 'Способ оплаты',
+            'payment_id' => 'ID оплаты (Яндекс.касса)',
+            'cancel_reason' => 'Причина отмены оплаты',
             'user_id' => 'ID пользователя',
             'deliveryData.index' => 'Индекс',
+            'delivery_index' => 'Индекс',
             'deliveryData.address' => 'Адрес',
+            'delivery_address' => 'Адрес доставки',
+            'customer_name' => 'Имя покупателя',
+            'customer_phone' => 'Телефон покупателя',
+            'track_post' => 'Трек-номер почты',
+            'weight' => 'Вес',
             'user.username' => 'Имя пользователя',
             'cost' => 'Стоимость (руб.)',
         ];
@@ -191,8 +218,8 @@ class Order extends ActiveRecord
         }, Json::decode($this->getAttribute('statuses_json')));
 
         $this->customerData = new CustomerData(
-            $this->getAttribute('customer_phone'),
-            $this->getAttribute('customer_name')
+            $this->getAttribute('customer_name'),
+            $this->getAttribute('customer_phone')
         );
 
         $this->deliveryData = new DeliveryData(
@@ -212,8 +239,8 @@ class Order extends ActiveRecord
             ];
         }, $this->statuses)));
 
-        $this->setAttribute('customer_phone', $this->customerData->phone);
         $this->setAttribute('customer_name', $this->customerData->name);
+        $this->setAttribute('customer_phone', $this->customerData->phone);
 
         $this->setAttribute('delivery_index', $this->deliveryData->index);
         $this->setAttribute('delivery_address', $this->deliveryData->address);

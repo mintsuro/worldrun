@@ -3,6 +3,7 @@
 namespace cabinet\entities\cabinet;
 
 use cabinet\entities\user\User;
+use cabinet\entities\shop\order\Order;
 use cabinet\forms\manage\cabinet\TemplateForm;
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use cabinet\entities\cabinet\StartNumber;
@@ -26,6 +27,7 @@ use DateTime;
  * @property UserAssignment[] $userAssignments
  * @property PdfTemplate $template
  * @property StartNumber $startnumber
+ * @property Order $order
  */
 class Race extends ActiveRecord
 {
@@ -146,6 +148,11 @@ class Race extends ActiveRecord
     public function getStartnumber(): ActiveQuery
     {
         return $this->hasOne(StartNumber::class, ['race_id' => 'id']);
+    }
+
+    public function getOrder(): ActiveQuery
+    {
+        return $this->hasOne(Order::class, ['race_id' => 'id']);
     }
 
     ##########################

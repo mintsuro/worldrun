@@ -48,6 +48,7 @@ class TrackController extends Controller
                 'class' => VerbFilter::class,
                 'actions' => [
                     'add' => ['get'],
+                    'change-strava-account' => ['get'],
                 ],
             ]
         ];
@@ -109,6 +110,7 @@ class TrackController extends Controller
             'urlOAuth' => $urlOAuth,
             'user' => $user,
             'screenForm' => $screenForm,
+            'race' => $race,
         ]);
     }
 
@@ -129,6 +131,44 @@ class TrackController extends Controller
         }
 
         return $this->redirect(['index', 'raceId' => $race->id]);
+    }
+
+    /**
+     * @param $raceId
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
+     * @throws \League\OAuth2\Client\Provider\Exception\IdentityProviderException
+     */
+    public function actionChangeStravaAccount($raceId){
+        $race = $this->findRace($raceId);
+        $options = [
+            'clientId'     => Yii::$app->params['stravaClientId'],
+            'clientSecret' => Yii::$app->params['stravaClientSecret'],
+            'redirectUri'  => Url::to(['/cabinet/track/index', 'raceId' => $race->id])
+        ];
+        $oAuth = new OAuth($options);
+
+        try{
+            if(!isset($_GET['code'])){
+                $urlOAuth = $oAuth->getAuthorizationUrl([
+                    'scope' => [
+                        'public',
+                        // 'write',
+                        // 'view_private',
+                    ]
+                ]);
+            }else{
+                $token = $oAuth->getAccessToken('authorization_code', [
+                    'code' => $_GET['code']
+                ]);
+                $this->stravaService->change(\Yii::$app->user->identity->getId(), $token->getToken());
+
+                return $this->redirect(['index', 'raceId' => $race->id]);
+            }
+        }catch(Exception $e){
+            Yii::$app->errorHandler->logException($e);
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        }
     }
 
     public function actionAll(){

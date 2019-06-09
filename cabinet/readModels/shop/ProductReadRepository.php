@@ -17,8 +17,13 @@ class ProductReadRepository
 
     public function getAll(): DataProviderInterface
     {
-        $query = Product::find()->alias('p')->active('p');
+        $query = Product::find()->alias('p')->active('p')->orderBy(['price' => SORT_ASC]);
         return $this->getProvider($query);
+    }
+
+    public function getFreeAll(): array
+    {
+        return Product::find()->alias('p')->active('p')->andWhere(['price' => 0])->all();
     }
 
     public function find($id): ?Product

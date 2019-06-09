@@ -55,6 +55,7 @@ class CartService
         $data = [];
         $data['url'] = Url::to(['/shop/cart/add', 'id' => $id]); // дополнить параметр id
         $data['flag'] = $flag;
+        $data['amount'] = $cart->getAmount();
 
         if($session->has('promo_code') && $items){
             $data['discount'] = PriceHelper::format($cost->getValueDisc($cart->getAmount()) + $session->get('promo_code'));

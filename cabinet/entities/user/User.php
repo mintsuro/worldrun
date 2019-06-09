@@ -153,6 +153,14 @@ class User extends ActiveRecord
         $this->strava = $strava;
     }
 
+    public function changeStrava($token): void
+    {
+        $strava = $this->strava;
+
+        $strava->edit($token);
+        $strava->save(false);
+    }
+
     public function confirmSignup(): void
     {
         if (!$this->isWait()) {

@@ -5,6 +5,7 @@ use yii\helpers\Url;
 /**
  * @var $this \yii\web\View
  * @var $user \cabinet\entities\user\User
+ * @var $race \cabinet\entities\cabinet\Race
  * @var $urlOAuth \Strava\API\OAuth
  */
 ?>
@@ -21,7 +22,7 @@ use yii\helpers\Url;
             ['class' => 'btn btn-success']
         ); ?>
         <?= Html::a(Html::encode('Сменить аккаунт Strava'),
-            Url::to($urlOAuth),
+            Url::to('#'),
             ['class' => 'btn btn-success']
         ); ?>
     <?php endif; ?>

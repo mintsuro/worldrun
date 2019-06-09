@@ -40,6 +40,16 @@ class StravaService
         $this->users->save($user);
     }
 
+    public function change($id, $token): void
+    {
+        if ($this->users->findByStrava($token)) {
+            throw new \DomainException('Такой пользователь Strava уже зарегистрирован.');
+        }
+
+        $user = $this->users->get($id);
+        $user->changeStrava($token);
+    }
+
     /**
      * @param Race $race
      * @throws \Exception

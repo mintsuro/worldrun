@@ -17,6 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a('Экспорт', ['export'], ['class' => 'btn btn-primary', 'data-method' => 'post', 'data-confirm' => 'Экспорт?']) ?>
+        <br/><strong>Экспорт оплаченных товаров в .xls файл для сервиса доставки почты</strong>
     </p>
 
     <div class="box">
@@ -33,11 +34,10 @@ $this->params['breadcrumbs'][] = $this->title;
                         'format' => 'raw',
                         'filter' => false,
                     ],
-                    [
-                        'attribute' => 'created_at',
-                        'label' => 'Дата создания',
-                        'format' => 'datetime',
-                    ],
+                    'customer_name',
+                    'customer_phone',
+                    'delivery_index',
+                    'delivery_address',
                     [
                         'attribute' => 'status',
                         'label' => 'Статус',

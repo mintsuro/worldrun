@@ -16,7 +16,6 @@ use yii\widgets\Menu;
         <?php $menuItems[] = ['label' => 'Профиль', 'url' => ['/cabinet/profile/edit']];
         if(Yii::$app->user->can(Rbac::ROLE_PARTICIPANT)){
             $menuItems[] = ['label' => 'Мои участия', 'url' => ['/cabinet/participation/index']];
-            $menuItems[] = ['label' => 'Мои треки', 'url' => ['/cabinet/track/all']];
             $menuItems[] = ['label' => 'Мои заказы', 'url' => ['/cabinet/order/index']];
         } ?>
         <?= Menu::widget([

@@ -66,6 +66,22 @@ class OrderController extends Controller
     }
 
     /**
+     * @param $raceId
+     * @return mixed
+     * @throws NotFoundHttpException
+     */
+    public function actionRace($raceId)
+    {
+        if (!$order = $this->orders->findByRace($raceId)) {
+            throw new NotFoundHttpException('Запрашиваемый заказ не найдены.');
+        }
+
+        return $this->render('race', [
+            'order' => $order,
+        ]);
+    }
+
+    /**
      * @param $id
      * @return mixed
      */

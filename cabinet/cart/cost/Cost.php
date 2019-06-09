@@ -111,8 +111,6 @@ final class Cost
         }catch(\DomainException $e){
             throw new \DomainException('Такой промокод не найден.');
         }
-
-
     }
 
     /**

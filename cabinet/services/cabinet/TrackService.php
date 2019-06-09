@@ -46,6 +46,7 @@ class TrackService
     public function addFromScreen($raceId, DownloadScreenForm $form): void
     {
         $track = Track::createFromScreen($form->file, $form->distance, $form->date_start, $form->elapsed_time, $raceId);
+        $form->upload();
         $this->tracks->save($track);
     }
 }

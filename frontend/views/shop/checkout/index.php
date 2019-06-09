@@ -67,10 +67,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'dataProvider' => $dataProvider,
                 'layout' => "{items}",
                 'itemView' => '_product',
-                'viewParams' => ['cart' => $cart],
+                'viewParams' => ['cart' => $cart, 'race' => $race],
+                'itemOptions' => ['class' => 'col-sm-6 product-index']
             ])  ?>
-
         </div>
+        <?= Html::hiddenInput('countItems', $cart->getAmount(), ['id' => 'count-cart']) ?>
     </div>
 
     <div class="panel panel-default">
@@ -138,7 +139,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </tr>
     </table>
 
-    <div class="form-group text-center">
+    <div class="form-group text-center" id="success-block">
         <?php if($items) : ?>
             <?= Html::submitButton('Зарегистрироваться', ['class' => 'btn btn-primary btn-lg']) ?>
         <?php else : ?>
@@ -152,10 +153,10 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php
 
 $this->registerJs('
-    jQuery(".active-promocode").click(function(e){
+     jQuery(".active-promocode").click(function(e){
        var path = "'. (string) Url::to(['/shop/checkout/code']) .'";
        var element = this;
-       var valueCode = jQuery("#input-value-code").val();
+       var valueCode = jQuery("#input-value-code").val(); 
         
         $.ajax({
             url: path,
@@ -167,7 +168,6 @@ $this->registerJs('
                     $(".code-status").addClass("show bg-danger");
                 }else{
                     $(".code-status").addClass("show bg-success").removeClass("bg-danger").text("Промокод активирован.");
-                    
                     $(".total-info .numb").text(parseFloat($(".total-info .numb").text())) - parseFloat(data);   
                 }
                 

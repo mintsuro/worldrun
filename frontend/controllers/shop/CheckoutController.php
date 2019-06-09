@@ -8,6 +8,7 @@ use cabinet\forms\shop\order\PromoCodeForm;
 use cabinet\readModels\UserReadRepository;
 use cabinet\readModels\shop\ProductReadRepository;
 use cabinet\services\cabinet\RaceService;
+use cabinet\services\shop\CartService;
 use cabinet\services\shop\OrderService;
 use cabinet\cart\Cart;
 use cabinet\entities\cabinet\Race;
@@ -26,6 +27,7 @@ class CheckoutController extends Controller
     private $service;
     private $race;
     private $cart;
+    private $cartService;
     private $products;
     private $users;
 
@@ -33,6 +35,7 @@ class CheckoutController extends Controller
         OrderService $service,
         RaceService $race,
         Cart $cart,
+        CartService $cartService,
         ProductReadRepository $products,
         UserReadRepository $users,
         array $config = [])
@@ -41,6 +44,7 @@ class CheckoutController extends Controller
         $this->service = $service;
         $this->race = $race;
         $this->cart = $cart;
+        $this->cartService = $cartService;
         $this->products = $products;
         $this->users = $users;
     }
@@ -86,7 +90,7 @@ class CheckoutController extends Controller
 
         if($form->load(Yii::$app->request->post()) && $form->validate()){
             try{
-                $order = $this->service->checkout(Yii::$app->user->id, $form);
+                $order = $this->service->checkout($race->id, Yii::$app->user->id, $form);
                 $this->race->registrationUser(Yii::$app->user->id, $raceId);
                 return $this->redirect(['/cabinet/order/view', 'id' => $order->id]);
             } catch(\DomainException $e){
@@ -114,9 +118,30 @@ class CheckoutController extends Controller
                 Yii::$app->response->format = Response::FORMAT_JSON;
                 return Json::decode($this->service->calcPromoCode($code, $this->cart->getAmount()));
             } catch (\DomainException $e) {
+                Yii::$app->session->setFlash('error', $e->getMessage());
                 Yii::$app->errorHandler->logException($e);
             }
         }
+
+        return false;
     }
 
+    public function beforeAction($action)
+    {
+        if (!parent::beforeAction($action)) {
+            return false;
+        }
+
+        if(Yii::$app->session->has('promo_code')) Yii::$app->session->remove('promo_code');
+
+        return true;
+    }
+
+    public function afterAction($action, $result)
+    {
+       /*$product = $this->products->getFreeAll();
+       $this->cartService->add($product[0]->id);
+       $this->cartService->add($product[1]->id); */
+       return parent::afterAction($action, $result);
+    }
 }

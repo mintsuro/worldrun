@@ -32,6 +32,7 @@
                 'items' => [
                     ['label' => 'Администрирование', 'options' => ['class' => 'header']],
                     ['label' => 'Забеги', 'icon' => 'file-o', 'url' => ['/cabinet/race/index'], 'active' => $this->context->id == 'race/index'],
+                    ['label' => 'Треки', 'icon' => 'file-o', 'url' => ['/cabinet/track/index'], 'active' => $this->context->id == 'track/index'],
                     ['label' => 'Товары', 'icon' => 'file-o', 'url' => ['/shop/product/index'], 'active' => $this->context->id == 'product/index'],
                     ['label' => 'Заказы', 'icon' => 'file-o', 'url' => ['/shop/order/index'], 'active' => $this->context->id == 'order/index'],
                     ['label' => 'Скидки', 'icon' => 'file-o', 'url' => ['/shop/discount/index'], 'active' => $this->context->id == 'discount-size/index'],

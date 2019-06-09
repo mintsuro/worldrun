@@ -1,5 +1,6 @@
 <?php
 
+use cabinet\entities\shop\order\Order;
 use cabinet\helpers\OrderHelper;
 use cabinet\helpers\PriceHelper;
 use yii\helpers\Html;
@@ -26,6 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </p>
 
     <div class="box">
+        <h5 class="box-header with-border">Общие</h5>
         <div class="box-body">
             <?= DetailView::widget([
                 'model' => $order,
@@ -38,18 +40,49 @@ $this->params['breadcrumbs'][] = $this->title;
                         'format' => 'raw',
                     ],
                     'user_id',
+                    'customer_name',
+                    'customer_phone',
                     [
-                        'attribute' => 'user.username',
+                        'label' => 'Город покупателя',
+                        'value' => function(Order $model){
+                            return $model->user->profile->city;
+                        },
                     ],
-                    'deliveryData.index',
-                    'deliveryData.address',
+                    'delivery_index',
+                    'delivery_address',
                     'cost',
+                    'weight',
+                    'track_post',
                 ],
             ]) ?>
         </div>
     </div>
 
     <div class="box">
+        <h5 class="box-header with-border">Данные о забеге</h5>
+        <div class="box-body">
+            <?= DetailView::widget([
+                'model' => $order,
+                'attributes' => [
+                    [
+                        'label' => 'Забег',
+                        'value' => function(Order $model){
+                            return $model->race->name;
+                        }
+                    ],
+                    [
+                        'label' => 'Дата завершения забега',
+                        'value' => function(Order $model){
+                            return $model->race->date_end;
+                        }
+                    ]
+                ],
+            ]) ?>
+        </div>
+    </div>
+
+    <div class="box">
+        <h5 class="box-header with-border">Подарки</h5>
         <div class="box-body">
             <div class="table-responsive">
                 <table class="table table-bordered" style="margin-bottom: 0">
@@ -75,32 +108,4 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
     </div>
-
-    <div class="box">
-        <div class="box-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" style="margin-bottom: 0">
-                    <thead>
-                    <tr>
-                        <th class="text-left">Дата</th>
-                        <th class="text-left">Статус</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php foreach ($order->statuses as $status): ?>
-                        <tr>
-                            <td class="text-left">
-                                <?= Yii::$app->formatter->asDatetime($status->created_at) ?>
-                            </td>
-                            <td class="text-left">
-                                <?= OrderHelper::statusLabel($status->value) ?>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
 </div>

@@ -46,7 +46,14 @@ class OrderService
         $this->transaction = $transaction;
     }
 
-    public function checkout($userId, OrderForm $form): Order
+    /**
+     * @param $raceId
+     * @param $userId
+     * @param OrderForm $form
+     * @return Order
+     * @throws \Exception
+     */
+    public function checkout($raceId, $userId, OrderForm $form): Order
     {
         $user = $this->users->get($userId);
         $session = \Yii::$app->session;
@@ -76,6 +83,7 @@ class OrderService
         }, $this->cart->getItems());
 
         $order = Order::create(
+            $raceId,
             $user->id,
             new CustomerData(
                 $form->customer->firstName . ' ' . $form->customer->lastName,

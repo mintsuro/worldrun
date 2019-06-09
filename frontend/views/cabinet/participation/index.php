@@ -8,6 +8,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
+use cabinet\entities\shop\order\Status;
 use cabinet\entities\cabinet\Race;
 use cabinet\helpers\RaceHelper;
 
@@ -57,8 +58,16 @@ $this->params['breadcrumbs'][] = $this->title;
                         'format' => 'raw',
                     ],
                     [
-                        'value' => function(){
-                            return Html::a('Подарки', Url::to(['/cabinet/order/index']));
+                        'value' => function(Race $model){
+                            if(!empty($model->order)):
+                                $linkPay = Html::a('Оплатить', Url::to(['/cabinet/order/race', 'raceId' => $model->id]), [
+                                    'class' => 'label label-success pay-link']);
+                                $tag = $model->order->current_status == Status::NEW ? $linkPay : null;
+                                return Html::a('Подарки', Url::to(['/cabinet/order/race', 'raceId' => $model->id])) . "<br/>" . $tag;
+
+                            else:
+                                return Html::tag('span', 'Подарки');
+                            endif;
                         },
                         'format' => 'raw',
                     ],

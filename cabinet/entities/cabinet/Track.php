@@ -24,6 +24,7 @@ use yii\behaviors\TimestampBehavior;
  * @property integer  $user_id
  *
  * @property UserAssignment[] $userAssignments
+ * @property User $user
  */
 class Track extends ActiveRecord
 {
@@ -33,7 +34,17 @@ class Track extends ActiveRecord
     const STATUS_ACTIVE = 10;
     const STATUS_MODERATION = 5;
     const STATUS_WAIT = 0;
-    
+
+    /**
+     * @param float $distance
+     * @param float $pace
+     * @param int $elapsed_time
+     * @param string $date_start
+     * @param int $id_strava_track
+     * @param int $raceId
+     * @return Track
+     * Created by user
+     */
     public static function create(float $distance, float $pace, int $elapsed_time,
         string $date_start, int $id_strava_track, int $raceId): self
     {
@@ -71,6 +82,57 @@ class Track extends ActiveRecord
         return $item;
     }
 
+    /**
+     * @param float $distance
+     * @param float $pace
+     * @param int $elapsed_time
+     * @param int $download_method
+     * @param string $file_screen
+     * @param string $date_start
+     * @param int $status
+     * Edit from admin page
+     */
+    public function edit(float $distance, float $pace, int $elapsed_time,
+        int $download_method, string $file_screen, string $date_start, int $status): void
+    {
+        $this->distance = $distance;
+        $this->pace = $pace;
+        $this->elapsed_time = $elapsed_time;
+        $this->download_method = $download_method;
+        $this->file_screen = $file_screen;
+        $this->date_start = $date_start;
+        $this->status = $status;
+    }
+
+    public function setScreen($file){
+        $this->file_screen = $file;
+    }
+
+    public function activate(): void
+    {
+        if ($this->isActive()) {
+            throw new \DomainException('Трек уже активирован.');
+        }
+        $this->status = self::STATUS_ACTIVE;
+    }
+
+    public function draft(): void
+    {
+        if ($this->isDraft()) {
+            throw new \DomainException('Трек уже находится на модерации.');
+        }
+        $this->status = self::STATUS_MODERATION;
+    }
+
+    public function isActive(){
+        return $this->status === self::STATUS_ACTIVE;
+    }
+
+    public function isDraft(): bool
+    {
+        return $this->status == self::STATUS_MODERATION;
+    }
+
     ##########################
 
     public function getUser(): ActiveQuery
@@ -91,8 +153,11 @@ class Track extends ActiveRecord
             'distance' => 'Дистанция',
             'type' => 'Тип забега',
             'download_method' => 'Способ загрузки',
+            'elapsed_time' => 'Время пробежки',
+            'file_screen' => 'Скриншот',
+            'status' => 'Статус',
             'created_at' => 'Дата/время загрузки',
-            'date_start' => 'Дата/время пробежки',
+            'date_start' => 'Дата/время старта пробежки',
             'user_id' => 'Пользователь',
             'pace' => 'Темп'
         ];

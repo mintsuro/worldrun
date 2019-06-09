@@ -4,6 +4,7 @@ namespace backend\controllers\shop;
 
 use cabinet\services\manage\shop\OrderManageService;
 use cabinet\entities\shop\order\Order;
+use cabinet\entities\shop\order\Status;
 use backend\forms\shop\OrderSearch;
 use cabinet\forms\manage\shop\order\OrderEditForm;
 use Yii;
@@ -53,24 +54,17 @@ class OrderController extends Controller
      */
     public function actionExport()
     {
-        $query = Order::find()->orderBy(['id' => SORT_DESC]);
+        $query = Order::find()->andWhere(['current_status' => STATUS::PAID])->orderBy(['id' => SORT_DESC]);
 
-        $objPHPExcel = new \PHPExcel();
-
-        $worksheet = $objPHPExcel->getActiveSheet();
-
-        foreach ($query->each() as $row => $order) {
-            /** @var Order $order */
-
-            $worksheet->setCellValueByColumnAndRow(0, $row + 1, $order->id);
-            $worksheet->setCellValueByColumnAndRow(1, $row + 1, date('Y-m-d H:i:s', $order->created_at));
+        try{
+            $file = $this->service->export($query);
+            return Yii::$app->response->sendFile($file, 'report.xlsx');
+        }catch (\DomainException $e){
+            Yii::$app->errorHandler->logException($e);
+            Yii::$app->session->setFlash('error', $e->getMessage());
         }
 
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-        $file = tempnam(sys_get_temp_dir(), 'export');
-        $objWriter->save($file);
-
-        return Yii::$app->response->sendFile($file, 'report.xlsx');
+        return false;
     }
 
     /**

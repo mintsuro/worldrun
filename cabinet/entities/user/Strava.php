@@ -23,6 +23,13 @@ class Strava extends ActiveRecord
         return $item;
     }
 
+    public function edit($token): void
+    {
+        Assert::notEmpty($token);
+
+        $this->token = $token;
+    }
+
     public function isFor($token): bool
     {
         return ($this->token === $token);
