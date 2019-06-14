@@ -25,6 +25,8 @@ class RaceManageService
             $form->status,
             $form->date_start,
             $form->date_end,
+            $form->date_reg_from,
+            $form->date_reg_to,
             $form->type
         );
 
@@ -48,6 +50,8 @@ class RaceManageService
             $form->status,
             $form->date_start,
             $form->date_end,
+            $form->date_reg_from,
+            $form->date_reg_to,
             $form->type
         );
 

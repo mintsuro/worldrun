@@ -32,9 +32,6 @@ class StravaService
      */
     public function attach($id, $token): void
     {
-        if ($this->users->findByStrava($token)) {
-            throw new \DomainException('Такой пользователь Strava уже зарегистрирован.');
-        }
         $user = $this->users->get($id);
         $user->attachStrava($token);
         $this->users->save($user);
@@ -42,10 +39,6 @@ class StravaService
 
     public function change($id, $token): void
     {
-        if ($this->users->findByStrava($token)) {
-            throw new \DomainException('Такой пользователь Strava уже зарегистрирован.');
-        }
-
         $user = $this->users->get($id);
         $user->changeStrava($token);
     }
@@ -55,7 +48,7 @@ class StravaService
      * @throws \Exception
      * @return array
      */
-    public function getAthleteData($race): array
+    public function getAthleteData($race)
     {
         $user = $this->users->get(Yii::$app->user->identity->getId());
 

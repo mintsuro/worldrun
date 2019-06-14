@@ -25,7 +25,7 @@ use cabinet\helpers\ProductHelper;
         <?= Html::encode($model->description) ?>
     </div>
     <div class="product-price">
-        <span class="price-val"><?= Html::encode($model->price) ?> </span>₽
+        <span class="price-val"><?= Html::encode($model->price) ?> </span><span class="symbol-price">&#8381;</span>
     </div>
     <div class="">
         <?php foreach($cart->getItems() as $item){
@@ -46,6 +46,7 @@ use cabinet\helpers\ProductHelper;
             'data-product-id' => $model->id,
             'data' => ['method' => 'post'],
         ]);?>
+        <div class="loader"></div>
     </div>
 </div>
 
@@ -54,8 +55,8 @@ use cabinet\helpers\ProductHelper;
 $this->registerJs("
     // Заглушка кнопок для бесплатных товаров
     if($('.product-item .product-price .price-val').val() == 0 ){
-        $('.product-index').eq(0).find($('.btn-choice')).removeClass('add-cart btn-choice').addClass('remove-cart active btn-choice-dis');
-        $('.product-index').eq(1).find($('.btn-choice')).removeClass('add-cart btn-choice').addClass('remove-cart active btn-choice-dis');
+        $('.product-index').eq(0).addClass('alt').find($('.btn-choice')).hide();
+        $('.product-index').eq(1).addClass('alt').find($('.btn-choice')).hide();
     } 
     
     jQuery('.btn-choice').click(function(e){
@@ -101,6 +102,12 @@ $this->registerJs("
                 
                 jQuery(element).attr('data-url', data.url);
             },
+            beforeSend: function(){
+                $(element).parent($('.product-item')).find('.loader').show();
+            },
+            complete: function(){
+                $(element).parent($('.product-item')).find('.loader').hide();
+            }
         });
     });
 ", $this::POS_END);

@@ -39,7 +39,6 @@ class ParticipationController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['index'],
                 'rules' => [
                     [
                         'allow' => true,
@@ -54,7 +53,8 @@ class ParticipationController extends Controller
      * @return mixed
      * @throws NotFoundHttpException
      */
-    public function actionIndex(){
+    public function actionIndex()
+    {
         if(!$user = $this->users->find(Yii::$app->user->identity->getId())){
             throw new NotFoundHttpException('Запрашиваемая страница не найдена');
         }
@@ -64,6 +64,22 @@ class ParticipationController extends Controller
         return $this->render('index', [
             'user' => $user,
             'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * @param $id
+     * @throws NotFoundHttpException
+     * @return mixed
+     */
+    public function actionView($id)
+    {
+        $race = $this->findModel($id);
+        $users = $race->getUsers()->orderBy('id')->all();
+
+        return $this->render('view', [
+            'race' => $race,
+            'users' => $users,
         ]);
     }
 
@@ -107,11 +123,25 @@ class ParticipationController extends Controller
      */
     public function actionUsers($raceId)
     {
-        $model = Race::findOne($raceId);
-        $users = $model->getUsers()->orderBy('id')->all();
+        $race = Race::findOne($raceId);
+        $users = $race->getUsers()->orderBy('id')->all();
 
         return $this->render('users', [
             'users' => $users,
+            'race' => $race,
         ]);
+    }
+
+    /**
+     * @param $id
+     * @return Race|null
+     * @throws NotFoundHttpException
+     */
+    protected function findModel($id)
+    {
+        if(!$model = Race::findOne($id)){
+            throw new NotFoundHttpException('Запись забега не найдена.');
+        }
+        return $model;
     }
 }

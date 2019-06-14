@@ -15,8 +15,19 @@ class TrackHelper
     {
         return [
             Track::STATUS_ACTIVE => 'Активный',
-            Track::STATUS_MODERATION => 'На модерации',
+            Track::STATUS_MODERATION => 'На проверке',
             Track::STATUS_WAIT => 'В ожидании',
+            Track::STATUS_CANCEL => 'Отклонен',
+        ];
+    }
+
+    public static function cancelList(): array
+    {
+        return [
+            Track::CANCEL_DATE => 'Неверная дата',
+            Track::CANCEL_SIMILARITY => 'Такой результат уже был загружен',
+            Track::CANCEL_DATA => 'На скриншоте нет данных о пробежке',
+            Track::CANCEL_OTHER => 'Другая причина',
         ];
     }
 
@@ -37,7 +48,7 @@ class TrackHelper
     {
         switch ($status) {
             case Track::STATUS_MODERATION:
-                $class = 'label label-danger';
+                $class = 'label label-default';
                 break;
             case Track::STATUS_WAIT:
                 $class = 'label label-danger';
@@ -46,7 +57,7 @@ class TrackHelper
                 $class = 'label label-success';
                 break;
             default:
-                $class = 'label label-default';
+                $class = 'label label-danger';
         }
 
         return Html::tag('span', ArrayHelper::getValue(self::statusList(), $status), [

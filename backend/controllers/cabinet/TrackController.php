@@ -77,9 +77,6 @@ class TrackController extends Controller
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $this->service->edit($track->id, $form);
-                if(!empty($form->file_screen)) {
-                    $form->upload();
-                }
                 return $this->redirect(['view', 'id' => $track->id]);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);

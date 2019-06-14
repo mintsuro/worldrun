@@ -19,6 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php else: ?>
             <?= Html::a('Активировать', ['activate', 'id' => $track->id], ['class' => 'btn btn-success', 'data-method' => 'post']) ?>
         <?php endif; ?>
+        <?= Html::a('Редактировать', ['update', 'id' => $track->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Удалить', ['delete', 'id' => $track->id], [
             'class' => 'btn btn-danger',
             'data' => [
@@ -40,6 +41,12 @@ $this->params['breadcrumbs'][] = $this->title;
                             return $model->user->username;
                         },
                         'format' => 'raw',
+                    ],
+                    [
+                        'label' => 'Название забега',
+                        'value' => function(Track $model){
+                            return $model->race->name;
+                        }
                     ],
                     [
                         'attribute' => 'date_start',
@@ -77,6 +84,13 @@ $this->params['breadcrumbs'][] = $this->title;
                         },
                         'format' => 'raw',
                     ],
+                    [
+                        'attribute' => 'cancel_reason',
+                        'value' => function(Track $model){
+                            return \yii\helpers\ArrayHelper::getValue(TrackHelper::cancelList(), $model->cancel_reason);
+                        },
+                    ],
+                    'cancel_text',
                 ],
             ]) ?>
         </div>

@@ -8,6 +8,7 @@ use cabinet\forms\manage\shop\order\OrderEditForm;
 use cabinet\repositories\shop\OrderRepository;
 use yii\db\ActiveQuery;
 use cabinet\entities\shop\order\Order;
+use cabinet\entities\shop\order\Status;
 
 class OrderManageService
 {
@@ -102,6 +103,8 @@ class OrderManageService
             $worksheet->setCellValueByColumnAndRow(3, $row + 2, 0);
             $worksheet->setCellValueByColumnAndRow(7, $row + 2, 47);
             $worksheet->setCellValueByColumnAndRow(7, $row + 2, '679016');
+            $order->current_status = Status::SENT;
+            $order->save(false);
         }
 
         $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');

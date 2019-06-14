@@ -20,13 +20,7 @@ class TrackManageService
     public function edit($id, TrackForm $form): void
     {
         $track = $this->repository->get($id);
-        $track->edit($form->distance, $form->pace, $form->elapsed_time,
-            $form->download_method, $form->file_screen, $form->date_start, $form->status
-        );
-
-        if ($form->file_screen) {
-            $track->setScreen($form->file_screen);
-        }
+        $track->edit($form->distance, $form->elapsed_time, $form->status, $form->cancel_reason, $form->cancel_text);
 
         $this->repository->save($track);
     }

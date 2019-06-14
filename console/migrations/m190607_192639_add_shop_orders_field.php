@@ -14,7 +14,7 @@ class m190607_192639_add_shop_orders_field extends Migration
         $this->addColumn('{{%shop_orders}}', 'track_post', $this->string()->comment('Трек-номер посылки'));
 
         $this->createIndex('{{%idx-shop_orders-race_id}}', '{{%shop_orders}}', 'race_id');
-        $this->addForeignKey('{{%fk-shop-orders-race_id}}', '{{%shop_orders}}', 'race_id', '{{%cabinet_race}}', 'id');
+        $this->addForeignKey('{{%fk-shop-orders-race_id}}', '{{%shop_orders}}', 'race_id', '{{%cabinet_race}}', 'id', 'CASCADE');
     }
 
     public function down()

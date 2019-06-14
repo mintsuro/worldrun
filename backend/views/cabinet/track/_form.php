@@ -1,68 +1,26 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $model \cabinet\forms\manage\cabinet\RaceForm */
-/* @var $race \cabinet\entities\cabinet\Race */
+/* @var $model \cabinet\forms\manage\cabinet\TrackForm */
 
-use cabinet\helpers\RaceHelper;
+use cabinet\helpers\TrackHelper;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
-use kartik\widgets\DatePicker;
-use kartik\file\FileInput;
 
 ?>
 <div class="user-update">
-    <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
+    <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'name')->textInput(['maxLength' => true]) ?>
-    <?= $form->field($model, 'status')->dropDownList(RaceHelper::statusList()) ?>
-    <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
-    <?= $form->field($model, 'date_start')->widget(DatePicker::class, [
-        'value' => date('Y-m-d'),
-        'options' => ['placeholder' => 'Выберите дату начала забега'],
-        'pluginOptions' => [
-            'format' => 'dd.mm.yyyy',
-            'todayHighlight' => true
-        ]
-    ]) ?>
-    <?= $form->field($model, 'date_end')->widget(DatePicker::class, [
-        'value' => date('Y-m-d'),
-        'options' => ['placeholder' => 'Выберите дату окончания забега'],
-        'pluginOptions' => [
-            'format' => 'dd.mm.yyyy',
-            'todayHighlight' => true
-        ]
-    ]) ?>
+    <?= $form->field($model, 'distance')->textInput() ?>
+    <?= $form->field($model, 'elapsed_time')->textInput(['value' => \Yii::$app->formatter->asTime($model->elapsed_time)]) ?>
+    <?= $form->field($model, 'status')->dropDownList(TrackHelper::statusList()) ?>
 
-    <?= $form->field($model, 'type')->dropDownList(RaceHelper::typeList()) ?>
-
-    <div class="box box-default">
-        <div class="box-header with-border">Фотография</div>
-        <div class="box-body">
-            <?php echo $form->field($model, 'photo')->widget(FileInput::class, [
-                'options' => [
-                    'accept' => 'image/*',
-                    'multiple' => false,
-                ]
-            ])->label(false) ?>
-        </div>
-    </div>
-
-    <div class="box box-default">
-        <div class="box-header with-border">Макеты файлов для PDF</div>
-        <div class="box-body">
-            <?= $form->field($model->template, 'start_number')->dropDownList(RaceHelper::getTemplate('start_number')) ?>
-            <?= $form->field($model->template, 'diploma')->dropDownList(RaceHelper::getTemplate('diploma')) ?>
-            <hr/>
-            <?= $form->field($model->template, 'top_start_number')->dropDownList(RaceHelper::getTemplate('start_number')) ?>
-            <?= $form->field($model->template, 'top_diploma')->dropDownList(RaceHelper::getTemplate('diploma')) ?>
-        </div>
-    </div>
+    <?= $form->field($model, 'cancel_reason')->dropDownList(TrackHelper::cancelList()) ?>
+    <?= $form->field($model, 'cancel_text')->textarea() ?>
 
     <div class="form-group">
         <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
-
 </div>

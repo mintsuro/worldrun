@@ -15,7 +15,7 @@ class RaceHelper
     {
         return [
             Race::STATUS_REGISTRATION => 'Регистрация',
-            Race::STATUS_WAIT => 'В процессе',
+            Race::STATUS_WAIT => 'Идет забег',
             Race::STATUS_COMPLETE => 'Завершен'
         ];
     }
@@ -50,6 +50,30 @@ class RaceHelper
         }
 
         return Html::tag('span', ArrayHelper::getValue(self::statusList(), $status), [
+            'class' => $class,
+        ]);
+    }
+
+    public static function statusSpecLabel($status, $dateRegTo): string
+    {
+        switch ($status) {
+            case Race::STATUS_REGISTRATION:
+                $class = 'label label-default';
+                break;
+            case Race::STATUS_WAIT:
+                $class = 'label label-default';
+                break;
+            case Race::STATUS_COMPLETE:
+                $class = 'label label-success';
+                break;
+            default:
+                $class = 'label label-default';
+        }
+
+        $str = (strtotime($dateRegTo) > time()) ? 'Регистрация' : '';
+
+        return "<span style='display: block;'>$str</span>" .
+        Html::tag('span', ArrayHelper::getValue(self::statusList(), $status), [
             'class' => $class,
         ]);
     }

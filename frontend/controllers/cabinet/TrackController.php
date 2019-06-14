@@ -5,6 +5,8 @@ namespace frontend\controllers\cabinet;
 use cabinet\entities\cabinet\Track;
 use cabinet\entities\cabinet\Race;
 use cabinet\entities\user\User;
+use cabinet\readModels\UserReadRepository;
+use cabinet\repositories\UserRepository;
 use cabinet\services\auth\StravaService;
 use cabinet\services\cabinet\TrackService;
 use cabinet\forms\cabinet\DownloadScreenForm;
@@ -27,8 +29,10 @@ class TrackController extends Controller
     private $stravaService;
     private $service;
     private $race;
+    private $users;
 
     public function __construct(string $id, $module,
+        UserRepository $users,
         StravaService $stravaService,
         TrackService $service,
         Race $race,
@@ -39,6 +43,7 @@ class TrackController extends Controller
         $this->stravaService = $stravaService;
         $this->service = $service;
         $this->race = $race;
+        $this->users = $users;
     }
 
     public function behaviors()
@@ -65,7 +70,6 @@ class TrackController extends Controller
         $dataProvider = new ActiveDataProvider([
             'query' => $race->getTracks()
                 ->andWhere(['user_id' => \Yii::$app->user->identity->getId()])
-                ->andWhere(['status' => Track::STATUS_ACTIVE]),
         ]);
         $user = User::findOne(Yii::$app->user->identity->getId());
         $urlOAuth = '';
@@ -96,6 +100,12 @@ class TrackController extends Controller
                 $token = $oAuth->getAccessToken('authorization_code', [
                     'code' => $_GET['code']
                 ]);
+
+                if($this->users->findByStrava($token)){
+                    \Yii::$app->session->setFlash('error', 'Такой пользователь Strava уже зарегистрирован.');
+                    return $this->redirect(['index', 'raceId' => $raceId]);
+                }
+
                 $this->stravaService->attach(\Yii::$app->user->identity->getId(), $token->getToken());
 
                 return $this->redirect(['index', 'raceId' => $raceId]);
@@ -161,6 +171,12 @@ class TrackController extends Controller
                 $token = $oAuth->getAccessToken('authorization_code', [
                     'code' => $_GET['code']
                 ]);
+
+                if($this->users->findByStrava($token)){
+                    \Yii::$app->session->setFlash('error', 'Такой пользователь Strava уже зарегистрирован.');
+                    return $this->redirect(['index', 'raceId' => $raceId]);
+                }
+
                 $this->stravaService->change(\Yii::$app->user->identity->getId(), $token->getToken());
 
                 return $this->redirect(['index', 'raceId' => $race->id]);

@@ -9,10 +9,12 @@
  */
 
 use cabinet\entities\cabinet\Track;
+use cabinet\helpers\TrackHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\GridView;
 use yii\bootstrap\Tabs;
+use yii\helpers\ArrayHelper;
 
 $this->title= 'Мои треки';
 $this->params['breadcrumbs'][] = $this->title;
@@ -38,7 +40,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'attribute' => 'date_start',
                         'value' => function(Track $model){
-                            return date('m.d.Y H:i:s', strtotime($model->date_start));
+                            $date = ($model->download_method == Track::STRAVA_DOWNLOAD) ? date('d.m.Y H:i:s', strtotime($model->date_start)) :
+                                date('d.m.Y', strtotime($model->date_start));
+                            return $date;
                         },
                     ],
                     [
@@ -68,6 +72,19 @@ $this->params['breadcrumbs'][] = $this->title;
                             }
                         },
                     ],
+                    [
+                        'attribute' => 'status',
+                        'value' => function(Track $model){
+                            if($model->status !== Track::STATUS_CANCEL){
+                                return TrackHelper::statusLabel($model->status);
+                            }else{
+                                return TrackHelper::statusLabel($model->status) . '<span class="mgr">' .
+                                    ArrayHelper::getValue(TrackHelper::cancelList(), $model->cancel_reason) . '</span>' .
+                                    "<p class='mgr-p'>$model->cancel_text</p>";
+                            }
+                        },
+                        'format' => 'raw',
+                    ]
                 ],
             ]) ?>
             <?= Tabs::widget([

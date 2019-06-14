@@ -16,8 +16,10 @@ class DownloadScreenForm extends Model
     public function rules(){
         return [
             [['distance', 'elapsed_time', 'date_start', 'file'], 'required'],
-            [['distance', 'elapsed_time'], 'integer'],
-            [['date_start'], 'date', 'format' => 'php:m.d.Y'],
+            [['distance'], 'integer'],
+            [['elapsed_time'], 'time', 'format' => 'php:H:i:s'],
+            //['elapsed_time', 'default', 'value' => '00:00:00'],
+            [['date_start'], 'date', 'format' => 'php:d.m.Y'],
             [['file'], 'file', 'extensions' => 'jpg, jpeg, png'],
         ];
     }
@@ -25,9 +27,9 @@ class DownloadScreenForm extends Model
     public function attributeLabels(){
         return [
             'distance' => 'Дистанция (в метрах)',
-            'elapsed_time' => 'Общее время (в секундах)',
+            'elapsed_time' => 'Общее время пробежки',
             'file' => 'Загрузить скришнот',
-            'date_start' => 'Дата пробежки'
+            'date_start' => 'Дата старта пробежки'
         ];
     }
 

@@ -41,7 +41,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         'format' => 'raw',
                     ],
                     'date_start:date',
-                    'date_end:date'
+                    'date_end:date',
+                    'date_reg_from:date',
+                    'date_reg_to:date',
                 ],
             ]) ?>
         </div>

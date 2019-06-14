@@ -22,12 +22,15 @@ use DateTime;
  * @property integer $status
  * @property integer $date_start
  * @property integer $date_end
+ * @property string  $date_reg_from
+ * @property string  $date_reg_to
  * @property integer $type
  *
  * @property UserAssignment[] $userAssignments
  * @property PdfTemplate $template
  * @property StartNumber $startnumber
  * @property Order $order
+ * @property User $user
  */
 class Race extends ActiveRecord
 {
@@ -39,7 +42,7 @@ class Race extends ActiveRecord
     const TYPE_SIMPLE = 2;
 
     public static function create(string $name, string $description, int $status,
-        string $date_start, string $date_end, int $type): self
+        string $date_start, string $date_end, string $date_reg_from, string $date_reg_to, int $type): self
     {
         $item = new static();
         $item->name = $name;
@@ -47,19 +50,23 @@ class Race extends ActiveRecord
         $item->status = $status;
         $item->date_start = date('Y-m-d', strtotime($date_start)) . ' 00:00:00';
         $item->date_end = date('Y-m-d', strtotime($date_end)) . '  23:59:59';
+        $item->date_reg_from = date('Y-m-d', strtotime($date_reg_from)) . ' 00:00:00';
+        $item->date_reg_to = date('Y-m-d', strtotime($date_reg_to)) . '  23:59:59';
         $item->type = $type;
 
         return $item;
     }
 
     public function edit(string $name, string $description, int $status,
-         string $date_start, string $date_end, int $type): void
+         string $date_start, string $date_end, string $date_reg_from, string $date_reg_to, int $type): void
     {
         $this->name = $name;
         $this->description = $description;
         $this->status = $status;
         $this->date_start = date('Y-m-d', strtotime($date_start)) . ' 00:00:00';
         $this->date_end = date('Y-m-d', strtotime($date_end)) . ' 23:59:59';
+        $this->date_reg_from = date('Y-m-d', strtotime($date_reg_from)) . ' 00:00:00';
+        $this->date_reg_to = date('Y-m-d', strtotime($date_reg_to)) . '  23:59:59';
         $this->type = $type;
     }
 
@@ -166,6 +173,8 @@ class Race extends ActiveRecord
             'status' => 'Статус',
             'date_start' => 'Дата начала',
             'date_end' => 'Дата завершения',
+            'date_reg_from' => 'Дата начала регистрации',
+            'date_reg_to' => 'Дата окончания регистрации',
         ];
     }
 

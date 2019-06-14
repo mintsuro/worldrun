@@ -15,12 +15,10 @@ use yii\imagine\Image;
 class TrackForm extends Model
 {
     public $distance;
-    public $pace;
     public $elapsed_time;
-    public $download_method;
-    public $file_screen;
-    public $date_start;
     public $status;
+    public $cancel_reason;
+    public $cancel_text;
 
     private $_track;
 
@@ -28,10 +26,8 @@ class TrackForm extends Model
     {
         if($track){
             $this->distance = $track->distance;
-            $this->pace = $track->pace;
             $this->elapsed_time = $track->elapsed_time;
-            $this->date_start = date('d.m.Y', strtotime($track->date_start));
-            $this->download_method = $track->download_method;
+            $this->status = $track->status;
             $this->_track = $track;
         }
         parent::__construct($config);
@@ -40,10 +36,12 @@ class TrackForm extends Model
     public function rules(): array
     {
         return [
-            [['distance', 'download_method', 'elapsed_time', 'date_start'], 'required'],
-            [['date_start'], 'date', 'format' => 'php:d.m.Y'],
-            [['distance', 'pace', 'elapsed_time', 'download_method'], 'integer'],
-            [['file_screen'], 'file', 'extensions' => 'jpeg, png, jpg'],
+            [['distance', 'elapsed_time', 'status'], 'required'],
+            [['distance', 'status'], 'integer'],
+            [['elapsed_time'], 'time', 'format' => 'php:H:i:s'],
+            ['elapsed_time', 'default', 'value' => '00:00:00'],
+            ['cancel_text', 'string'],
+            ['cancel_reason', 'integer'],
         ];
     }
 
@@ -51,37 +49,10 @@ class TrackForm extends Model
     {
         return [
             'distance' => 'Дистанция',
-            'type' => 'Тип забега',
-            'download_method' => 'Способ загрузки',
-            'created_at' => 'Дата/время загрузки',
-            'date_start' => 'Дата/время пробежки',
-            'user_id' => 'Пользователь',
-            'pace' => 'Темп'
+            'elapsed_time' => 'Время пробежки',
+            'status' => 'Статус',
+            'cancel_reason' => 'Причина отклонения',
+            'cancel_text' => 'Описание другой причины',
         ];
-    }
-
-    public function beforeValidate(): bool
-    {
-        if (parent::beforeValidate()) {
-            $this->file_screen = UploadedFile::getInstance($this, 'file_screen');
-            return true;
-        }
-        return false;
-    }
-
-    public function upload()
-    {
-        $width = 1024;
-        $height = 768;
-        $originPath = \Yii::getAlias('@uploadsRoot') . '/origin/screen/' . $this->file_screen->baseName . '.' . $this->file_screen->extension;
-        $thumbPath = \Yii::getAlias('@uploadsRoot') . '/thumb/screen/' . $this->file_screen->baseName . "x$width-$height" . '.' . $this->file_screen->extension;
-
-        if ($this->validate()) {
-            $this->file_screen->saveAs($originPath);
-            Image::thumbnail($originPath, $width, $height)->save($thumbPath, ['quality' => 90]);
-            return true;
-        } else {
-            return false;
-        }
     }
 }

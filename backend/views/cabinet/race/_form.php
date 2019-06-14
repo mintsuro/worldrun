@@ -34,6 +34,23 @@ use kartik\file\FileInput;
         ]
     ]) ?>
 
+    <?= $form->field($model, 'date_reg_from')->widget(DatePicker::class, [
+        'value' => date('Y-m-d'),
+        'options' => ['placeholder' => 'Выберите дату начала регистрации'],
+        'pluginOptions' => [
+            'format' => 'dd.mm.yyyy',
+            'todayHighlight' => true
+        ]
+    ]) ?>
+    <?= $form->field($model, 'date_reg_to')->widget(DatePicker::class, [
+        'value' => date('Y-m-d'),
+        'options' => ['placeholder' => 'Выберите дату окончания регистрации'],
+        'pluginOptions' => [
+            'format' => 'dd.mm.yyyy',
+            'todayHighlight' => true,
+        ]
+    ]) ?>
+
     <?= $form->field($model, 'type')->dropDownList(RaceHelper::typeList()) ?>
 
     <div class="box box-default">

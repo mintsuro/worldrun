@@ -3,6 +3,8 @@
 namespace cabinet\helpers;
 
 use cabinet\entities\user\User;
+use cabinet\entities\cabinet\Race;
+use cabinet\entities\cabinet\Track;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
@@ -37,5 +39,33 @@ class UserHelper
         return Html::tag('span', ArrayHelper::getValue(self::statusList(), $status), [
             'class' => $class,
         ]);
+    }
+
+    /**
+     * @param integer $id
+     * @param Race $race
+     */
+    public static function resultTrack($id, $race)
+    {
+        $tracks = $race->getTracks();
+
+        if($race->type == Race::TYPE_MULTIPLE){
+            $distance = $tracks
+                ->andWhere(['user_id' => $id])
+                ->andWhere(['status' => Track::STATUS_ACTIVE])
+                ->sum('distance');
+
+            return $distance . ' м.';
+
+        }else if($race->type == Race::TYPE_SIMPLE){
+            $elapsed_time = $tracks
+                ->andWhere(['user_id' => $id])
+                ->andWhere(['status' => Track::STATUS_ACTIVE])
+                ->sum('elapsed_time');
+
+            return date('H:i:s', strtotime($elapsed_time));
+        }
+
+        return '';
     }
 }

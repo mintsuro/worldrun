@@ -23,6 +23,8 @@ class RaceForm extends CompositeForm
     public $temp_diploma;
     public $date_start;
     public $date_end;
+    public $date_reg_from;
+    public $date_reg_to;
     public $type;
 
     private $_race;
@@ -34,6 +36,8 @@ class RaceForm extends CompositeForm
             $this->status = $race->status;
             $this->date_start = date('d.m.Y', strtotime($race->date_start));
             $this->date_end = date('d.m.Y', strtotime($race->date_end));
+            $this->date_reg_from = date('d.m.Y', strtotime($race->date_reg_from));
+            $this->date_reg_to = date('d.m.Y', strtotime($race->date_reg_to));
             $this->type = $race->type;
             $this->template = new TemplateForm();
             $this->_race = $race;
@@ -46,8 +50,8 @@ class RaceForm extends CompositeForm
     public function rules(): array
     {
         return [
-            [['name', 'status', 'date_start', 'date_end'], 'required'],
-            [['date_start', 'date_end'], 'date', 'format' => 'php:d.m.Y'],
+            [['name', 'status', 'date_start', 'date_end', 'date_reg_from', 'date_reg_to'], 'required'],
+            [['date_start', 'date_end', 'date_reg_from', 'date_reg_to'], 'date', 'format' => 'php:d.m.Y'],
             [['name', 'description'], 'string'],
             [['status', 'type'], 'integer'],
             [['photo'], 'file', 'extensions' => 'jpeg, png, jpg', /*'on' => ['insert', 'update']*/],
@@ -62,6 +66,8 @@ class RaceForm extends CompositeForm
             'status' => 'Статус',
             'date_start' => 'Дата начала',
             'date_end' => 'Дата завершения',
+            'date_reg_from' => 'Дата начала регистрации',
+            'date_reg_to' => 'Дата окончания регистрации',
             'type' => 'Тип забега',
             'description' => 'Краткое описание',
         ];

@@ -22,7 +22,7 @@ use kartik\file\FileInput;
             ]
         ]) ?>
         <?= $form->field($screenForm, 'distance')->textInput() ?>
-        <?= $form->field($screenForm, 'elapsed_time')->textInput() ?>
+        <?= $form->field($screenForm, 'elapsed_time')->textInput(['placeholder' => '00:00:00']) ?>
         <?= $form->field($screenForm, 'date_start')->widget(DatePicker::class, [
             'options' => ['placeholder' => 'Выберите дату начала забега'],
             'pluginOptions' => [

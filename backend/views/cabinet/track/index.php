@@ -22,6 +22,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filterModel' => $searchModel,
                 'columns' => [
                     [
+                        'label' => 'Название забега',
+                        'value' => function(Track $model){
+                            return $model->race->name;
+                        },
+                        'contentOptions' => ['width' => '100px'],
+                    ],
+                    [
                         'label' => 'Автор забега',
                         'value' => function(Track $model){
                             return $model->user->username;
@@ -77,7 +84,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'format' => 'raw',
                     ],
                     [
-                        'template' => '{view}{delete}',
+                        'template' => '{view}{update}{delete}',
                         'class' => ActionColumn::class,
                     ],
                 ],

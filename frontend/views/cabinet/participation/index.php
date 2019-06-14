@@ -29,7 +29,13 @@ $this->params['breadcrumbs'][] = $this->title;
                         'attribute' => 'id',
                         'label' => '№',
                     ],
-                    'name',
+                    [
+                        'attribute' => 'name',
+                        'value' => function(Race $model){
+                            return Html::a($model->name, Url::to(['/cabinet/participation/view', 'id' => $model->id]));
+                        },
+                        'format' => 'raw'
+                    ],
                     [
                         'label' => 'Дата проведения',
                         'value' => function(Race $model){
@@ -41,19 +47,25 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'attribute' => 'status',
                         'value' => function (Race $model){
-                            return RaceHelper::statusLabel($model->status);
+                            return RaceHelper::statusSpecLabel($model->status, $model->date_reg_to);
                         },
                         'format' => 'raw',
                     ],
                     [
                         'value' => function(Race $model){
-                            return Html::a('Мои треки', Url::to(['/cabinet/track/index', 'raceId' => $model->id]));
+                            if(strtotime($model->date_start) < time()):
+                                return Html::a('Мои треки', Url::to(['/cabinet/track/index', 'raceId' => $model->id]));
+                            else:
+                                return Html::tag('span', 'Мои треки');
+                            endif;
                         },
                         'format' => 'raw',
                     ],
                     [
                         'value' => function(Race $model){
-                            return Html::a('Ссылка на стартовый номер', Url::to(['/cabinet/pdf-generator/generate-start-number', 'raceId' => $model->id]));
+                            return Html::a('Ссылка на стартовый номер', Url::to(['/cabinet/pdf-generator/generate-start-number', 'raceId' => $model->id]), [
+                                'target' => '_blank',
+                            ]);
                         },
                         'format' => 'raw',
                     ],
@@ -73,7 +85,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     [
                         'value' => function(Race $model){
-                            return Html::a('Диплом', Url::to(['/cabinet/pdf-generator/generate-diploma', 'raceId' => $model->id]));
+                            if(strtotime($model->date_end) < time()) :
+                                return Html::a('Диплом', Url::to(['/cabinet/pdf-generator/generate-diploma', 'raceId' => $model->id]), [
+                                    'target' => '_blank',
+                                ]);
+                            else :
+                                return Html::tag('span', 'Диплом');
+                            endif;
                         },
                         'format' => 'raw',
                     ],

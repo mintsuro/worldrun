@@ -10,7 +10,6 @@ use yii\helpers\StringHelper;
 $url = Url::to(['race', 'id' => $model->id]);
 ?>
 
-
 <div class="race-item">
     <h4 class="tit"><?= Html::encode($model->name) ?></h4>
     <div class="thumbnail">
@@ -38,7 +37,7 @@ $url = Url::to(['race', 'id' => $model->id]);
                 <span>0</span>
             <?php endif; ?>
         </div>
-            <?php if($model->user['id'] !== Yii::$app->user->identity->getId()): ?>
+            <?php if(($model->user['id'] !== Yii::$app->user->identity->getId()) && (strtotime($model->date_reg_to) > time()) && (strtotime($model->date_reg_from) < time()) ): ?>
             <div class="info-text">
                 <?= Html::a('Участвовать', Url::to(['/shop/checkout', 'raceId' => $model->id]), ['class' => 'btn btn-success']) ?>
             </div>

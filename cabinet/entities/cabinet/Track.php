@@ -19,12 +19,15 @@ use yii\behaviors\TimestampBehavior;
  * @property string   $date_start
  * @property integer  $created_at
  * @property integer  $status
+ * @property integer  $cancel_reason
+ * @property string   $cancel_text
  * @property integer  $id_strava_track
  * @property integer  $race_id
  * @property integer  $user_id
  *
  * @property UserAssignment[] $userAssignments
  * @property User $user
+ * @property Race $race
  */
 class Track extends ActiveRecord
 {
@@ -34,6 +37,12 @@ class Track extends ActiveRecord
     const STATUS_ACTIVE = 10;
     const STATUS_MODERATION = 5;
     const STATUS_WAIT = 0;
+    const STATUS_CANCEL = 1;
+
+    const CANCEL_DATE = 1;
+    const CANCEL_SIMILARITY = 2;
+    const CANCEL_DATA = 3;
+    const CANCEL_OTHER = 4;
 
     /**
      * @param float $distance
@@ -66,13 +75,13 @@ class Track extends ActiveRecord
     }
 
     public static function createFromScreen(string $file, int $distance, string $date_start,
-        int $elapsed_time, int $raceId): self
+        string $elapsed_time, int $raceId): self
     {
         $item = new static();
         $item->file_screen = $file;
         $item->distance = $distance;
         $item->date_start = date('Y-m-d', strtotime($date_start)) . ' 00:00:00';
-        $item->elapsed_time = $elapsed_time;
+        $item->elapsed_time = strtotime($elapsed_time);
         $item->download_method = self::SCREEN_DOWNLOAD;
         $item->status = self::STATUS_MODERATION;
         $item->user_id = Yii::$app->user->identity->getId();
@@ -84,24 +93,20 @@ class Track extends ActiveRecord
 
     /**
      * @param float $distance
-     * @param float $pace
      * @param int $elapsed_time
-     * @param int $download_method
-     * @param string $file_screen
-     * @param string $date_start
      * @param int $status
+     * @param int $cancel_reason
+     * @param string $cancel_text
      * Edit from admin page
      */
-    public function edit(float $distance, float $pace, int $elapsed_time,
-        int $download_method, string $file_screen, string $date_start, int $status): void
+    public function edit(float $distance, string $elapsed_time, int $status,
+        int $cancel_reason, string $cancel_text): void
     {
         $this->distance = $distance;
-        $this->pace = $pace;
-        $this->elapsed_time = $elapsed_time;
-        $this->download_method = $download_method;
-        $this->file_screen = $file_screen;
-        $this->date_start = $date_start;
+        $this->elapsed_time = strtotime($elapsed_time);
         $this->status = $status;
+        $this->cancel_reason = $cancel_reason;
+        $this->cancel_text = $cancel_text;
     }
 
     public function setScreen($file){
@@ -140,6 +145,11 @@ class Track extends ActiveRecord
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 
+    public function getRace(): ActiveQuery
+    {
+        return $this->hasOne(Race::class, ['id' => 'race_id']);
+    }
+
     ##########################
 
     public static function find(): TrackQuery
@@ -159,7 +169,9 @@ class Track extends ActiveRecord
             'created_at' => 'Дата/время загрузки',
             'date_start' => 'Дата/время старта пробежки',
             'user_id' => 'Пользователь',
-            'pace' => 'Темп'
+            'pace' => 'Темп',
+            'cancel_reason' => 'Причина отклонения',
+            'cancel_text' => 'Текст другой причины'
         ];
     }
 
