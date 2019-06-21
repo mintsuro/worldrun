@@ -103,8 +103,6 @@ class OrderManageService
             $worksheet->setCellValueByColumnAndRow(3, $row + 2, 0);
             $worksheet->setCellValueByColumnAndRow(7, $row + 2, 47);
             $worksheet->setCellValueByColumnAndRow(7, $row + 2, '679016');
-            $order->current_status = Status::SENT;
-            $order->save(false);
         }
 
         $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');

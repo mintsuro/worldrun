@@ -16,6 +16,8 @@ return [
         'signup/<_a:[\w-]+>' => 'auth/signup/<_a>',
         'reset/<_a:[\w-]+>' => 'auth/reset/<_a>',
         '<_a:login|logout>' => 'auth/auth/<_a>',
+        //'auth/<_a:[\w-]+>' => 'auth/auth/<_a>',
+        'network/<_a:[\w-]+>' => 'auth/network/<_a>',
 
         'profile/<_a:[\w-]+>' => 'cabinet/profile/<_a>',
         'participation/<_a:[\w-]+>' => 'cabinet/participation/<_a>',

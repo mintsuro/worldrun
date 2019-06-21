@@ -5,6 +5,7 @@ use cabinet\helpers\OrderHelper;
 use yii\grid\ActionColumn;
 use yii\helpers\Html;
 use yii\grid\GridView;
+use kartik\date\DatePicker;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\forms\shop\OrderSearch */
@@ -14,7 +15,6 @@ $this->title = 'Заказы';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-index">
-
     <p>
         <?= Html::a('Экспорт', ['export'], ['class' => 'btn btn-primary', 'data-method' => 'post', 'data-confirm' => 'Экспорт?']) ?>
         <br/><strong>Экспорт оплаченных товаров в .xls файл для сервиса доставки почты</strong>
@@ -33,6 +33,23 @@ $this->params['breadcrumbs'][] = $this->title;
                         },
                         'format' => 'raw',
                         'filter' => false,
+                    ],
+                    [
+                        'attribute' => 'created_at',
+                        'label' => 'Дата заказа',
+                        'filter' => DatePicker::widget([
+                            'model' => $searchModel,
+                            'attribute' => 'date_from',
+                            'attribute2' => 'date_to',
+                            'type' => DatePicker::TYPE_RANGE,
+                            'separator' => '-',
+                            'pluginOptions' => [
+                                'todayHighlight' => true,
+                                'autoclose'=>true,
+                                'format' => 'yyyy-mm-dd',
+                            ],
+                        ]),
+                        'format' => 'datetime',
                     ],
                     'customer_name',
                     'customer_phone',

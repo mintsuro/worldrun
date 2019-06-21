@@ -61,12 +61,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'attribute' => 'pace',
                         'value' => function(Track $model){
                             if($model->download_method == $model::STRAVA_DOWNLOAD){
-                                $resPace = 1000 / $model->pace;
-                                $res = $resPace / 60;
-                                $strDec = substr($res, 2, 1); //strlen(substr(strrchr($res, "."), 1));
-                                $seconds = $strDec / 10 * 60;
-                                $minute = floor($res);
-                                return $minute . ':' . $seconds;
+                                return TrackHelper::getPace($model->pace);
                             }else{
                                 return null;
                             }

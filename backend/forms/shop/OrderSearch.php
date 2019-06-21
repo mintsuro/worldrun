@@ -10,11 +10,14 @@ use yii\data\ActiveDataProvider;
 class OrderSearch extends Model
 {
     public $id;
+    public $date_from;
+    public $date_to;
 
     public function rules(): array
     {
         return [
             [['id'], 'integer'],
+            [['date_from', 'date_to'], 'date', 'format' => 'php:Y-m-d'],
         ];
     }
 
@@ -43,6 +46,11 @@ class OrderSearch extends Model
         $query->andFilterWhere([
             'id' => $this->id,
         ]);
+
+        $query
+            ->andFilterWhere(['>=', 'created_at', $this->date_from ? strtotime($this->date_from . ' 00:00:00') : null])
+            ->andFilterWhere(['<=', 'created_at', $this->date_to ? strtotime($this->date_to . ' 23:59:59') : null]);
+
 
         return $dataProvider;
     }

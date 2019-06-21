@@ -37,11 +37,13 @@ $url = Url::to(['race', 'id' => $model->id]);
                 <span>0</span>
             <?php endif; ?>
         </div>
-            <?php if(($model->user['id'] !== Yii::$app->user->identity->getId()) && (strtotime($model->date_reg_to) > time()) && (strtotime($model->date_reg_from) < time()) ): ?>
-            <div class="info-text">
-                <?= Html::a('Участвовать', Url::to(['/shop/checkout', 'raceId' => $model->id]), ['class' => 'btn btn-success']) ?>
-            </div>
-        <?php endif; ?>
+            <?php foreach($model->users as $user): ?>
+                <?php if(($user->id !== Yii::$app->user->identity->getId()) && (strtotime($model->date_reg_to) > time()) && (strtotime($model->date_reg_from) < time()) ): ?>
+                <div class="info-text">
+                    <?= Html::a('Участвовать', Url::to(['/shop/checkout', 'raceId' => $model->id]), ['class' => 'btn btn-success']) ?>
+                </div>
+                <?php endif; ?>
+            <?php endforeach; ?>
     </div>
     <div class="desc-race">
         <?= Html::encode(StringHelper::truncateWords(strip_tags($model->description), 100)) ?>

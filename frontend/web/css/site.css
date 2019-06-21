@@ -137,6 +137,12 @@ a.desc:after {
     font-size: 16px;
     margin: 10px 0;
 }
+.product-item .product-price .symbol-price{
+    line-height: 5px;
+    width: 0.4em;
+    border-bottom: 1px solid #000;
+    display: inline-block;
+}
 .product-item .btn-choice, .product-item .btn-choice-dis{
     display: inline-block;
     vertical-align: top;
@@ -164,6 +170,15 @@ a.desc:after {
     width: 100%;
     height: 45px;
     background-color: #fff;
+    background-image: url('../images/loader.gif');
+    background-position: 50% 0;
+    background-repeat: no-repeat;
+    display: none;
+}
+#download-block .loader{
+    margin: 50px auto 0;
+    width: 100px;
+    height: 45px;
     background-image: url('../images/loader.gif');
     background-position: 50% 0;
     background-repeat: no-repeat;
@@ -302,6 +317,13 @@ p.mgr-p{
     margin-top:5px;
     display:block
 }
+.strava-tracks{
+    margin-top: 20px
+}
+.strava-tracks em{
+    display: block;
+    padding-bottom: 15px;
+}
 
 /* .list-group-item:hover{
     z-index: 2;
@@ -320,6 +342,27 @@ p.mgr-p{
 .list-group-item.active a{
     color: #fff;
     text-decoration: none;
+}
+.check-track input{
+    opacity: 0;
+}
+.check-track label{
+    height: 24px;
+    width: 24px;
+    display: block;
+    border: 1px solid #ced900;
+    cursor: pointer;
+    margin: -20px auto 0;
+}
+.check-track input:checked + label{
+    border-color: #8c9300;
+    background-image: url('../images/bg-sprites.png');
+    background-position: -51px -53px;
+    background-repeat: no-repeat;
+    background-color: transparent;
+}
+.strava-tracks .btn-add-track{
+    display: block;
 }
 
 @media(max-width:767px) {

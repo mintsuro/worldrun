@@ -4,7 +4,7 @@ namespace frontend\widgets\auth;
 use yii\base\Widget;
 use rmrevin\yii\ulogin\ULogin;
 
-class UloginWidget extends Widget
+class UloginSignupWidget extends Widget
 {
     public function run(): string
     {
@@ -25,7 +25,7 @@ class UloginWidget extends Widget
             'hidden' => [],
 
             // where to should ULogin redirect users after successful login
-            'redirectUri' => ['signup/ulogin-auth'],
+            'redirectUri' => ['network/ulogin-sign'],
 
             // force use https in redirect uri
             'forceRedirectUrlScheme' => 'http',

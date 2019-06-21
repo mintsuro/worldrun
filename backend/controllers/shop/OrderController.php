@@ -28,8 +28,8 @@ class OrderController extends Controller
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
-                    'export' => ['POST'],
-                    'delete' => ['POST'],
+                    'export' => ['post'],
+                    'delete' => ['post'],
                 ],
             ],
         ];
@@ -40,8 +40,13 @@ class OrderController extends Controller
      */
     public function actionIndex()
     {
+        $request = Yii::$app->request;
         $searchModel = new OrderSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        if($req = $request->get('OrderSearch')){
+            Yii::$app->session->set('order_date', $req);
+        }
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -54,17 +59,28 @@ class OrderController extends Controller
      */
     public function actionExport()
     {
-        $query = Order::find()->andWhere(['current_status' => STATUS::PAID])->orderBy(['id' => SORT_DESC]);
+        $session = Yii::$app->session;
 
-        try{
-            $file = $this->service->export($query);
-            return Yii::$app->response->sendFile($file, 'report.xlsx');
-        }catch (\DomainException $e){
-            Yii::$app->errorHandler->logException($e);
-            Yii::$app->session->setFlash('error', $e->getMessage());
+        if($session->has('order_date')) {
+            $orderSearch = $session->get('order_date');
+            $query = Order::find()
+                ->andWhere(['current_status' => STATUS::PAID])
+                ->andWhere(['>=', 'created_at', strtotime($orderSearch['date_from'])])
+                ->andWhere(['<=', 'created_at', strtotime($orderSearch['date_to'])])
+                ->orderBy(['id' => SORT_DESC]);
+
+            try {
+                $file = $this->service->export($query);
+                $session->remove('order_date');
+                return Yii::$app->response->sendFile($file, 'report.xlsx');
+            } catch (\DomainException $e) {
+                Yii::$app->errorHandler->logException($e);
+                $session->setFlash('error', $e->getMessage());
+            }
         }
 
-        return false;
+        $session->setFlash('error', 'Выберите товары в фильтре даты заказа');
+        return $this->redirect('index');
     }
 
     /**

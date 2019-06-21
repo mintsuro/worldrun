@@ -8,6 +8,8 @@ use Yii;
 use yii\web\Controller;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
+use rmrevin\yii\ulogin\AuthAction;
 
 class AuthController extends Controller
 {

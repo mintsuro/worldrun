@@ -27,7 +27,7 @@ class NetworkService
         $this->email = $email;
     }
 
-    public function auth($network, $identity, $username, $email, $profileData)
+    public function sign($network, $identity, $username, $email, $profileData)
     {
         if($this->users->findByUsernameOrEmail($email)){
             throw new \DomainException('Пользователь с таким email уже существует!');
@@ -44,6 +44,15 @@ class NetworkService
             $this->roles->assign($user['userObject']->id, Rbac::ROLE_USER);
             $this->email->sendEmailSignup($user['userObject'], $user['password']);
         });
+    }
+
+    public function login($email)
+    {
+        $user = $this->users->findByUsernameOrEmail($email);
+        if(!$user || !$user->isActive()){
+            throw new \DomainException('Неопределенный пользователь.');
+        }
+        return $user;
     }
 
     public function attach($id, $network, $identity): void

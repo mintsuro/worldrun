@@ -10,6 +10,7 @@ use cabinet\repositories\UserRepository;
 use cabinet\services\auth\StravaService;
 use cabinet\services\cabinet\TrackService;
 use cabinet\forms\cabinet\DownloadScreenForm;
+use cabinet\forms\cabinet\DownloadTrackForm;
 use Strava\API\OAuth;
 use Strava\API\Exception;
 use Yii;
@@ -52,8 +53,9 @@ class TrackController extends Controller
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
-                    'add' => ['get'],
+                    'add' => ['post'],
                     'change-strava-account' => ['get'],
+                    'download' => ['post'],
                 ],
             ]
         ];
@@ -130,14 +132,46 @@ class TrackController extends Controller
      */
     public function actionAdd($raceId){
         $race = $this->findRace($raceId);
+        $form = new DownloadTrackForm();
 
-        try {
-            $athleteData = $this->stravaService->getAthleteData($race);
-            $this->service->add($athleteData, $race->id);
-            return $this->redirect(['index', 'raceId' => $race->id]);
-        }catch(\Exception $e) {
-            Yii::$app->errorHandler->logException($e);
-            Yii::$app->session->setFlash('error', $e->getMessage());
+        if(Yii::$app->request->post('strava-track')) {
+            try {
+                $athleteData = $this->stravaService->getAthleteData($race);
+                $this->service->add($athleteData, $race->id, Yii::$app->request->post('strava-track'));
+                return $this->redirect(['index', 'raceId' => $race->id]);
+            } catch (\Exception $e) {
+                Yii::$app->errorHandler->logException($e);
+                Yii::$app->session->setFlash('error', $e->getMessage());
+            }
+        }else{
+            Yii::$app->session->setFlash('error', 'Выберите трек из Strava для загрузки.');
+        }
+
+        return $this->redirect(['index', 'raceId' => $race->id]);
+    }
+
+    /**
+     * @param $raceId
+     * @throws NotFoundHttpException
+     */
+    public function actionDownload($raceId)
+    {
+        $race = $this->findRace($raceId);
+        $form = new DownloadTrackForm();
+
+        if(Yii::$app->request->isAjax){
+            try {
+                $athleteData = $this->stravaService->getAthleteData($race);
+                $tracks = $this->service->download($athleteData);
+                return $this->renderPartial('_download', [
+                    'tracks' => $tracks,
+                    'raceId' => $raceId,
+                    'model'  => $form,
+                ]);
+            }catch(\Exception $e) {
+                Yii::$app->errorHandler->logException($e);
+                Yii::$app->session->setFlash('error', $e->getMessage());
+            }
         }
 
         return $this->redirect(['index', 'raceId' => $race->id]);

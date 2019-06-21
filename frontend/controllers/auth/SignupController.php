@@ -14,8 +14,6 @@ use yii\helpers\ArrayHelper;
 
 class SignupController extends Controller
 {
-    public $enableCsrfValidation = false;
-
     private $service;
     private $network;
 
@@ -31,7 +29,7 @@ class SignupController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['request', 'confirm', 'ulogin-auth'],
+                'only' => ['request', 'confirm'],
                 'rules' => [
                     [
                         'allow' => true,
@@ -40,40 +38,6 @@ class SignupController extends Controller
                 ],
             ],
         ];
-    }
-
-    public function actions()
-    {
-        return [
-            'ulogin-auth' => [
-                'class' => AuthAction::class,
-                'successCallback' => [$this, 'uloginSuccessCallback'],
-                'errorCallback' => function($data){
-                    \Yii::error($data['error']);
-                },
-            ]
-        ];
-    }
-
-    public function uloginSuccessCallback($attributes)
-    {
-        //print_r($attributes); die();
-        $network = ArrayHelper::getValue($attributes, 'network');
-        $identity = ArrayHelper::getValue($attributes, 'uid');
-        $username = ArrayHelper::getValue($attributes, 'first_name');
-        $email = ArrayHelper::getValue($attributes, 'email');
-        $profileData = Json::encode($attributes);
-
-        try {
-             $this->network->auth($network, $identity, $username, $email, $profileData);
-             Yii::$app->session->setFlash('success', 'Проверьте свою почту и следуйте дальнейшим инструкциям.');
-             return $this->goHome();
-        } catch (\DomainException $e) {
-            Yii::$app->errorHandler->logException($e);
-            Yii::$app->session->setFlash('error', $e->getMessage());
-
-            return $this->redirect(['request']);
-        }
     }
 
     /**

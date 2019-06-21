@@ -21,13 +21,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 'dataProvider' => $dataProvider,
                 'filterModel' => $searchModel,
                 'columns' => [
-                    [
+                    /*[
                         'label' => 'Название забега',
                         'value' => function(Track $model){
                             return $model->race->name;
                         },
                         'contentOptions' => ['width' => '100px'],
-                    ],
+                    ], */
                     [
                         'label' => 'Автор забега',
                         'value' => function(Track $model){

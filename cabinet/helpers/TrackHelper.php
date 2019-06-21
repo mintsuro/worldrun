@@ -82,4 +82,15 @@ class TrackHelper
             'class' => $class,
         ]);
     }
+
+    public static function getPace($pace): string
+    {
+        $resPace = 1000 / $pace;
+        $res = $resPace / 60; // 4.3561596096881
+        $strDec = substr(strstr($res, '.'), 1, 1); //strlen(substr(strrchr($res, "."), 1));
+        $seconds = $strDec / 10 * 60;
+        $sec = strlen($seconds) == 1 ? '0' . $seconds : $seconds;
+        $minute = floor($res);
+        return $minute . ':' . $sec;
+    }
 }

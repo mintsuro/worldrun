@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @var $this yii\web\View
  * @var $model \cabinet\entities\shop\product\Product
@@ -25,7 +24,7 @@ use cabinet\helpers\ProductHelper;
         <?= Html::encode($model->description) ?>
     </div>
     <div class="product-price">
-        <span class="price-val"><?= Html::encode($model->price) ?> </span><span class="symbol-price">&#8381;</span>
+        <span class="price-val"><?= Html::encode($model->price) ?> </span><span class="symbol-price">P</span>
     </div>
     <div class="">
         <?php foreach($cart->getItems() as $item){
@@ -50,15 +49,14 @@ use cabinet\helpers\ProductHelper;
     </div>
 </div>
 
-<?php
-
-$this->registerJs("
+<?php $this->registerJs("
     // Заглушка кнопок для бесплатных товаров
     if($('.product-item .product-price .price-val').val() == 0 ){
         $('.product-index').eq(0).addClass('alt').find($('.btn-choice')).hide();
         $('.product-index').eq(1).addClass('alt').find($('.btn-choice')).hide();
     } 
     
+    // Добавление товара в корзину без перезагрузки страницы
     jQuery('.btn-choice').click(function(e){
        e.preventDefault();
        var path = $(this).attr('data-url');
@@ -111,5 +109,4 @@ $this->registerJs("
         });
     });
 ", $this::POS_END);
-
 ?>
