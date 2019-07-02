@@ -6,7 +6,7 @@
  */
 use yii\helpers\Html;
 
-$this->title = 'Участники ' . $race->name;
+$this->title = 'Участники: ' . $race->name;
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 

@@ -10,12 +10,21 @@ use yii\db\ActiveQuery;
 
 class RaceReadRepository
 {
-    public function getAll(User $user): DataProviderInterface
+    public function getAllByStartDate(): ActiveQuery
+    {
+        $query = Race::find()->alias('r')->active('r');
+        $query->where(['>=', 'date_start', time()]);
+        $query->andWhere(['<=', 'date_end', time()]);
+        $query->orderBy(['r.date_start', SORT_ASC]);
+        $query->all();
+        return $query;
+    }
+
+    public function getAllByStartReg(): DataProviderInterface
     {
         $query = Race::find()->alias('r')->active('r');
         //$query->join('INNER JOIN', 'cabinet_user_participation us', 'us.user_id != :user_id', [':user_id' => $user->id]);
-        $query->andWhere(['>=', 'date_start', time()]);
-        //$query->andOnCondition(['!=', 'us.user_id', $user->id]);
+        $query->where(['>=', 'date_reg_from', time()]);
         $query->orderBy('r.date_end');
         $query->all();
         return $this->getProvider($query);

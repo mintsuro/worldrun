@@ -1,12 +1,8 @@
 <?php
-/**
- * @var $race \cabinet\entities\cabinet\Race
- * @var $users \cabinet\entities\user\User[]
- */
+/** @var $race \cabinet\entities\cabinet\Race */
 
 use yii\helpers\Html;
-
-$this->title = $race->name;
+use yii\helpers\Url;
 ?>
 
 <div class="panel panel-default">
@@ -25,22 +21,13 @@ $this->title = $race->name;
                 <span><strong><?= date('d.m.Y', strtotime($race->date_end)) ?></strong></span>
             </div>
             <div class="info-text">
-                <h4>Период регистрации:</h4>
+                <h4>Дата регистрации:</h4>
                 <span><strong><?= date('d.m.Y', strtotime($race->date_reg_from)) ?></strong></span> -
                 <span><strong><?= date('d.m.Y', strtotime($race->date_reg_to)) ?></strong></span>
             </div>
             <div class="info-text">
                 <span><?= \cabinet\helpers\RaceHelper::statusLabel($race->status) ?></span>
             </div>
-            <div class="info-text">
-                <p><?= $race->description ?></p>
-            </div>
         </div>
     </div>
 </div>
-
-<h4>Участники</h4>
-<?= $this->render('_users', [
-    'model' => $race,
-    'users' => $users,
-]) ?>

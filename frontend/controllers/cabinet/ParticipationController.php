@@ -93,7 +93,7 @@ class ParticipationController extends Controller
             throw new NotFoundHttpException('Запрашиваемая страница не найдена');
         }
 
-        $dataProvider = $this->races->getAll($user);
+        $dataProvider = $this->races->getAllByStartReg();
 
         return $this->render('all', [
             'dataProvider' => $dataProvider,

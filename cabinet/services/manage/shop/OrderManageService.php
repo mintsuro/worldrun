@@ -9,14 +9,17 @@ use cabinet\repositories\shop\OrderRepository;
 use yii\db\ActiveQuery;
 use cabinet\entities\shop\order\Order;
 use cabinet\entities\shop\order\Status;
+use common\mail\services\Email;
 
 class OrderManageService
 {
     private $orders;
+    private $email;
 
-    public function __construct(OrderRepository $orders)
+    public function __construct(OrderRepository $orders, Email $email)
     {
         $this->orders = $orders;
+        $this->email = $email;
     }
 
     public function edit($id, OrderEditForm $form): void
@@ -110,6 +113,22 @@ class OrderManageService
         $objWriter->save($file);
 
         return $file;
+    }
+
+    /**
+     * @param Order[] $orders
+     */
+    public function notifyPay(array $orders)
+    {
+        $messages = [];
+
+        foreach($orders as $order):
+            $messages[] = $this->email->emailNotifyPay($order->user, $order);
+            $order->notify_send = 1;
+            $order->save();
+        endforeach;
+
+        $this->email->mailer->sendMultiple($messages);
     }
 
 }

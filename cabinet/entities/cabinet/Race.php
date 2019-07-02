@@ -6,8 +6,8 @@ use cabinet\entities\user\User;
 use cabinet\entities\shop\order\Order;
 use cabinet\forms\manage\cabinet\TemplateForm;
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
-use cabinet\entities\cabinet\StartNumber;
 use yii\db\ActiveRecord;
+use yii\db\Query;
 use yii\web\UploadedFile;
 use cabinet\entities\cabinet\queries\RaceQuery;
 use yii\db\ActiveQuery;
@@ -28,9 +28,9 @@ use DateTime;
  *
  * @property UserAssignment[] $userAssignments
  * @property PdfTemplate $template
- * @property StartNumber $startnumber
  * @property Order $order
  * @property User $user
+ * @property User $users
  */
 class Race extends ActiveRecord
 {
@@ -103,8 +103,22 @@ class Race extends ActiveRecord
                 throw new \DomainException('Пользователь уже зарегистрирован');
             }
         }
-        $assignment = UserAssignment::create($userId, $raceId);
-        $assignment->save();
+        //$assignment = UserAssignment::create($userId, $raceId);
+        //$assignment->save();
+        /*\Yii::$app->db->createCommand("INSERT INTO cabinet_user_participation (race_id, user_id, start_number) VALUES (
+          $raceId,
+          $userId,
+          (CASE start_number WHEN race_id = $raceId THEN SELECT MAX(start_number)+1 FROM cabinet_user_participation ELSE 1 END)
+        )")->execute(); */
+        $count = \Yii::$app->db->createCommand("SELECT * FROM cabinet_user_participation WHERE race_id = $raceId")->execute();
+
+        if($count !== 0){
+            $res = \Yii::$app->db->createCommand("SELECT MAX(start_number) FROM cabinet_user_participation WHERE race_id = $raceId")->execute();
+        }else{
+            $res = 0;
+        }
+
+        \Yii::$app->db->createCommand("INSERT INTO cabinet_user_participation (race_id, user_id, start_number) VALUES ($raceId, $userId, $res + 1)")->execute();
     }
 
     /**
@@ -113,9 +127,14 @@ class Race extends ActiveRecord
      */
     public function createStartNumber(int $raceId, int $userId)
     {
-        $startNumber = StartNumber::create($raceId, $userId);
-        $startNumber->save();
+        //$startNumber = StartNumber::create($raceId, $userId);
+        //$startNumber->save();
         //\Yii::$app->db->createCommand('INSERT INTO `cabinet_user_startnumber` (`user_id`) VALUES (`1`)')->execute();
+        (new Query)->createCommand('INSERT INTO `cabinet_user_startnumber` (`race_id`, `user_id`, `value`) VALUES (:race_id, :user_id, :value)', [
+            ':race_id' => $raceId,
+            ':user_id' => $userId,
+            ':value' => '(CASE `value` WHEN `race_id` = '. $raceId .' THEN SELECT MAX(`value`) + 1 ELSE 1 END)',
+        ])->execute();
     }
 
     public function getIntervalDate(){
@@ -123,6 +142,23 @@ class Race extends ActiveRecord
         $date_to = new  DateTime($this->date_end);
         $interval = $date_from->diff($date_to);
         return $interval->format('%a');
+    }
+
+    /**
+     * @param $race Race model
+     * @return string
+     */
+    public function getStartNumberForUser(Race $race): string
+    {
+        $assignments = $race->userAssignments;
+        /** @var  $assign UserAssignment */
+        foreach($assignments as $assign){
+            if($assign->user_id === \Yii::$app->user->getId()){
+                return $assign->start_number;
+            }
+        }
+
+        return null;
     }
 
     ##########################
@@ -150,11 +186,6 @@ class Race extends ActiveRecord
     public function getTemplate(): ActiveQuery
     {
         return $this->hasOne(PdfTemplate::class, ['race_id' => 'id']);
-    }
-
-    public function getStartnumber(): ActiveQuery
-    {
-        return $this->hasOne(StartNumber::class, ['race_id' => 'id']);
     }
 
     public function getOrder(): ActiveQuery

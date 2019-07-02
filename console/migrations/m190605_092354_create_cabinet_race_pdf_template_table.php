@@ -34,19 +34,4 @@ class m190605_092354_create_cabinet_race_pdf_template_table extends Migration
     {
         $this->dropTable('{{%cabinet_race_pdf_template}}');
     }
-
-    /*
-    // Use up()/down() to run migration code without a transaction.
-    public function up()
-    {
-
-    }
-
-    public function down()
-    {
-        echo "m190605_092354_create_cabinet_race_pdf_template cannot be reverted.\n";
-
-        return false;
-    }
-    */
 }

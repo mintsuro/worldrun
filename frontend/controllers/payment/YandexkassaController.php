@@ -43,8 +43,9 @@ class YandexkassaController extends Controller
         $order = $this->loadModel($id);
 
         $client = $this->client;
+        $params = Yii::$app->params;
 
-        $client->setAuth('548756', 'test_EGAn02ti4_6o6-Qw1TfGZCpt5SwOnSG7Xa9TRbmM2lg');
+        $client->setAuth(Yii::$app->params['yandexKassaKey'], $params['yandexKassaPassword']);
         $payment = $client->createPayment(
             [
                 'amount' => array(
@@ -72,9 +73,11 @@ class YandexkassaController extends Controller
 
     public function actionCheckPayment($id)
     {
-        //header("Status: 200");
         $client = $this->client;
-        $client->setAuth('548756', 'test_EGAn02ti4_6o6-Qw1TfGZCpt5SwOnSG7Xa9TRbmM2lg');
+
+        $params = Yii::$app->params;
+
+        $client->setAuth(Yii::$app->params['yandexKassaKey'], $params['yandexKassaPassword']);
 
         $order = $this->loadModel($id);
         $paymentId = $order->payment_id;

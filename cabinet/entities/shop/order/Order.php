@@ -26,6 +26,7 @@ use cabinet\entities\cabinet\Race;
  * @property string $delivery_index
  * @property string $customer_name
  * @property string $customer_phone
+ * @property bool $notify_send
  * @property CustomerData $customerData
  * @property DeliveryData $deliveryData
  *

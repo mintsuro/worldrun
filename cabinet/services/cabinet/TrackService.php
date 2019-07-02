@@ -39,6 +39,7 @@ class TrackService
             }
         }catch(\DomainException $e){
             Yii::$app->errorHandler->logException($e);
+            Yii::$app->session->setFlash('error', $e->getMessage());
         }
     }
 
@@ -69,6 +70,7 @@ class TrackService
             return $tracks;
         }catch(\DomainException $e){
             Yii::$app->errorHandler->logException($e);
+            Yii::$app->session->setFlash('error', $e->getMessage());
         }
     }
 

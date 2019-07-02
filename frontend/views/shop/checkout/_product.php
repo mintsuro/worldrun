@@ -9,7 +9,6 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use cabinet\helpers\ProductHelper;
-
 ?>
 
 <div class="product-item">

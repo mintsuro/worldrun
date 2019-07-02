@@ -25,6 +25,11 @@ $url = Url::to(['race', 'id' => $model->id]);
                 <span><strong><?= date('d.m.Y', strtotime($model->date_end)) ?></strong></span>
         </div>
         <div class="info-text">
+            <h4>Период регистрации:</h4>
+            <span><strong><?= date('d.m.Y', strtotime($model->date_reg_from)) ?></strong></span> -
+            <span><strong><?= date('d.m.Y', strtotime($model->date_reg_to)) ?></strong></span>
+        </div>
+        <div class="info-text">
             <span><?= \cabinet\helpers\RaceHelper::statusLabel($model->status) ?></span>
         </div>
         <div class="info-text">
@@ -37,13 +42,11 @@ $url = Url::to(['race', 'id' => $model->id]);
                 <span>0</span>
             <?php endif; ?>
         </div>
-            <?php foreach($model->users as $user): ?>
-                <?php if(($user->id !== Yii::$app->user->identity->getId()) && (strtotime($model->date_reg_to) > time()) && (strtotime($model->date_reg_from) < time()) ): ?>
-                <div class="info-text">
-                    <?= Html::a('Участвовать', Url::to(['/shop/checkout', 'raceId' => $model->id]), ['class' => 'btn btn-success']) ?>
-                </div>
-                <?php endif; ?>
-            <?php endforeach; ?>
+        <?php if(($model->user['id'] !== Yii::$app->user->identity->getId()) && (strtotime($model->date_reg_to) > time()) && (strtotime($model->date_reg_from) < time()) ): ?>
+            <div class="info-text">
+                <?= Html::a('Участвовать', Url::to(['/shop/checkout', 'raceId' => $model->id]), ['class' => 'btn btn-success']) ?>
+            </div>
+        <?php endif; ?>
     </div>
     <div class="desc-race">
         <?= Html::encode(StringHelper::truncateWords(strip_tags($model->description), 100)) ?>

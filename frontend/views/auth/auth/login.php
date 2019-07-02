@@ -35,7 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
 
             <?php ActiveForm::end(); ?>
-
+            <h4>Войти через:</h4>
             <?= \frontend\widgets\auth\UloginAuthWidget::widget(); ?>
         </div>
     </div>

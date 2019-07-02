@@ -7,22 +7,26 @@ use cabinet\entities\user\User;
 use cabinet\repositories\cabinet\RaceRepository;
 use cabinet\repositories\UserRepository;
 use cabinet\services\TransactionManager;
+use common\mail\services\Email;
 
 class RaceService
 {
     private $races;
     private $users;
     private $transaction;
+    private $email;
 
     public function __construct(
         RaceRepository $races,
         UserRepository $users,
-        TransactionManager $transaction
+        TransactionManager $transaction,
+        Email $email
     )
     {
         $this->races = $races;
         $this->users = $users;
         $this->transaction = $transaction;
+        $this->email = $email;
     }
 
     /**
@@ -35,9 +39,7 @@ class RaceService
         $race = $this->races->get($raceId);
         $user = $this->users->get($userId);
 
-        $this->transaction->wrap(function() use ($race, $user){
-            $race->assignUser($user->id, $race->id);
-            $race->createStartNumber($race->id, $user->id);
-        });
+        $race->assignUser($user->id, $race->id);
+        $this->email->sendEmailRegRace($user, $race);
     }
 }

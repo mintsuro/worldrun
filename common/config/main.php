@@ -24,7 +24,7 @@ return [
             'timeFormat' => 'H:i:s',
 
             'locale' => 'ru-RU', //your language locale
-            //'defaultTimeZone' => 'Europe/Moscow', // time zone
+            'defaultTimeZone' => 'Europe/Moscow', // time zone
         ],
     ],
 ];

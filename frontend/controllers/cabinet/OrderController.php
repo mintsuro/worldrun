@@ -57,7 +57,7 @@ class OrderController extends Controller
     public function actionView($id)
     {
         if (!$order = $this->orders->findOwn(\Yii::$app->user->id, $id)) {
-            throw new NotFoundHttpException('Запрашиваемые заказы не найдены.');
+            throw new NotFoundHttpException('Заказы не найдены.');
         }
 
         return $this->render('view', [
@@ -73,7 +73,7 @@ class OrderController extends Controller
     public function actionRace($raceId)
     {
         if (!$order = $this->orders->findByRace($raceId)) {
-            throw new NotFoundHttpException('Запрашиваемый заказ не найдены.');
+            throw new NotFoundHttpException('Заказ не найден.');
         }
 
         return $this->render('race', [

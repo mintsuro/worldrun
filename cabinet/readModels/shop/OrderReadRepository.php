@@ -3,6 +3,7 @@
 namespace cabinet\readModels\shop;
 
 use cabinet\entities\shop\order\Order;
+use cabinet\entities\shop\order\Status;
 use yii\data\ActiveDataProvider;
 use cabinet\repositories\NotFoundException;
 
@@ -35,5 +36,12 @@ class OrderReadRepository
             throw new NotFoundException('Заказ с таким идентификатором оплаты не найден.');
         }
         return $order;
+    }
+
+    public function getNewAll(): array
+    {
+        $orders = Order::find()->andWhere(['current_status' => Status::NEW, 'notify_send' => 0])->all();
+
+        return $orders;
     }
 }
