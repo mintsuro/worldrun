@@ -10,9 +10,8 @@ $this->params['breadcrumbs'][] = ['label' => $race->name, 'url' => ['view', 'id'
 $this->params['breadcrumbs'][] = 'Редактировать';
 ?>
 <div class="page-update">
-
     <?= $this->render('_form', [
         'model' => $model,
+        'race'  => $race,
     ]) ?>
-
 </div>

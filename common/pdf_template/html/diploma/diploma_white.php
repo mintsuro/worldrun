@@ -1,8 +1,10 @@
 <?php
 /**
  * @var $race \cabinet\entities\cabinet\Race
- * @var $distance integer
+ * @var $user \cabinet\entities\user\User
+ * @var $result integer
  * @var $intervalDate integer
+ * @var $position integer
  */
 ?>
 <!doctype html>
@@ -59,10 +61,10 @@
             <div class="content">
                 <div class="title1"><span style="font-size: 74px;">БЕГ</span><br>В РЕЖИМЕ<br><span style="font-size:31px;">ОНЛАЙН</span></div>
                 <div class="title2">ДИПЛОМ<br><span style="font-size:40px;margin-left:160px;">УЧАСТНИКА</span></div>
-                    <div class="name"><?= $race->user->profile->first_name . "\n" . $race->user->profile->last_name ?></div>
-                    <div class="result">ЗАНЯВШЕГО <span class="red"><?= 1 ?> МЕСТО</span></div>
-                    <?php if($distance): ?>
-                    <div class="distance">НА ДИСТАНЦИИ <span class="red"><?= $distance ?></span></div>
+                    <div class="name"><?= $user->profile->first_name . "\n" . $user->profile->last_name ?></div>
+                    <div class="result">ЗАНЯВШЕГО <span class="red"><?= $position ?> МЕСТО</span></div>
+                    <?php if($result): ?>
+                    <div class="distance">НА ДИСТАНЦИИ <span class="red"><?= $result ?></span></div>
                     <?php endif; ?>
                 <div class="time">ВРЕМЯ: <span class="red">ЗА <?= $intervalDate ?> ДНЕЙ</span></div>
                 <div class="date">ДАТА: <span class="red"><?= date('d.m.Y', strtotime($race->date_end)) ?></span></div>

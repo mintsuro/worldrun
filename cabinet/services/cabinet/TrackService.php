@@ -50,12 +50,6 @@ class TrackService
             foreach (array_reverse($athleteData) as $activity) {
                 if ($activity['manual'] === false && $activity['type'] == 'Run') {
                     if (!$this->readRepository->getByTrackId($activity['id'])) {
-                        /*$track = Track::create($activity['distance'], $activity['average_speed'],
-                            $activity['elapsed_time'], $activity['start_date_local'],
-                            $activity['id'], $raceId
-                        );
-                        $this->tracks->save($track);
-                        break; */
                         $tracks[] = [
                             'distance' => $activity['distance'],
                             'average_speed' => $activity['average_speed'],
@@ -74,9 +68,23 @@ class TrackService
         }
     }
 
+    /**
+     * @param string $str_time
+     * @return integer
+     */
+    private function convertTimeToSeconds($str_time): int
+    {
+        $str_time = preg_replace("/^([\d]{1,2})\:([\d]{2})$/", "00:$1:$2", $str_time);
+        sscanf($str_time, "%d:%d:%d", $hours, $minutes, $seconds);
+        $time_seconds = $hours * 3600 + $minutes * 60 + $seconds;
+
+        return $time_seconds;
+    }
+
     public function addFromScreen($raceId, DownloadScreenForm $form): void
     {
-        $track = Track::createFromScreen($form->file, $form->distance, $form->date_start, $form->elapsed_time, $raceId);
+        $time = $this->convertTimeToSeconds($form->elapsed_time);
+        $track = Track::createFromScreen($form->file, $form->distance, $form->date_start, $time, $raceId);
         $form->upload();
         $this->tracks->save($track);
     }

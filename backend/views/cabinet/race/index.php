@@ -28,18 +28,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 'columns' => [
                     [
                         'attribute' => 'date_start',
-                         /*'filter' => DatePicker::widget([
-                            'model' => $searchModel,
-                            'attribute' => 'date_from',
-                            'attribute2' => 'date_to',
-                            'type' => DatePicker::TYPE_RANGE,
-                            'separator' => '-',
-                            'pluginOptions' => [
-                                'todayHighlight' => true,
-                                'autoclose'=>true,
-                                'format' => 'yyyy-mm-dd',
-                            ],
-                        ]), */
                         'format' => 'date',
                     ],
                     [
@@ -56,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'attribute' => 'photo',
                         'value' => function(Race $model){
-                            return $model->photo ? Html::img(\Yii::$app->get('frontendUrlManager')->baseUrl . '/uploads/origin/race/' . $model->photo,
+                            return $model->photo ? Html::img(\Yii::$app->get('frontendUrlManager')->baseUrl . '/uploads/origin/race/' . "$model->id-$model->photo",
                                 ['style' => ['width' => '100px', 'height' => '70px']]) : null;
                         },
                         'format' => 'raw',

@@ -5,6 +5,7 @@
  */
 
 use yii\helpers\Html;
+use cabinet\helpers\RaceHelper;
 
 $this->title = $race->name;
 ?>
@@ -13,9 +14,10 @@ $this->title = $race->name;
     <div class="panel-heading"><?= $race->name ?></div>
     <div class="panel-body race-item detail">
         <div class="thumbnail">
-            <?php if ($race->photo): ?>
-                <?= Html::img(\Yii::$app->get('frontendUrlManager')->baseUrl . '/uploads/origin/race/' . $race->photo,
-                    ['style' => ['width' => '200px', 'height' => '200px'], 'class' => 'img-responsive']) ?>
+            <?php if ($race->photo):
+                $file = '/uploads/thumb/race/' . "$race->id-500x500-$race->photo"; ?>
+                <?= Html::img(\Yii::$app->get('frontendUrlManager')->baseUrl . $file,
+                ['class' => 'img-responsive']) ?>
             <?php endif; ?>
         </div>
         <div class="info-race">
@@ -30,7 +32,7 @@ $this->title = $race->name;
                 <span><strong><?= date('d.m.Y', strtotime($race->date_reg_to)) ?></strong></span>
             </div>
             <div class="info-text">
-                <span><?= \cabinet\helpers\RaceHelper::statusLabel($race->status) ?></span>
+                <span><?= RaceHelper::statusSpecLabel($race->status,  $race->date_reg_from, $race->date_reg_to) ?></span>
             </div>
             <div class="info-text">
                 <p><?= $race->description ?></p>

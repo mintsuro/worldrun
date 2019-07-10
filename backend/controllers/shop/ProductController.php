@@ -6,6 +6,7 @@ use cabinet\forms\manage\shop\product\ProductForm;
 use cabinet\services\manage\shop\ProductManageService;
 use cabinet\entities\shop\product\Product;
 use backend\forms\shop\ProductSearch;
+use zxbodya\yii2\galleryManager\GalleryManagerAction;
 use Yii;
 use yii\web\Controller;
 use yii\data\ActiveDataProvider;
@@ -16,7 +17,8 @@ class ProductController extends Controller
 {
     private $service;
 
-    public function __construct($id, $module, ProductManageService $service, array $config = [])
+    public function __construct($id, $module,
+        ProductManageService $service, array $config = [])
     {
         parent::__construct($id, $module, $config);
         $this->service = $service;
@@ -72,9 +74,11 @@ class ProductController extends Controller
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $product = $this->service->create($form);
+
                 if(!empty($form->photo)){
-                    $form->upload();
+                    $form->upload($product);
                 }
+
                 return $this->redirect(['view', 'id' => $product->id]);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
@@ -100,9 +104,11 @@ class ProductController extends Controller
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $this->service->edit($product->id, $form);
+
                 if(!empty($form->photo)){
-                    $form->upload();
+                    $form->upload($product);
                 }
+
                 return $this->redirect(['view', 'id' => $product->id]);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);

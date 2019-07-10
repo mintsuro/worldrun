@@ -15,6 +15,7 @@ use yii\widgets\Menu;
     <aside id="column-right" class="col-sm-3 hidden-xs">
         <?php $menuItems[] = ['label' => 'Профиль', 'url' => ['/cabinet/profile/edit']];
         if(Yii::$app->user->can(Rbac::ROLE_PARTICIPANT)){
+            $menuItems[] = ['label' => 'Забеги', 'url' => ['/cabinet/participation/all']];
             $menuItems[] = ['label' => 'Мои участия', 'url' => ['/cabinet/participation/index']];
             $menuItems[] = ['label' => 'Мои заказы', 'url' => ['/cabinet/order/index']];
         } ?>

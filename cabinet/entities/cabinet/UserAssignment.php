@@ -10,7 +10,9 @@ use cabinet\entities\user\User;
  * @property integer $race_id;
  * @property integer $user_id;
  * @property integer $start_number
- * @property bool $notify_send
+ * @property bool $notify_start
+ * @property bool $notify_end
+ * @property bool $notify_finish
  *
  * @property User $user
  */

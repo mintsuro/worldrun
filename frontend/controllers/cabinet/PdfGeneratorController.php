@@ -4,23 +4,30 @@ namespace frontend\controllers\cabinet;
 
 use cabinet\entities\cabinet\Race;
 use cabinet\entities\cabinet\Track;
-use cabinet\entities\cabinet\UserAssignment;
-use cabinet\entities\user\User;
+use cabinet\readModels\cabinet\UserAssignmentReadRepository;
 use cabinet\repositories\NotFoundException;
 use cabinet\services\cabinet\PdfTemplateService;
+use cabinet\repositories\cabinet\RaceRepository;
 use Yii;
-use yii\db\ActiveRecord;
 use yii\db\Query;
 use yii\web\Controller;
 
 class PdfGeneratorController extends Controller
 {
-    public $service;
+    private $service;
+    private $repository;
+    private $assignmentRepository;
 
-    public function __construct($id, $module, PdfTemplateService $service, array $config = [])
+    public function __construct($id, $module,
+        PdfTemplateService $service,
+        RaceRepository $repository,
+        UserAssignmentReadRepository $assignmentRepository,
+        array $config = [])
     {
         parent::__construct($id, $module, $config);
         $this->service = $service;
+        $this->repository = $repository;
+        $this->assignmentRepository = $assignmentRepository;
     }
 
     /**
@@ -57,39 +64,42 @@ class PdfGeneratorController extends Controller
     {
         $orientationPDF = 'P';
         $formatPDF = 'A4';
-        $race = Race::findOne($raceId);
-        $tracks = $race->getTracks();
-        $distance = $tracks
-            ->andWhere(['user_id' => \Yii::$app->user->identity->getId()])
-            ->andWhere(['status' => Track::STATUS_ACTIVE])
-            ->sum('distance');
+        $race = $this->repository->get($raceId);
+        $assignment = $this->assignmentRepository->getUserByRace(Yii::$app->user->getId(), $raceId);
+        $user = $assignment->user;
 
-        $position = $tracks
-            ->select(['SUM(distance)', 'user_id'])
-            //->where(['status' => Track::STATUS_ACTIVE])
-            ->groupBy('user_id')
-            ->orderBy(['SUM(distance)' => SORT_ASC])
-            ->all();
+        try {
+            if($race->type == Race::TYPE_MULTIPLE){
+                $sql = "SELECT SUM(distance) AS sum_distance, user_id FROM cabinet_tracks WHERE race_id = $race->id 
+              AND status = '". Track::STATUS_ACTIVE ."' GROUP BY user_id ORDER BY sum_distance DESC";
+            }else{
+                $sql = "SELECT SUM(elapsed_time) AS time, user_id FROM cabinet_tracks WHERE race_id = $race->id
+                AND status = '". Track::STATUS_ACTIVE ."' GROUP BY user_id ORDER BY time ASC";
+            }
 
-        $sql = '';
+            $query = \Yii::$app->db->createCommand($sql)->queryAll();
 
-            $position = \Yii::$app->db->createCommand('SELECT SUM(distance) AS fieldname, user_id AS field2 FROM cabinet_tracks GROUP BY field2 ORDER BY fieldname ASC')->query();
-        //$position = (new Query())->createCommand('SELECT SUM(distance) AS fieldname, user_id AS field2 FROM cabinet_tracks GROUP BY field2 ORDER BY fieldname ASC')->query();
+            for ($i = 0, $j = 0; $i < count($query); $i++, $j++) {
+                if ($query[$j]['user_id'] == Yii::$app->user->getId()) {
+                    $position = $j + 1;
+                    $result = ($race->type == Race::TYPE_MULTIPLE) ? $query[$j]['sum_distance'] : $query[$j]['time'];
+                    break;
+                }
+            }
 
-        $arr = [];
-        foreach ($position as $pos) {
-
-            echo $pos['field2'] . ";\n";
+            $intervalDate = $race->getIntervalDate();
+            $template = ($position <= 3) ? $race->template->diploma_top : $race->template->diploma;
+            $content = $this->renderFile(Yii::getAlias('@common') . "/pdf_template/html/diploma/{$template}", [
+                'race' => $race,
+                'result' => $result,
+                'intervalDate' => $intervalDate,
+                'position' => $position,
+                'user' => $user,
+            ]);
+        }catch (\DomainException $e){
+            Yii::$app->errorHandler->logException($e);
+            Yii::$app->session->getFlash('error', $e->getMessage());
         }
-
-        die();
-
-        $intervalDate = $race->getIntervalDate();
-        $content = $this->renderFile(Yii::getAlias('@common') . "/pdf_template/html/diploma/{$race->template->diploma}", [
-            'race' => $race,
-            'distance' => $distance,
-            'intervalDate' => $intervalDate,
-        ]);
 
         if(Yii::$app->request->isGet) {
             if(!empty($content)){

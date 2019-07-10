@@ -19,7 +19,6 @@ class m190605_092354_create_cabinet_race_pdf_template_table extends Migration
             'diploma' => $this->string()->notNull(),
             'start_number' => $this->string()->notNull(),
             'diploma_top' => $this->string(),
-            'start_number_top' => $this->string(),
             'race_id' => $this->integer()->notNull(),
         ], $tableOptions);
 

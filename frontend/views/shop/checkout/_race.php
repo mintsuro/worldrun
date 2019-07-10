@@ -9,9 +9,10 @@ use yii\helpers\Url;
     <div class="panel-heading"><?= $race->name ?></div>
     <div class="panel-body race-item detail">
         <div class="thumbnail">
-            <?php if ($race->photo): ?>
-                <?= Html::img(\Yii::$app->get('frontendUrlManager')->baseUrl . '/uploads/origin/race/' . $race->photo,
-                    ['style' => ['width' => '200px', 'height' => '200px'], 'class' => 'img-responsive']) ?>
+            <?php if ($race->photo):
+                $file = '/uploads/thumb/race/' . "$race->id-500x500-$race->photo"; ?>
+                <?= Html::img(\Yii::$app->get('frontendUrlManager')->baseUrl . $file,
+                ['class' => 'img-responsive']) ?>
             <?php endif; ?>
         </div>
         <div class="info-race">

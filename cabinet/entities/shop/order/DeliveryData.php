@@ -6,10 +6,12 @@ class DeliveryData
 {
     public $index;
     public $address;
+    public $city;
 
-    public function __construct($index, $address)
+    public function __construct($index, $address, $city)
     {
         $this->index = $index;
         $this->address = $address;
+        $this->city = $city;
     }
 }

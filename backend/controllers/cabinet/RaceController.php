@@ -1,5 +1,4 @@
 <?php
-
 namespace backend\controllers\cabinet;
 
 use cabinet\entities\cabinet\Race;
@@ -71,12 +70,15 @@ class RaceController extends Controller
     public function actionCreate()
     {
         $form = new RaceForm();
+        $race = new Race();
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $race = $this->service->create($form);
+
                 if(!empty($form->photo)) {
-                    $form->upload();
+                    $form->upload($race);
                 }
+
                 return $this->redirect(['view', 'id' => $race->id]);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
@@ -85,6 +87,7 @@ class RaceController extends Controller
         }
         return $this->render('create', [
             'model' => $form,
+            'race'  => $race,
         ]);
     }
 
@@ -102,9 +105,11 @@ class RaceController extends Controller
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $this->service->edit($race->id, $form);
+
                 if(!empty($form->photo)) {
-                    $form->upload();
+                    $form->upload($race);
                 }
+
                 return $this->redirect(['view', 'id' => $race->id]);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);

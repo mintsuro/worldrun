@@ -1,5 +1,4 @@
 <?php
-
 namespace frontend\controllers\cabinet;
 
 use cabinet\entities\cabinet\Track;
@@ -54,7 +53,6 @@ class TrackController extends Controller
                 'class' => VerbFilter::class,
                 'actions' => [
                     'add' => ['post'],
-                    'change-strava-account' => ['get'],
                     'download' => ['post'],
                 ],
             ]
@@ -71,9 +69,9 @@ class TrackController extends Controller
         $race = $this->findRace($raceId);
         $dataProvider = new ActiveDataProvider([
             'query' => $race->getTracks()
-                ->andWhere(['user_id' => \Yii::$app->user->identity->getId()])
+                ->andWhere(['user_id' => \Yii::$app->user->getId()])
         ]);
-        $user = User::findOne(Yii::$app->user->identity->getId());
+        $user = User::findOne(Yii::$app->user->getId());
         $urlOAuth = '';
         $options = [
             'clientId'     => Yii::$app->params['stravaClientId'],
@@ -128,6 +126,44 @@ class TrackController extends Controller
 
     /**
      * @param $raceId
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
+     * @throws \League\OAuth2\Client\Provider\Exception\IdentityProviderException
+     */
+    public function actionChangeStravaAccount($raceId)
+    {
+        $race = $this->findRace($raceId);
+        $options = [
+            'clientId'     => Yii::$app->params['stravaClientId'],
+            'clientSecret' => Yii::$app->params['stravaClientSecret'],
+            'redirectUri'  => Url::to(['/cabinet/track/index', 'raceId' => $race->id])
+        ];
+        $oAuth = new OAuth($options);
+
+        try{
+            if(!isset($_GET['code'])){
+                $urlOAuth = $oAuth->getAuthorizationUrl([
+                    'scope' => [
+                        'public',
+                    ]
+                ]);
+            }else{
+                $token = $oAuth->getAccessToken('authorization_code', [
+                    'code' => $_GET['code']
+                ]);
+
+                $this->stravaService->change(\Yii::$app->user->identity->getId(), $token->getToken());
+
+                return $this->redirect(['index', 'raceId' => $race->id]);
+            }
+        }catch(Exception $e){
+            Yii::$app->errorHandler->logException($e);
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        }
+    }
+
+    /**
+     * @param $raceId
      * @throws NotFoundHttpException
      */
     public function actionAdd($raceId){
@@ -153,6 +189,7 @@ class TrackController extends Controller
     /**
      * @param $raceId
      * @throws NotFoundHttpException
+     * Download tracks from Strava
      */
     public function actionDownload($raceId)
     {
@@ -175,50 +212,6 @@ class TrackController extends Controller
         }
 
         return $this->redirect(['index', 'raceId' => $race->id]);
-    }
-
-    /**
-     * @param $raceId
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException
-     * @throws \League\OAuth2\Client\Provider\Exception\IdentityProviderException
-     */
-    public function actionChangeStravaAccount($raceId){
-        $race = $this->findRace($raceId);
-        $options = [
-            'clientId'     => Yii::$app->params['stravaClientId'],
-            'clientSecret' => Yii::$app->params['stravaClientSecret'],
-            'redirectUri'  => Url::to(['/cabinet/track/index', 'raceId' => $race->id])
-        ];
-        $oAuth = new OAuth($options);
-
-        try{
-            if(!isset($_GET['code'])){
-                $urlOAuth = $oAuth->getAuthorizationUrl([
-                    'scope' => [
-                        'public',
-                        // 'write',
-                        // 'view_private',
-                    ]
-                ]);
-            }else{
-                $token = $oAuth->getAccessToken('authorization_code', [
-                    'code' => $_GET['code']
-                ]);
-
-                if($this->users->findByStrava($token)){
-                    \Yii::$app->session->setFlash('error', 'Такой пользователь Strava уже зарегистрирован.');
-                    return $this->redirect(['index', 'raceId' => $raceId]);
-                }
-
-                $this->stravaService->change(\Yii::$app->user->identity->getId(), $token->getToken());
-
-                return $this->redirect(['index', 'raceId' => $race->id]);
-            }
-        }catch(Exception $e){
-            Yii::$app->errorHandler->logException($e);
-            Yii::$app->session->setFlash('error', $e->getMessage());
-        }
     }
 
     public function actionAll(){

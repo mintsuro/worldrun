@@ -6,6 +6,8 @@ use cabinet\entities\shop\order\Status;
 use cabinet\entities\shop\product\Product;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use yii\helpers\Url;
+use cabinet\entities\cabinet\Race;
 
 class OrderHelper
 {
@@ -18,6 +20,13 @@ class OrderHelper
             Status::COMPLETED => 'Завершен',
             Status::CANCELLED => 'Отменен',
             Status::CANCELLED_BY_CUSTOMER => 'Отменен пользователем',
+        ];
+    }
+
+    public static function statusSent(): array
+    {
+        return [
+            Status::SENT => 'Отправлен'
         ];
     }
 
@@ -42,5 +51,15 @@ class OrderHelper
         return Html::tag('span', ArrayHelper::getValue(self::statusList(), $status), [
             'class' => $class,
         ]);
+    }
+
+    public static function statusColumn(Race $race): string
+    {
+        $linkPay = Html::a('Оплатить', Url::to(['/cabinet/order/race', 'raceId' => $race->id]), [
+            'class' => 'label label-success pay-link']);
+        $note = $race->order->current_status == Status::NEW ?
+            Html::tag('span', 'Не оплачено', ['class' => 'label alt label-danger']) : null;
+        $tag = $race->order->current_status == Status::NEW ? $linkPay : null;
+        return Html::a('Подарки', Url::to(['/cabinet/order/race', 'raceId' => $race->id])) . "<br/>" . $tag . $note;
     }
 }

@@ -17,6 +17,7 @@ use Yii;
  * @property string phone
  * @property integer postal_code
  * @property string address_delivery
+ * @property string city_delivery
  * @property string size_costume
  * @property integer user_id
  */
@@ -26,7 +27,7 @@ class Profile extends ActiveRecord
     const SEX_MALE = 2;
 
     /**
-     * Create in base signup data
+     * Создание записи профиля при регистрации
      * @param string $firstname
      * @return Profile
      */
@@ -58,7 +59,7 @@ class Profile extends ActiveRecord
     }
 
     /**
-     * Create in network data
+     * Создание записи профиля при регистрации из соц.сети
      * @param string $profileData
      * @return Profile
      */
@@ -77,7 +78,7 @@ class Profile extends ActiveRecord
     }
 
     public function edit($firstname, $lastname, $sex, $age, $city, $phone,
-        $postal_code, $address_delivery, $size_costume): void
+        $postal_code, $address_delivery, $city_delivery, $size_costume): void
     {
         $this->first_name = ucfirst($firstname);
         $this->last_name = ucfirst($lastname);
@@ -87,6 +88,7 @@ class Profile extends ActiveRecord
         $this->phone = $phone;
         $this->postal_code = $postal_code;
         $this->address_delivery = $address_delivery;
+        $this->city_delivery = $city_delivery;
         $this->size_costume = $size_costume;
     }
 
@@ -105,6 +107,7 @@ class Profile extends ActiveRecord
             'phone' => 'Телефон',
             'postal_code' => 'Индекс',
             'address_delivery' => 'Адрес доставки',
+            'city_delivery' => 'Город доставки',
             'size_costume' => 'Размер одежды',
         ];
     }

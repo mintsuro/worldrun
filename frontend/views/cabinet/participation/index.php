@@ -8,9 +8,9 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
-use cabinet\entities\shop\order\Status;
 use cabinet\entities\cabinet\Race;
 use cabinet\helpers\RaceHelper;
+use cabinet\helpers\OrderHelper;
 
 $this->title= 'Мои участия';
 $this->params['breadcrumbs'][] = $this->title;
@@ -39,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'label' => 'Дата проведения',
                         'value' => function(Race $model){
-                            return 'Период с ' . date('d.m.Y', strtotime($model->date_start)) . ' по ' . date('d.m.Y', strtotime($model->date_end));
+                            return 'С ' . date('d.m.Y', strtotime($model->date_start)) . ' по ' . date('d.m.Y', strtotime($model->date_end));
                         },
                         'format' => 'raw',
                         'options' => ['width', '100px']
@@ -47,23 +47,23 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'attribute' => 'status',
                         'value' => function (Race $model){
-                            return RaceHelper::statusSpecLabel($model->status, $model->date_reg_to);
+                            return RaceHelper::statusSpecLabel($model->status, $model->date_reg_from, $model->date_reg_to);
                         },
                         'format' => 'raw',
                     ],
                     [
                         'value' => function(Race $model){
                             if(strtotime($model->date_start) < time()):
-                                return Html::a('Мои треки', Url::to(['/cabinet/track/index', 'raceId' => $model->id]));
+                                return Html::a('Треки', Url::to(['/cabinet/track/index', 'raceId' => $model->id]));
                             else:
-                                return Html::tag('span', 'Мои треки');
+                                return Html::tag('span', 'Треки');
                             endif;
                         },
                         'format' => 'raw',
                     ],
                     [
                         'value' => function(Race $model){
-                            return Html::a('Ссылка на стартовый номер', Url::to(['/cabinet/pdf-generator/generate-start-number', 'raceId' => $model->id]), [
+                            return Html::a('Стартовый номер', Url::to(['/cabinet/pdf-generator/generate-start-number', 'raceId' => $model->id]), [
                                 'target' => '_blank',
                             ]);
                         },
@@ -72,11 +72,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'value' => function(Race $model){
                             if(!empty($model->order)):
-                                $linkPay = Html::a('Оплатить', Url::to(['/cabinet/order/race', 'raceId' => $model->id]), [
-                                    'class' => 'label label-success pay-link']);
-                                $tag = $model->order->current_status == Status::NEW ? $linkPay : null;
-                                return Html::a('Подарки', Url::to(['/cabinet/order/race', 'raceId' => $model->id])) . "<br/>" . $tag;
-
+                                return OrderHelper::statusColumn($model);
                             else:
                                 return Html::tag('span', 'Подарки');
                             endif;
@@ -85,12 +81,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     [
                         'value' => function(Race $model){
-                            if(strtotime($model->date_end) < time()) :
+                            if(strtotime($model->date_reg_to) < time() && $model->status !== Race::STATUS_WAIT) :
                                 return Html::a('Диплом', Url::to(['/cabinet/pdf-generator/generate-diploma', 'raceId' => $model->id]), [
                                     'target' => '_blank',
                                 ]);
                             else :
-                                return Html::tag('span', 'Диплом');
+                                return Html::tag('span', 'Диплом') .
+                                    Html::tag('span', 'Будет доступен после забега', ['class' => 'label alt label-default']);
                             endif;
                         },
                         'format' => 'raw',

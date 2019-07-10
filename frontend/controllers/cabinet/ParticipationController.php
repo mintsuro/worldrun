@@ -101,6 +101,7 @@ class ParticipationController extends Controller
     }
 
     /**
+     * @param integer $raceId
      * @return mixed
      */
     public function actionAdd($raceId)

@@ -4,6 +4,7 @@ namespace cabinet\entities\cabinet;
 
 use cabinet\entities\user\User;
 use cabinet\entities\shop\order\Order;
+use cabinet\entities\gallery\Gallery;
 use cabinet\forms\manage\cabinet\TemplateForm;
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use yii\db\ActiveRecord;
@@ -18,10 +19,10 @@ use DateTime;
  * @property integer $id
  * @property string  $name
  * @property string $description
- * @property string  $photo
  * @property integer $status
  * @property integer $date_start
  * @property integer $date_end
+ * @property string  $photo
  * @property string  $date_reg_from
  * @property string  $date_reg_to
  * @property integer $type
@@ -30,7 +31,8 @@ use DateTime;
  * @property PdfTemplate $template
  * @property Order $order
  * @property User $user
- * @property User $users
+ * @property User[] $users
+ * @property Gallery $gallery
  */
 class Race extends ActiveRecord
 {
@@ -79,7 +81,7 @@ class Race extends ActiveRecord
     {
         $template = PdfTemplate::create(
             $form->start_number, $form->diploma,
-            $form->top_start_number, $form->top_diploma);
+            $form->top_diploma);
         $this->template = $template;
     }
 
@@ -87,7 +89,7 @@ class Race extends ActiveRecord
     {
         $item = PdfTemplate::findOne(['race_id' => $raceId]);
         $item->edit($form->start_number, $form->diploma,
-            $form->top_start_number, $form->top_diploma, $raceId);
+            $form->top_diploma, $raceId);
         $item->save();
     }
 
@@ -121,23 +123,8 @@ class Race extends ActiveRecord
         \Yii::$app->db->createCommand("INSERT INTO cabinet_user_participation (race_id, user_id, start_number) VALUES ($raceId, $userId, $res + 1)")->execute();
     }
 
-    /**
-     * @param int $userId
-     * @param int $raceId
-     */
-    public function createStartNumber(int $raceId, int $userId)
+    public function getIntervalDate()
     {
-        //$startNumber = StartNumber::create($raceId, $userId);
-        //$startNumber->save();
-        //\Yii::$app->db->createCommand('INSERT INTO `cabinet_user_startnumber` (`user_id`) VALUES (`1`)')->execute();
-        (new Query)->createCommand('INSERT INTO `cabinet_user_startnumber` (`race_id`, `user_id`, `value`) VALUES (:race_id, :user_id, :value)', [
-            ':race_id' => $raceId,
-            ':user_id' => $userId,
-            ':value' => '(CASE `value` WHEN `race_id` = '. $raceId .' THEN SELECT MAX(`value`) + 1 ELSE 1 END)',
-        ])->execute();
-    }
-
-    public function getIntervalDate(){
         $date_from = new DateTime($this->date_start);
         $date_to = new  DateTime($this->date_end);
         $interval = $date_from->diff($date_to);
@@ -157,8 +144,27 @@ class Race extends ActiveRecord
                 return $assign->start_number;
             }
         }
-
         return null;
+    }
+
+    /**
+     * @param integer $userId
+     * Get count tracks simple type for user
+     * @return boolean
+     */
+    public function getCountSimpleTrack($userId): bool
+    {
+        $flag = true;
+
+        if($this->type === self::TYPE_SIMPLE):
+            $count = $this->getTracks()->andWhere(['user_id' => $userId, 'race_id' => $this->id])->count();
+            if($count < 2){
+                $flag = false;
+                return $flag;
+            }
+        endif;
+
+        return $flag;
     }
 
     ##########################
@@ -193,6 +199,11 @@ class Race extends ActiveRecord
         return $this->hasOne(Order::class, ['race_id' => 'id']);
     }
 
+    public function getGallery(): ActiveQuery
+    {
+        return $this->hasOne(Gallery::class, ['ownerId' => 'id'])->andWhere(['type' => 'race']);
+    }
+
     ##########################
 
     public function attributeLabels()
@@ -200,8 +211,8 @@ class Race extends ActiveRecord
         return [
             'name' => 'Название забега',
             'description' => 'Краткое описание',
-            'photo' => 'Фото',
             'status' => 'Статус',
+            'photo' => 'Изображение',
             'date_start' => 'Дата начала',
             'date_end' => 'Дата завершения',
             'date_reg_from' => 'Дата начала регистрации',
@@ -221,20 +232,6 @@ class Race extends ActiveRecord
                 'class' => SaveRelationsBehavior::class,
                 'relations' => ['userAssignments', 'template'],
             ],
-            /* [
-                'class' => \mohorev\file\UploadImageBehavior::class,
-                'attribute' => 'photo',
-                'scenarios' => ['insert', 'update'],
-                'placeholder' => '@app/modules/user/assets/images/userpic.jpg',
-                'path' => \Yii::getAlias('@uploadsRoot') . '/origin/race',
-                'url' => \Yii::$app->get('frontendUrlManager')->baseUrl . '/uploads/origin/race',
-                'thumbPath' => '@webroot/upload/{id}/images/thumb',
-                'thumbUrl' => '@web/upload/{id}/images/thumb',
-                'thumbs' => [
-                    'thumb' => ['width' => 640, 'height' => 480],
-                    'preview' => ['width' => 100, 'height' => 70],
-                ],
-            ], */
         ];
     }
 

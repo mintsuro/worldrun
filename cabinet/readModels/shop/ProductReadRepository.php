@@ -15,9 +15,11 @@ class ProductReadRepository
         return Product::find()->active()->count();
     }
 
-    public function getAll(): DataProviderInterface
+    public function getAll($raceId): DataProviderInterface
     {
-        $query = Product::find()->alias('p')->active('p')->orderBy(['price' => SORT_ASC]);
+        $query = Product::find()->alias('p')->active('p')
+            ->where(['race_id' => $raceId])
+            ->orderBy(['sort' => SORT_ASC]);
         return $this->getProvider($query);
     }
 

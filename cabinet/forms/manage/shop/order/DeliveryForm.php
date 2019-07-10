@@ -12,6 +12,7 @@ class DeliveryForm extends Model
     public $method;
     public $index;
     public $address;
+    public $city;
 
     private $_order;
 
@@ -19,6 +20,7 @@ class DeliveryForm extends Model
     {
         $this->index = $order->deliveryData->index;
         $this->address = $order->deliveryData->address;
+        $this->city = $order->deliveryData->city;
         parent::__construct($config);
     }
 
@@ -26,8 +28,7 @@ class DeliveryForm extends Model
     {
         return [
             [['index', 'address'], 'required'],
-            [['index'], 'string', 'max' => 255],
-            [['address'], 'string'],
+            [['index', 'address', 'city'], 'string', 'max' => 255],
         ];
     }
 }

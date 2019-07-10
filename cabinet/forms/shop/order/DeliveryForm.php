@@ -10,13 +10,13 @@ class DeliveryForm extends Model
 {
     public $index;
     public $address;
+    public $city;
 
     public function rules(): array
     {
         return [
-           [['index', 'address'], 'required'],
-           [['index'], 'string', 'max' => 255],
-           [['address'], 'string']
+           [['index', 'address', 'city'], 'required'],
+           [['index', 'address', 'city'], 'string', 'max' => 255],
         ];
     }
 
@@ -25,6 +25,7 @@ class DeliveryForm extends Model
         return [
             'index' => 'Почтовый индекс',
             'address' => 'Адрес доставки',
+            'city' => 'Город доставки',
         ];
     }
 }

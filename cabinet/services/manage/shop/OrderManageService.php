@@ -5,6 +5,7 @@ namespace cabinet\services\manage\shop;
 use cabinet\entities\shop\order\CustomerData;
 use cabinet\entities\shop\order\DeliveryData;
 use cabinet\forms\manage\shop\order\OrderEditForm;
+use cabinet\forms\manage\shop\order\OrderSentForm;
 use cabinet\repositories\shop\OrderRepository;
 use yii\db\ActiveQuery;
 use cabinet\entities\shop\order\Order;
@@ -13,18 +14,18 @@ use common\mail\services\Email;
 
 class OrderManageService
 {
-    private $orders;
+    private $repository;
     private $email;
 
-    public function __construct(OrderRepository $orders, Email $email)
+    public function __construct(OrderRepository $repository, Email $email)
     {
-        $this->orders = $orders;
+        $this->repository = $repository;
         $this->email = $email;
     }
 
     public function edit($id, OrderEditForm $form): void
     {
-        $order = $this->orders->get($id);
+        $order = $this->repository->get($id);
 
         $order->edit(
             new CustomerData(
@@ -39,20 +40,22 @@ class OrderManageService
         $order->setDeliveryInfo(
             new DeliveryData(
                 $form->delivery->index,
-                $form->delivery->address
+                $form->delivery->address,
+                $form->delivery->city
             )
         );
 
-        $this->orders->save($order);
+        $this->repository->save($order);
     }
 
     public function remove($id): void
     {
-        $order = $this->orders->get($id);
-        $this->orders->remove($order);
+        $order = $this->repository->get($id);
+        $this->repository->remove($order);
     }
 
     /**
+     * Генерация excel файла для отправки заказа
      * @param $query ActiveQuery
      * @return string
      * @throws \PHPExcel_Exception
@@ -100,7 +103,7 @@ class OrderManageService
         foreach ($query->each() as $row => $order) {
             /** @var Order $order */
 
-            $worksheet->setCellValueByColumnAndRow(0, $row + 2, $order->delivery_index . ', ' . $order->delivery_address);
+            $worksheet->setCellValueByColumnAndRow(0, $row + 2, "$order->delivery_index, $order->delivery_city, $order->delivery_address");
             $worksheet->setCellValueByColumnAndRow(1, $row + 2, $order->customer_name);
             $worksheet->setCellValueByColumnAndRow(2, $row + 2, $order->weight);
             $worksheet->setCellValueByColumnAndRow(3, $row + 2, 0);
@@ -116,19 +119,51 @@ class OrderManageService
     }
 
     /**
-     * @param Order[] $orders
+     * @param $id
+     * @param OrderSentForm $form
+     * @return void
      */
-    public function notifyPay(array $orders)
+    public function setSent($id, OrderSentForm $form): void
     {
-        $messages = [];
+        $order = $this->repository->get($id);
 
-        foreach($orders as $order):
-            $messages[] = $this->email->emailNotifyPay($order->user, $order);
-            $order->notify_send = 1;
+        if(!$order->isSent()){
+            $order->setSent($form);
             $order->save();
-        endforeach;
-
-        $this->email->mailer->sendMultiple($messages);
+            $this->email->sendEmailNotifySentOrder($order->user, $order);
+        }else{
+            new \DomainException('Такой заказ уже был отправлен');
+        }
     }
 
+    /**
+     * Уведомление о напоминании об оплате
+     * @param Order[] $orders
+     * @return string
+     */
+    public function notifyPay(array $orders): string
+    {
+        $messages = [];
+        $res = 'Unpaid orders not found';
+
+        try{
+            foreach($orders as $order):
+                if($order->created_at  < time()){
+                    $messages[] = $this->email->emailNotifyPay($order->user, $order);
+                    $order->notify_send = 1;
+                    $order->update(false);
+                }
+            endforeach;
+
+            if($messages){
+                $this->email->mailer->sendMultiple($messages);
+                $res = 'Send email for notify pay';
+            }
+        }catch(\DomainException $e){
+            \Yii::$app->errorHandler->logException($e);
+            $res = $e->getMessage();
+        }
+
+        return $res;
+    }
 }

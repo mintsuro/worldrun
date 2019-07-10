@@ -15,8 +15,9 @@ use yii\helpers\Url;
 use yii\grid\GridView;
 use yii\bootstrap\Tabs;
 use yii\helpers\ArrayHelper;
+use cabinet\entities\cabinet\Race;
 
-$this->title= 'Мои треки';
+$this->title= 'Треки';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
@@ -81,24 +82,27 @@ $this->params['breadcrumbs'][] = $this->title;
                         'format' => 'raw',
                     ]
                 ],
-            ]) ?>
-            <?= Tabs::widget([
-                'items' => [
-                    [
-                        'label' => 'Подключение через Strava',
-                        'content' => $this->render('_part-strava', [
-                            'user' => $user, 'urlOAuth' => $urlOAuth, 'race' => $race,
-                        ]),
-                        'active' => true,
+            ]); ?>
+            <?php if($race->status !== Race::STATUS_COMPLETE && strtotime($race->date_end) > time() &&
+                        $race->getCountSimpleTrack(Yii::$app->user->getId())):
+                echo Tabs::widget([
+                    'items' => [
+                        [
+                            'label' => 'Подключение через Strava',
+                            'content' => $this->render('_part-strava', [
+                                'user' => $user, 'urlOAuth' => $urlOAuth, 'race' => $race,
+                            ]),
+                            'active' => true,
+                        ],
+                        [
+                            'label' => 'Загрузка скриншота',
+                            'content' => $this->render('_part-screenshot', [
+                                'screenForm' => $screenForm,
+                            ]),
+                        ],
                     ],
-                    [
-                        'label' => 'Загрузка скриншота',
-                        'content' => $this->render('_part-screenshot', [
-                            'screenForm' => $screenForm,
-                        ]),
-                    ],
-                ],
-            ])  ?>
+                ]);
+            endif; ?>
         </div>
     </div>
 </div>

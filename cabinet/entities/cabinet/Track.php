@@ -75,13 +75,13 @@ class Track extends ActiveRecord
     }
 
     public static function createFromScreen(string $file, int $distance, string $date_start,
-        string $elapsed_time, int $raceId): self
+        int $time, int $raceId): self
     {
         $item = new static();
         $item->file_screen = $file;
         $item->distance = $distance;
         $item->date_start = date('Y-m-d', strtotime($date_start)) . ' 00:00:00';
-        $item->elapsed_time = strtotime($elapsed_time);
+        $item->elapsed_time = $time;
         $item->download_method = self::SCREEN_DOWNLOAD;
         $item->status = self::STATUS_MODERATION;
         $item->user_id = Yii::$app->user->identity->getId();
@@ -113,6 +113,11 @@ class Track extends ActiveRecord
         $this->file_screen = $file;
     }
 
+    public function isScreenshots(): bool
+    {
+        return $this->download_method === self::SCREEN_DOWNLOAD;
+    }
+
     public function activate(): void
     {
         if ($this->isActive()) {
@@ -136,6 +141,11 @@ class Track extends ActiveRecord
     public function isDraft(): bool
     {
         return $this->status == self::STATUS_MODERATION;
+    }
+
+    public function isCancel(): bool
+    {
+        return $this->status == self::STATUS_CANCEL;
     }
 
     ##########################

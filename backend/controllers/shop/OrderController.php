@@ -2,6 +2,7 @@
 
 namespace backend\controllers\shop;
 
+use cabinet\forms\manage\shop\order\OrderSentForm;
 use cabinet\services\manage\shop\OrderManageService;
 use cabinet\entities\shop\order\Order;
 use cabinet\entities\shop\order\Status;
@@ -97,12 +98,13 @@ class OrderController extends Controller
     /**
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
         $order = $this->findModel($id);
-
         $form = new OrderEditForm($order);
+
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $this->service->edit($order->id, $form);
@@ -131,6 +133,33 @@ class OrderController extends Controller
             Yii::$app->session->setFlash('error', $e->getMessage());
         }
         return $this->redirect(['index']);
+    }
+
+    /**
+     * Отправка уведомления об отправке заказа
+     * @param $id
+     * @return mixed
+     * @throws NotFoundHttpException
+     */
+    public function actionSent($id)
+    {
+        $order = $this->findModel($id);
+        $form = new OrderSentForm($order);
+
+        if($form->load(Yii::$app->request->post()) && $form->validate()){
+            try{
+                $this->service->setSent($order->id, $form);
+                return $this->redirect(['view', 'id' => $order->id]);
+            }catch(\DomainException $e){
+                Yii::$app->errorHandler->logException($e);
+                Yii::$app->session->setFlash('error', $e->getMessage());
+            }
+        }
+
+        return $this->render('sent', [
+            'order' => $order,
+            'model' => $form,
+        ]);
     }
 
     /**

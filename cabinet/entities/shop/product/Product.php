@@ -1,26 +1,30 @@
 <?php
-
 namespace cabinet\entities\shop\product;
 
 use cabinet\entities\EventTrait;
+use cabinet\entities\gallery\Gallery;
+use cabinet\entities\shop\product\queries\ProductQuery;
+use cabinet\entities\shop\product\events\ProductAppearedInStock;
+use cabinet\entities\cabinet\Race;
+use zxbodya\yii2\galleryManager\GalleryBehavior;
 use yii\db\ActiveRecord;
 use yii\db\ActiveQuery;
 use yii\db\Exception;
-use yii\web\UploadedFile;
-use cabinet\entities\shop\product\queries\ProductQuery;
-use cabinet\entities\shop\product\events\ProductAppearedInStock;
-use cabinet\cart\Cart;
 
 /**
  * @property integer $id
- * @property integer $created_at
- * @property string $code
  * @property string $name
  * @property string $description
  * @property integer $price
- * @property integer $photo
- * @property integer $status
  * @property integer $quantity
+ * @property string  $photo
+ * @property integer $status
+ * @property integer $sort
+ * @property integer $created_at
+ * @property integer $race_id
+ *
+ * @property Race $race
+ * @property Gallery $gallery
  **/
 
 class Product extends ActiveRecord
@@ -30,22 +34,26 @@ class Product extends ActiveRecord
     const STATUS_DRAFT = 0;
     const STATUS_ACTIVE = 1;
 
-    public static function create($name, $description, $price): self
+    public static function create($name, $description, $price, $sort, $raceId): self
     {
         $product = new static();
         $product->name = $name;
         $product->description = $description;
         $product->price = $price;
         $product->status = self::STATUS_ACTIVE;
+        $product->sort = $sort;
+        $product->race_id = $raceId;
         $product->created_at = time();
         return $product;
     }
 
-    public function edit($name, $description, $price): void
+    public function edit($name, $description, $price, $sort, $raceId): void
     {
         $this->name = $name;
         $this->description = $description;
         $this->price = $price;
+        $this->sort = $sort;
+        $this->race_id = $raceId;
     }
 
     public function setPhoto($photo){
@@ -111,15 +119,29 @@ class Product extends ActiveRecord
 
     ##########################
 
+    public function getRace(): ActiveQuery
+    {
+        return $this->hasOne(Race::class, ['id' => 'race_id']);
+    }
+
+    public function getGallery(): ActiveQuery
+    {
+        return $this->hasOne(Gallery::class, ['ownerId' => 'id'])->andWhere(['type' => 'product']);
+    }
+
+    ##########################
+
     public function attributeLabels(){
         return [
             'name' => 'Название',
             'price' => 'Цена',
-            'description' => 'Описание',
             'photo' => 'Фотография',
+            'description' => 'Описание',
             'status' => 'Статус',
             'created_at' => 'Дата создания',
-            'quantity' => 'Количество'
+            'quantity' => 'Количество',
+            'sort' => 'Сортировка',
+            'race_id' => 'Забег'
         ];
     }
 

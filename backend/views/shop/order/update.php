@@ -39,6 +39,7 @@ $this->params['breadcrumbs'][] = 'Редактировать';
         <div class="box-body">
             <?= $form->field($model->delivery, 'index')->textInput()->label('Индекс') ?>
             <?= $form->field($model->delivery, 'address')->textarea(['rows' => 3])->label('Адрес') ?>
+            <?= $form->field($model->delivery, 'city')->textInput(['maxlength' => true])->label('Город') ?>
         </div>
     </div>
 

@@ -116,13 +116,18 @@ a.desc:after {
     border: 1px solid #ccc;
     border-radius: 15px;
     position: relative;
-    min-height: 380px;
+    min-height: 360px;
 }
 .product-index.alt .product-item{
     min-height: 300px;
 }
 .product-item .thumb{
-    display: inline-block;
+    display: block;
+    height: 200px;
+}
+.product-item .thumb img{
+    height: 100%;
+    margin: 0 auto;
 }
 .product-item .product-name{
     margin-bottom: 5px;
@@ -158,14 +163,12 @@ a.desc:after {
     margin-top: 15px;
     text-decoration-line: none;
     cursor: pointer;
-    position: absolute;
-    left: 30%;
-    z-index: 50;
+    position: relative;
 }
 .product-item .loader{
     position: absolute;
     left: 0;
-    bottom: 20px;
+    bottom: 10px;
     z-index: 100;
     width: 100%;
     height: 45px;
@@ -227,7 +230,7 @@ a.desc:after {
 }
 .race-item .tit
 {
-    margin: 15px 0;
+    margin: 10px 0 15px 0;
 }
 .race-item .info-race h4{
     margin: 0 0 5px 0;
@@ -256,11 +259,17 @@ a.desc:after {
     background-position: 50% 50%;
     background-repeat: no-repeat;
 }
+.race-item .thumbnail img{
+    height: 100%;
+}
 .race-item.detail .thumbnail {
     margin-bottom: 0;
 }
 .race-item .info-text span{
     font-size: 14px;
+}
+.race-item .info-text .btn-success{
+    margin-right: 5px;
 }
 .race-item .desc-race{
     clear: left;
@@ -364,6 +373,14 @@ p.mgr-p{
 .strava-tracks .btn-add-track{
     display: block;
 }
+.label.alt{
+    display: inline-block;
+    padding: 5px;
+    margin-right: 5px;
+    margin-top: 5px;
+    white-space: pre-line;
+}
+
 
 @media(max-width:767px) {
     .nav li > form > button.logout {

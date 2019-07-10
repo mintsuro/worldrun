@@ -1,11 +1,11 @@
 <?php
 
-use kartik\widgets\FileInput;
-use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
-
 /* @var $this yii\web\View */
 /* @var $model cabinet\forms\manage\shop\product\ProductForm */
+
+use yii\helpers\Html;
+use yii\bootstrap\ActiveForm;
+use kartik\file\FileInput;
 
 $this->title = 'Создать товар';
 $this->params['breadcrumbs'][] = ['label' => 'Товары', 'url' => ['index']];
@@ -23,20 +23,12 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="row">
                 <div class="col-md-6">
                     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model, 'price')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model, 'sort')->textInput(['value' => 1]) ?>
+                    <?= $form->field($model, 'race_id')->dropDownList($model->getRaces()) ?>
                 </div>
             </div>
             <?= $form->field($model, 'description')->textArea() ?>
-        </div>
-    </div>
-
-    <div class="box box-default">
-        <div class="box-header with-border">Цена (руб.)</div>
-        <div class="box-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <?= $form->field($model, 'price')->textInput(['maxlength' => true])->label(false) ?>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -57,5 +49,4 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 
     <?php ActiveForm::end(); ?>
-
 </div>

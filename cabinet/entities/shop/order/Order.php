@@ -2,6 +2,7 @@
 
 namespace cabinet\entities\shop\order;
 
+use cabinet\forms\manage\shop\order\OrderSentForm;
 use yii\db\ActiveRecord;
 use yii\db\ActiveQuery;
 use yii\helpers\Json;
@@ -24,6 +25,7 @@ use cabinet\entities\cabinet\Race;
  * @property integer $weight
  * @property string $delivery_address
  * @property string $delivery_index
+ * @property string $delivery_city
  * @property string $customer_name
  * @property string $customer_phone
  * @property bool $notify_send
@@ -72,12 +74,19 @@ class Order extends ActiveRecord
         $this->payment_id = $paymentId;
     }
 
+    public function setSent(OrderSentForm $form): void
+    {
+        $this->current_status = $form->status;
+        $this->track_post = $form->track_post;
+    }
+
     public function pay($method): void
     {
         if ($this->isPaid()) {
             throw new \DomainException('Заказ уже оплачен.');
         }
         $this->payment_method = $method;
+        $this->notify_send = 1;
         $this->addStatus(Status::PAID);
     }
 
@@ -178,6 +187,7 @@ class Order extends ActiveRecord
             'delivery_index' => 'Индекс',
             'deliveryData.address' => 'Адрес',
             'delivery_address' => 'Адрес доставки',
+            'delivery_city' => 'Город доставки',
             'customer_name' => 'Имя покупателя',
             'customer_phone' => 'Телефон покупателя',
             'track_post' => 'Трек-номер почты',
@@ -225,7 +235,8 @@ class Order extends ActiveRecord
 
         $this->deliveryData = new DeliveryData(
             $this->getAttribute('delivery_index'),
-            $this->getAttribute('delivery_address')
+            $this->getAttribute('delivery_address'),
+            $this->getAttribute('delivery_city')
         );
 
         parent::afterFind();
@@ -245,6 +256,7 @@ class Order extends ActiveRecord
 
         $this->setAttribute('delivery_index', $this->deliveryData->index);
         $this->setAttribute('delivery_address', $this->deliveryData->address);
+        $this->setAttribute('delivery_city', $this->deliveryData->city);
 
         return parent::beforeSave($insert);
     }

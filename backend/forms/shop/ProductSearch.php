@@ -11,17 +11,15 @@ use yii\helpers\ArrayHelper;
 class ProductSearch extends Model
 {
     public $id;
-    public $code;
     public $name;
-    public $category_id;
-    public $brand_id;
-    public $quantity;
     public $status;
+    public $race_id;
+    public $sort;
 
     public function rules(): array
     {
         return [
-            [['id', 'status', 'quantity'], 'integer'],
+            [['id', 'status', 'sort', 'race_id'], 'integer'],
             [['name'], 'safe'],
         ];
     }
@@ -51,7 +49,7 @@ class ProductSearch extends Model
         $query->andFilterWhere([
             'id' => $this->id,
             'status' => $this->status,
-            'quantity' => $this->quantity,
+            'sort' => $this->sort,
         ]);
 
         $query->andFilterWhere(['like', 'name', $this->name]);

@@ -2,7 +2,7 @@
 
 namespace cabinet\entities\user;
 
-use cabinet\entities\cabinet\StartNumber;
+use cabinet\entities\cabinet\UserAssignment;
 use cabinet\entities\user\Profile;
 use cabinet\helpers\ProfileHelper;
 use Yii;
@@ -32,8 +32,7 @@ use yii\helpers\Json;
  *
  * @property Network[] $networks
  * @property Profile   $profile
- * @property StartNumber $startnumber
- * @property Strava  $strava
+ * @property Strava    $strava
  */
 class User extends ActiveRecord
 {
@@ -216,9 +215,9 @@ class User extends ActiveRecord
         return $this->hasOne(Strava::class, ['user_id' => 'id']);
     }
 
-    public function getStartnumber(): ActiveQuery
+    public function getUserAssignments(): ActiveQuery
     {
-        return $this->hasOne(StartNumber::class, ['user_id' => 'id']);
+        return $this->hasMany(UserAssignment::class, ['user_id' => 'id']);
     }
 
     ###############################

@@ -14,8 +14,8 @@ use cabinet\helpers\ProductHelper;
 <div class="product-item">
     <div class="center thumb">
         <?php if ($model->photo): ?>
-            <?= Html::img(\Yii::$app->get('frontendUrlManager')->baseUrl . '/uploads/origin/product/' . $model->photo,
-                ['style' => ['width' => '200px', 'height' => '200px'], 'class' => 'img-responsive']) ?>
+            <?= Html::img(\Yii::$app->get('frontendUrlManager')->baseUrl . '/uploads/origin/product/' . "$model->id-$model->photo",
+                ['class' => 'img-responsive']) ?>
         <?php endif; ?>
     </div>
     <div class="product-name">
@@ -25,35 +25,11 @@ use cabinet\helpers\ProductHelper;
     <div class="product-price">
         <span class="price-val"><?= Html::encode($model->price) ?> </span><span class="symbol-price">P</span>
     </div>
-    <div class="">
-        <?php foreach($cart->getItems() as $item){
-            if($item->getProductId() == $model->id ){
-                echo Html::tag('span', 'Выбрано', [
-                    'class' => 'btn-choice remove-cart active',
-                    'data-url' => Url::to(['/shop/cart/remove', 'id' => $item->getId()]),
-                    'data-id' => $item->getId(),
-                    'data-product-id' => $model->id,
-                    'data' => ['method' => 'post'],
-                ]);
-                break;
-            }
-        }
-        echo Html::tag('span', 'Выбрать', [
-            'class' => 'btn-choice add-cart', 'id' => 'add-cart',
-            'data-url' => Url::to(['/shop/cart/add', 'id' => $model->id]),
-            'data-product-id' => $model->id,
-            'data' => ['method' => 'post'],
-        ]);?>
-        <div class="loader"></div>
-    </div>
+    <?php if($model->price > 0) echo ProductHelper::buttonCart($cart, $model); ?>
 </div>
 
 <?php $this->registerJs("
-    // Заглушка кнопок для бесплатных товаров
-    if($('.product-item .product-price .price-val').val() == 0 ){
-        $('.product-index').eq(0).addClass('alt').find($('.btn-choice')).hide();
-        $('.product-index').eq(1).addClass('alt').find($('.btn-choice')).hide();
-    } 
+   
     
     // Добавление товара в корзину без перезагрузки страницы
     jQuery('.btn-choice').click(function(e){

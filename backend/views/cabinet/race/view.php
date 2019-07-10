@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 use cabinet\entities\cabinet\Race;
 use cabinet\helpers\RaceHelper;
+use zxbodya\yii2\galleryManager\GalleryManager;
 
 /* @var $this yii\web\View */
 /* @var $race \cabinet\entities\cabinet\Race */

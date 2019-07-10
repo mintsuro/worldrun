@@ -1,8 +1,7 @@
 <?php
-
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-use kartik\widgets\FileInput;
+use kartik\file\FileInput;
 
 /* @var $this yii\web\View */
 /* @var $product cabinet\entities\shop\product\Product */
@@ -18,42 +17,22 @@ $this->params['breadcrumbs'][] = 'Редактировать';
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
 
     <div class="box box-default">
-        <div class="box-header with-border">Общие</div>
+        <div class="box-header with-border">Основное</div>
         <div class="box-body">
             <div class="row">
                 <div class="col-md-6">
                     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model, 'price')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model, 'sort')->textInput(['value' => 1]) ?>
+                    <?= $form->field($model, 'race_id')->dropDownList($model->getRaces()) ?>
                 </div>
             </div>
-            <?= $form->field($model, 'description')->textArea(['rows' => 6]) ?>
+            <?= $form->field($model, 'description')->textArea() ?>
         </div>
     </div>
 
     <div class="box box-default">
-        <div class="box-header with-border">Цена (руб.)</div>
-        <div class="box-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <?= $form->field($model, 'price')->textInput(['maxlength' => true])->label(false) ?>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="box" id="photos">
-        <div class="box-header with-border">Фотографии</div>
-        <div class="box-body">
-            <div class="row">
-                <div>
-                    <?php /* echo Html::a(
-                        Html::img($photo->getThumbFileUrl('file', 'thumb')),
-                        $photo->getUploadedFileUrl('file'),
-                        ['class' => 'thumbnail', 'target' => '_blank']
-                    ) */ ?>
-                </div>
-            </div>
-        </div>
-
+        <div class="box-header with-border">Фотография</div>
         <div class="box-body">
             <?= $form->field($model, 'photo')->widget(FileInput::class, [
                 'options' => [
@@ -69,5 +48,4 @@ $this->params['breadcrumbs'][] = 'Редактировать';
     </div>
 
     <?php ActiveForm::end(); ?>
-
 </div>

@@ -98,7 +98,8 @@ class OrderService
         $order->setDeliveryInfo(
             new DeliveryData(
                 $form->delivery->index,
-                $form->delivery->address
+                $form->delivery->address,
+                $form->delivery->city
             )
         );
 

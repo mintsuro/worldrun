@@ -32,7 +32,9 @@
         "basvandorst/StravaPHP": "1.2.0",
         "kartik-v/yii2-mpdf": "dev-master",
         "spipu/html2pdf": "5.*",
-        "phpoffice/phpexcel": "^1.8"
+        "phpoffice/phpexcel": "^1.8",
+        "zxbodya/yii2-gallery-manager": "*@dev",
+        "costa-rico/yii2-images": "dev-master"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

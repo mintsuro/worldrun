@@ -27,7 +27,9 @@ class ProductManageService
         $product = Product::create(
             $form->name,
             $form->description,
-            $form->price
+            $form->price,
+            $form->sort,
+            $form->race_id
         );
 
         if ($form->photo) {
@@ -46,7 +48,9 @@ class ProductManageService
         $product->edit(
             $form->name,
             $form->description,
-            $form->price
+            $form->price,
+            $form->sort,
+            $form->race_id
         );
 
         if ($form->photo) {

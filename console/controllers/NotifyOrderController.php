@@ -22,27 +22,27 @@ class NotifyOrderController extends Controller
         $this->repository = $repository;
     }
 
-    public function actionIndex()
-    {
-         $this->stdout('Yes, test cron connect' . PHP_EOL);
-    }
 
+    // Уведомление о напоминании об оплате
     public function actionReminderPay(): bool
     {
         $orders = $this->repository->getNewAll();
+        $result = 'Not new orders';
 
         /** @var $order Order */
         if($orders){
             try{
-                $this->orderService->notifyPay($orders);
-                $this->stdout('Send email for notify pay' . PHP_EOL);
+                $result = $this->orderService->notifyPay($orders);
+                $this->stdout($result . PHP_EOL);
                 exit;
             }catch(\DomainException $e){
                 \Yii::$app->errorHandler->logException($e);
+                $this->stdout($e->getMessage() . PHP_EOL);
             }
         }
 
-        $this->stdout('Outstanding orders not found' . PHP_EOL);
+        /** @var $result string */
+        $this->stdout($result . PHP_EOL);
         return true;
     }
 }

@@ -15,6 +15,7 @@ class ProfileEditForm extends Model
     public $phone;
     public $postal_code;
     public $address_delivery;
+    public $city_delivery;
     public $size_costume;
 
     private $_profile;
@@ -29,6 +30,7 @@ class ProfileEditForm extends Model
         $this->phone = $profile->phone;
         $this->postal_code = $profile->postal_code;
         $this->address_delivery = $profile->address_delivery;
+        $this->city_delivery = $profile->city_delivery;
         $this->size_costume = $profile->size_costume;
         $this->_profile = $profile;
         parent::__construct($config);
@@ -38,7 +40,8 @@ class ProfileEditForm extends Model
     {
         return [
             [['first_name', 'last_name', 'sex', 'age', 'city', 'phone'], 'required'],
-            [['first_name', 'last_name', 'age', 'city', 'phone', 'address_delivery', 'size_costume'], 'string', 'max' => 255],
+            [['first_name', 'last_name', 'age', 'city', 'phone', 'address_delivery',
+                'city_delivery', 'size_costume'], 'string', 'max' => 255],
             [['age'], 'integer', 'min' => 5, 'max' => 99],
             [['phone'], 'string', 'max' => 20],
             [['sex', 'postal_code'], 'integer'],
@@ -56,6 +59,7 @@ class ProfileEditForm extends Model
             'phone' => 'Телефон',
             'postal_code' => 'Индекс',
             'address_delivery' => 'Адрес доставки',
+            'city_delivery' => 'Город доставки',
             'size_costume' => 'Размер одежды',
         ];
     }

@@ -14,8 +14,8 @@ $this->params['breadcrumbs'][] = ['label' => 'Заказы', 'url' => ['index']]
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-view">
-
     <p>
+        <?= Html::a('Певерести в статус отправлено', ['sent', 'id' => $order->id], ['class' => 'btn btn-primary']); ?>
         <?= Html::a('Редактировать', ['update', 'id' => $order->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Удалить', ['delete', 'id' => $order->id], [
             'class' => 'btn btn-danger',

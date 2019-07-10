@@ -1,9 +1,9 @@
 <?php
-
 /* @var $this yii\web\View
 *  @var $users \cabinet\entities\user\User[]
 *  @var $model \cabinet\entities\cabinet\Race
 */
+
 use yii\helpers\Html;
 use cabinet\entities\cabinet\Race;
 use cabinet\helpers\UserHelper;
@@ -26,7 +26,14 @@ use cabinet\helpers\UserHelper;
         <tbody>
             <?php foreach($users as $user) : ?>
                 <?php
-                $startNumber = $user->startnumber->value;
+                /** @var \cabinet\entities\cabinet\UserAssignment $assignment  */
+                foreach($user->getUserAssignments()->all() as $assignment):
+                    if($assignment->race_id == $model->id){
+                        $startNumber = $assignment->start_number;
+                        break;
+                    }
+                endforeach;
+
                 $startNumber = str_pad($startNumber, 4, '0', STR_PAD_LEFT);
                 ?>
                 <tr>

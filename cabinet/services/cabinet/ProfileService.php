@@ -36,7 +36,7 @@ class ProfileService
 
         $profile->edit($form->first_name, $form->last_name, $form->sex,
             $form->age, $form->city, $form->phone, $form->postal_code,
-            $form->address_delivery, $form->size_costume);
+            $form->address_delivery, $form->city_delivery, $form->size_costume);
 
         $user->editUsername($form->first_name);
 

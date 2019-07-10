@@ -9,6 +9,9 @@ use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
 use yii\imagine\Image;
+use Imagine\Gd\Imagine;
+use Imagine\Image\Box;
+use Imagine\Image\ImageInterface;
 
 /**
  * @property TemplateForm $template
@@ -17,7 +20,6 @@ class RaceForm extends CompositeForm
 {
     public $name;
     public $description;
-    public $photo;
     public $status;
     public $temp_start_number;
     public $temp_diploma;
@@ -26,6 +28,7 @@ class RaceForm extends CompositeForm
     public $date_reg_from;
     public $date_reg_to;
     public $type;
+    public $photo;
 
     private $_race;
 
@@ -39,10 +42,10 @@ class RaceForm extends CompositeForm
             $this->date_reg_from = date('d.m.Y', strtotime($race->date_reg_from));
             $this->date_reg_to = date('d.m.Y', strtotime($race->date_reg_to));
             $this->type = $race->type;
-            $this->template = new TemplateForm();
+            $this->template = new TemplateForm($race);
             $this->_race = $race;
         }else{
-            $this->template = new TemplateForm($race);
+            $this->template = new TemplateForm();
         }
         parent::__construct($config);
     }
@@ -54,7 +57,7 @@ class RaceForm extends CompositeForm
             [['date_start', 'date_end', 'date_reg_from', 'date_reg_to'], 'date', 'format' => 'php:d.m.Y'],
             [['name', 'description'], 'string'],
             [['status', 'type'], 'integer'],
-            [['photo'], 'file', 'extensions' => 'jpeg, png, jpg', /*'on' => ['insert', 'update']*/],
+            [['photo'], 'file', 'extensions' => 'jpeg, png, jpg'],
         ];
     }
 
@@ -62,8 +65,8 @@ class RaceForm extends CompositeForm
     {
         return [
             'name' => 'Название забега',
-            'photo' => 'Фото',
             'status' => 'Статус',
+            'photo' => 'Фото',
             'date_start' => 'Дата начала',
             'date_end' => 'Дата завершения',
             'date_reg_from' => 'Дата начала регистрации',
@@ -82,16 +85,19 @@ class RaceForm extends CompositeForm
         return false;
     }
 
-    public function upload()
+    public function upload(Race $model)
     {
-        $width = 300;
-        $height = 300;
-        $originPath = \Yii::getAlias('@uploadsRoot') . '/origin/race/' . $this->photo->baseName . '.' . $this->photo->extension;
-        $thumbPath = \Yii::getAlias('@uploadsRoot') . '/origin/race/' . $this->photo->baseName . "x$width-$height" . '.' . $this->photo->extension;
-
+        $imagine = new Imagine();
+        $width = 500;
+        $height = 500;
+        $size = new Box($width, $height);
+        $mode = ImageInterface::THUMBNAIL_OUTBOUND;
+        $file = $this->photo->baseName . '.' . $this->photo->extension;
+        $originPath = \Yii::getAlias('@uploadsRoot') . '/origin/race/' . "$model->id-" . $file;
+        $thumbPath = \Yii::getAlias('@uploadsRoot') . '/thumb/race/' . "$model->id-{$width}x{$height}-" . $file;
         if ($this->validate()) {
             $this->photo->saveAs($originPath);
-            Image::thumbnail($originPath, $width, $height)->save($thumbPath, ['quality' => 90]);
+            $imagine->open($originPath)->thumbnail($size, $mode)->save($thumbPath, ['quantity' => 100]);
             return true;
         } else {
             return false;

@@ -85,7 +85,7 @@ class CheckoutController extends Controller
         $formCode = new PromoCodeForm();
 
         /* @var Product[] $dataProvider */
-        $dataProvider = $this->products->getAll();
+        $dataProvider = $this->products->getAll($race->id);
         $user = $this->users->findActiveById(\Yii::$app->user->id);
 
         if($form->load(Yii::$app->request->post()) && $form->validate()){
@@ -109,6 +109,7 @@ class CheckoutController extends Controller
         ]);
     }
 
+    // Активация промокода
     public function actionCode()
     {
         $code = Yii::$app->request->post('code');

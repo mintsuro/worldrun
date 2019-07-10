@@ -59,8 +59,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="panel panel-default">
         <div class="panel-heading">Доставка</div>
         <div class="panel-body">
-            <?= $form->field($model->delivery, 'index')->textInput(['value' => $user->profile->postal_code, 'readonly' => true]) ?>
-            <?= $form->field($model->delivery, 'address')->textInput(['value' => $user->profile->address_delivery, 'readonly' => true]) ?>
+            <?= $form->field($model->delivery, 'index')->textInput(['value' => $user->profile->postal_code]) ?>
+            <?= $form->field($model->delivery, 'address')->textInput(['value' => $user->profile->address_delivery]) ?>
+            <?= $form->field($model->delivery, 'city')->textInput(['value' => $user->profile->city_delivery]) ?>
         </div>
     </div>
 
@@ -95,7 +96,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <td class="text-right"><strong>Скидка:</strong></td>
             <?php if($session->has('promo_code') && $items) : ?>
                 <td class="text-right"><span class="discount-info">
-                        <span class="numb"><?= PriceHelper::format($cost->getValueDisc($cart->getAmount()) + $session->get('promo_code')) ?></span> руб.
+                    <span class="numb"><?= PriceHelper::format($cost->getValueDisc($cart->getAmount()) + $session->get('promo_code')) ?></span> руб.
                 </span></td>
             <?php  elseif($items) : ?>
                 <td class="text-right"><span class="discount-info">
@@ -135,6 +136,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php
 
 $this->registerJs('
+    // Активация промокода
      jQuery(".active-promocode").click(function(e){
        var path = "'. (string) Url::to(['/shop/checkout/code']) .'";
        var element = this;

@@ -6,10 +6,8 @@
  * @var $profile \cabinet\entities\user\Profile
  */
 
-//use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use cabinet\helpers\ProfileHelper;
-use kartik\date\DatePicker;
 use kartik\form\ActiveForm;
 use cabinet\access\Rbac;
 
@@ -35,6 +33,7 @@ $this->params['breadcrumbs'][] =  $this->title;
             <?= $form->field($model, 'phone')->textInput(['maxLength' => true]) ?>
             <?= $form->field($model, 'postal_code')->textInput() ?>
             <?= $form->field($model, 'address_delivery')->textInput(['maxLength' => true]) ?>
+            <?= $form->field($model, 'city_delivery')->textInput() ?>
             <?= $form->field($model, 'size_costume')->dropDownList(ProfileHelper::sizeCostumeList()) ?>
 
             <div class="form-group">

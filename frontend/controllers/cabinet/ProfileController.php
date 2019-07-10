@@ -40,6 +40,10 @@ class ProfileController extends Controller
         ];
     }
 
+    /**
+     * @return string|\yii\web\Response
+     * @throws NotFoundHttpException
+     */
     public function actionEdit()
     {
         $profile = $this->findModel(Yii::$app->user->identity->getId());

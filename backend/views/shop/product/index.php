@@ -34,14 +34,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         'filter' => false,
                     ],
                     [
-                        'value' => function (Product $model) {
-                            return $model->photo ? Html::img(\Yii::$app->get('frontendUrlManager')->baseUrl . '/uploads/origin/product/' . $model->photo,
-                                ['style' => ['width' => '100px', 'height' => '100px']]) : null;
-                        },
-                        'format' => 'raw',
-                        'contentOptions' => ['style' => 'width: 100px'],
-                    ],
-                    [
                         'label' => 'Название',
                         'attribute' => 'name',
                         'value' => function (Product $model) {
@@ -51,10 +43,28 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     [
                         'label' => 'Стоимость',
-                        'attribute' => 'price_new',
+                        'attribute' => 'price',
                         'value' => function (Product $model) {
                             return PriceHelper::format($model->price);
                         },
+                    ],
+                    [
+                        'attribute' => 'sort',
+                        'filter' => false,
+                    ],
+                    [
+                        'attribute' => 'race_id',
+                        'value' => function(Product $model){
+                            return $model->race->name;
+                        }
+                    ],
+                    [
+                        'value' => function (Product $model) {
+                            return $model->photo ? Html::img(\Yii::$app->get('frontendUrlManager')->baseUrl . '/uploads/origin/product/' . $model->photo,
+                                ['style' => ['width' => '100px', 'height' => '100px']]) : null;
+                        },
+                        'format' => 'raw',
+                        'contentOptions' => ['style' => 'width: 100px'],
                     ],
                     [
                         'label' => 'Статус',

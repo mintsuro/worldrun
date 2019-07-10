@@ -1,15 +1,11 @@
 <?php
 
-use kartik\file\FileInput;
+use zxbodya\yii2\galleryManager\GalleryManager;
 use cabinet\helpers\PriceHelper;
 use cabinet\helpers\ProductHelper;
-use yii\bootstrap\ActiveForm;
-use yii\grid\ActionColumn;
-use yii\grid\GridView;
-use yii\helpers\ArrayHelper;
+use cabinet\entities\shop\product\Product;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
-use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $product cabinet\entities\shop\product\Product */
@@ -59,6 +55,12 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'attribute' => 'price',
                                 'label' => 'Цена (руб.)',
                                 'value' => PriceHelper::format($product->price),
+                            ],
+                            [
+                                'label' => 'Забег',
+                                'value' => function(Product $model){
+                                    return $model->race->name;
+                                },
                             ],
                         ],
                     ]) ?>
