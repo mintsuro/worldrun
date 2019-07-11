@@ -6,6 +6,8 @@
  * @var $intervalDate integer
  * @var $position integer
  */
+
+use cabinet\helpers\TrackHelper;
 ?>
 <!doctype html>
 <html lang="ru">
@@ -58,8 +60,11 @@
                 <div class="str2">учаcтника</div>
                     <div style='color:red;font-size:50px;font-weight:bold;text-align:right;margin:30px 30px;'><?= $user->profile->first_name . "\n" . $user->profile->last_name ?></div>
                     <div style='color:red;font-size:30px;font-weight:bold;text-align:right;margin-right:30px;'>ЗАНЯВШЕГО <?= $position ?> МЕСТО</div>
-                    <?php if($result): ?>
-                    <div style='color:red;font-size:20px;font-weight:bold;text-align:right;margin-right:30px;margin-top:20px;'><span style="color:#fff;">И ПРЕОДОЛЕВШЕГО:</span> <?= $result ?><span style="color:#fff;"> ЗА <?= $intervalDate ?> ДНЕЙ</span></div>
+                    <?php if($race->type == $race::TYPE_MULTIPLE): ?>
+                    <div style='color:red;font-size:20px;font-weight:bold;text-align:right;margin-right:30px;margin-top:20px;'><span style="color:#fff;">И ПРЕОДОЛЕВШЕГО:</span> <?= $result['sum_distance'] ?><span style="color:#fff;"> ЗА <?= $intervalDate ?> ДНЕЙ</span></div>
+                    <?php endif; ?>
+                    <?php if($race->type == $race::TYPE_SIMPLE): ?>
+                        <div style='color:red;font-size:20px;font-weight:bold;text-align:right;margin-right:30px;margin-top:20px;'><span style="color:#fff;">И ПРОБЕЖАВШЕГО ЗА:</span> <?= TrackHelper::convertTime($result['time']) ?> ВРЕМЯ</div>
                     <?php endif; ?>
                 <div style="color:white;font-size:20px;font-weight:bold;text-align:right;margin-right:30px;margin-top:10px;">ДАТА СТАРТА: <span style="color:red;"><?= date('d.m.Y', strtotime($race->date_start)) ?></span></div>
                 <div style="color:white;font-size:20px;font-weight:bold;text-align:right;margin-right:30px;margin-top:10px;">ДАТА ФИНИША: <span style="color:red;"><?= date('d.m.Y', strtotime($race->date_end)) ?></span></div>

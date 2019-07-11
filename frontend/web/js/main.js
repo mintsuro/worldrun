@@ -1,15 +1,25 @@
-$("input.test-ch").on('click', function() {
-    // in the handler, 'this' refers to the box clicked on
-    var $box = $(this);
-    if ($box.is(":checked")) {
-        // the name of the box is retrieved using the .attr() method
-        // as it is assumed and expected to be immutable
-        var group = "input:checkbox[name='" + $box.attr("name") + "']";
-        // the checked state of the group/box on the other hand will change
-        // and the current value is retrieved using .prop() method
-        $(group).prop("checked", false);
-        $box.prop("checked", true);
-    } else {
-        $box.prop("checked", false);
-    }
+// Активация промокода через ajax
+jQuery("#active-promocode-test").click(function(e){
+    var path = "";
+    var element = this;
+    var valueCode = jQuery("#input-value-code").val();
+
+    $.ajax({
+        url: path,
+        type: "POST",
+        data: { code: valueCode },
+        dataType: "json",
+        success: function(data){
+            if(data == null){
+                $(".code-status").addClass("show bg-danger");
+            }else{
+                $(".code-status").addClass("show bg-success").removeClass("bg-danger").text("Промокод активирован.");
+                $(".total-info .numb").text(parseFloat($(".total-info .numb").text())) - parseFloat(data);
+            }
+            console.log(data);
+        },
+        error: function(err){
+            console.log("Ошибка запроса активации.");
+        }
+    });
 });

@@ -11,7 +11,7 @@ class PromoCodeForm extends Model
     public function rules(){
         return [
             //[['code'], 'required'],
-            [['code'], 'string', 'min' => 3, 'max' => 10],
+            [['code'], 'string', 'min' => 3, 'max' => 20],
         ];
     }
 

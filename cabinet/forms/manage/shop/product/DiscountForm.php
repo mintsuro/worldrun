@@ -21,8 +21,8 @@ class DiscountForm extends Model
         if($discount) {
             $this->name = $discount->name;
             $this->value = $discount->value;
-            $this->fromDate = $discount->from_date;
-            $this->toDate = $discount->to_date;
+            $this->fromDate = date('d.m.Y', strtotime($discount->from_date));
+            $this->toDate = date('d.m.Y', strtotime($discount->to_date));
             $this->type = $discount->type;
             $this->typeValue = $discount->type_value;
             $this->sizeProducts = $discount->size_products;

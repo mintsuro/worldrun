@@ -35,8 +35,8 @@ class Discount extends ActiveRecord
         $discount = new static();
         $discount->name = $name;
         $discount->value = $value;
-        $discount->from_date = $fromDate;
-        $discount->to_date = $toDate;
+        $discount->from_date = date('Y-m-d', strtotime($fromDate)) . ' 00:00:00';
+        $discount->to_date = date('Y-m-d', strtotime($toDate)) . ' 23:59:59';
         $discount->type_value = $typeValue;
         $discount->type = $type;
         $discount->size_products = $sizeProducts;
@@ -51,8 +51,8 @@ class Discount extends ActiveRecord
     {
         $this->name = $name;
         $this->value = $value;
-        $this->from_date = $fromDate;
-        $this->to_date = $toDate;
+        $this->from_date = date('Y-m-d', strtotime($fromDate)) . ' 00:00:00';
+        $this->to_date = date('Y-m-d', strtotime($toDate)) . ' 23:59:59';
         $this->type_value = $typeValue;
         $this->type = $type;
         $this->size_products = $sizeProducts;

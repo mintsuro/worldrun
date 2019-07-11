@@ -14,8 +14,7 @@ use cabinet\helpers\ProductHelper;
 <div class="product-item">
     <div class="center thumb">
         <?php if ($model->photo): ?>
-            <?= Html::img(\Yii::$app->get('frontendUrlManager')->baseUrl . '/uploads/origin/product/' . "$model->id-$model->photo",
-                ['class' => 'img-responsive']) ?>
+            <?= Html::img($model->getThumbFileUrl('photo', 'thumb'), ['class' => 'img-responsive']); ?>
         <?php endif; ?>
     </div>
     <div class="product-name">

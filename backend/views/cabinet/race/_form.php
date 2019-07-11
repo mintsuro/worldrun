@@ -10,7 +10,10 @@ use kartik\widgets\DatePicker;
 use kartik\file\FileInput;
 ?>
 <div class="user-update">
-    <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
+    <?php $form = ActiveForm::begin([
+        'enableClientValidation' => false,
+        'options' => ['enctype' => 'multipart/form-data']
+    ]); ?>
 
     <?= $form->field($model, 'name')->textInput(['maxLength' => true]) ?>
     <?= $form->field($model, 'status')->dropDownList(RaceHelper::statusList()) ?>
@@ -62,7 +65,6 @@ use kartik\file\FileInput;
             ])->label(false) ?>
         </div>
     </div>
-
 
     <div class="box box-default">
         <div class="box-header with-border">Макеты файлов для PDF</div>

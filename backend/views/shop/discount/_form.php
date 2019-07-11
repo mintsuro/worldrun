@@ -26,19 +26,19 @@ use cabinet\helpers\DiscountHelper;
         <div class="box-header with-border">Дополнительные</div>
         <div class="box-body">
             <?= $form->field($model, 'fromDate')->widget(DatePicker::class, [
-                'value' => date('d.m.Y'),
+                'value' => date('Y-m-d'),
                 'options' => ['placeholder' => 'Выберите дату начала действия скидка'],
                 'pluginOptions' => [
                     'format' => 'dd.mm.yyyy',
-                    'todayHighlight' => true
+                    'todayHighlight' => true,
                 ]
             ]) ?>
             <?= $form->field($model, 'toDate')->widget(DatePicker::class, [
-                'value' => date('d.m.Y'),
+                'value' => date('Y-m-d'),
                 'options' => ['placeholder' => 'Выберите дату конца действия скидки'],
                 'pluginOptions' => [
                     'format' => 'dd.mm.yyyy',
-                    'todayHighlight' => true
+                    'todayHighlight' => true,
                 ]
             ]) ?>
             <?= $form->field($model, 'type')->dropDownList(DiscountHelper::typeList()) ?>

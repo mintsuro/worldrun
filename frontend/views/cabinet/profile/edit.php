@@ -10,9 +10,9 @@ use yii\helpers\Html;
 use cabinet\helpers\ProfileHelper;
 use kartik\form\ActiveForm;
 use cabinet\access\Rbac;
+use yii\widgets\MaskedInput;
 
 $this->title = 'Редактирование профиля';
-//$this->params['breadcrumbs'][] = ['label' => 'Кабинет', 'url' => ['cabinet/default/index']];
 $this->params['breadcrumbs'][] =  $this->title;
 ?>
 
@@ -28,9 +28,11 @@ $this->params['breadcrumbs'][] =  $this->title;
             <?= $form->field($model, 'first_name')->textInput(['maxLength' => true]) ?>
             <?= $form->field($model, 'last_name')->textInput(['maxLength' => true]) ?>
             <?= $form->field($model, 'sex')->dropDownList(ProfileHelper::sexList()) ?>
-            <?= $form->field($model, 'age')->textInput() ?>
+            <?= $form->field($model, 'age')->textInput(['maxLength' => true]) ?>
             <?= $form->field($model, 'city')->textInput(['maxLength' => true]) ?>
-            <?= $form->field($model, 'phone')->textInput(['maxLength' => true]) ?>
+            <?= $form->field($model, 'phone')->widget(MaskedInput::class,[
+            'mask' => '+7(999)999-99-99',
+            ]); ?>
             <?= $form->field($model, 'postal_code')->textInput() ?>
             <?= $form->field($model, 'address_delivery')->textInput(['maxLength' => true]) ?>
             <?= $form->field($model, 'city_delivery')->textInput() ?>

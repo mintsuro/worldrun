@@ -45,7 +45,7 @@ class ProfileEditForm extends Model
             [['age'], 'integer', 'min' => 5, 'max' => 99],
             [['phone'], 'string', 'max' => 20],
             [['sex', 'postal_code'], 'integer'],
-            //['phone', 'match', 'pattern' => '/^\+7\([0-9]{3}\)\[0-9]{3}\-[0-9]{2}\-[0-9]{2}$/', 'message' => 'Неправильный формат телефонного номера']
+            ['phone', 'match', 'pattern' => '/^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$/', 'message' => 'Неправильный формат телефонного номера']
         ];
     }
 

@@ -5,6 +5,7 @@ namespace cabinet\forms\cabinet;
 use yii\base\Model;
 use yii\web\UploadedFile;
 use yii\imagine\Image;
+use Imagine\Image\Box;
 
 class DownloadScreenForm extends Model
 {
@@ -48,10 +49,11 @@ class DownloadScreenForm extends Model
         $height = 768;
         $originPath = \Yii::getAlias('@uploadsRoot') . '/origin/screen/' . $this->file->baseName . '.' . $this->file->extension;
         $thumbPath = \Yii::getAlias('@uploadsRoot') . '/thumb/screen/' . $this->file->baseName . "x$width-$height" . '.' . $this->file->extension;
+        $size = new Box($width, $height);
 
         if ($this->validate()) {
             $this->file->saveAs($originPath);
-            Image::thumbnail($originPath, $width, $height)->save($thumbPath, ['quality' => 90]);
+            Image::thumbnail($originPath, $width, $height)->save($thumbPath, ['quality' => 100]);
             return true;
         } else {
             return false;

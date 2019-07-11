@@ -15,9 +15,7 @@ $this->title = $race->name;
     <div class="panel-body race-item detail">
         <div class="thumbnail">
             <?php if ($race->photo):
-                $file = '/uploads/thumb/race/' . "$race->id-500x500-$race->photo"; ?>
-                <?= Html::img(\Yii::$app->get('frontendUrlManager')->baseUrl . $file,
-                ['class' => 'img-responsive']) ?>
+                echo Html::img($race->getThumbFileUrl('photo', 'thumb'), ['class' => 'img-responsive']); ?>
             <?php endif; ?>
         </div>
         <div class="info-race">

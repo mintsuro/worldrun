@@ -14,7 +14,10 @@ $this->params['breadcrumbs'][] = 'Редактировать';
 ?>
 <div class="product-update">
 
-    <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
+    <?php $form = ActiveForm::begin([
+        'enableClientValidation' => false,
+        'options' => ['enctype' => 'multipart/form-data'
+    ]]); ?>
 
     <div class="box box-default">
         <div class="box-header with-border">Основное</div>

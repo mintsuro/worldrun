@@ -2,9 +2,9 @@
 
 namespace cabinet\entities\cabinet;
 
+use cabinet\entities\shop\product\Product;
 use cabinet\entities\user\User;
 use cabinet\entities\shop\order\Order;
-use cabinet\entities\gallery\Gallery;
 use cabinet\forms\manage\cabinet\TemplateForm;
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use yii\db\ActiveRecord;
@@ -13,7 +13,6 @@ use yii\web\UploadedFile;
 use cabinet\entities\cabinet\queries\RaceQuery;
 use yii\db\ActiveQuery;
 use DateTime;
-//use yiidreamteam\upload\ImageUploadBehavior;
 
 /**
  * @property integer $id
@@ -32,7 +31,7 @@ use DateTime;
  * @property Order $order
  * @property User $user
  * @property User[] $users
- * @property Gallery $gallery
+ * @property Product[] $products
  */
 class Race extends ActiveRecord
 {
@@ -147,9 +146,8 @@ class Race extends ActiveRecord
         return null;
     }
 
-    /**
+    /** Проверка на количество загруженных треков с типом одиночный забег
      * @param integer $userId
-     * Get count tracks simple type for user
      * @return boolean
      */
     public function getCountSimpleTrack($userId): bool
@@ -199,9 +197,9 @@ class Race extends ActiveRecord
         return $this->hasOne(Order::class, ['race_id' => 'id']);
     }
 
-    public function getGallery(): ActiveQuery
+    public function getProducts(): ActiveQuery
     {
-        return $this->hasOne(Gallery::class, ['ownerId' => 'id'])->andWhere(['type' => 'race']);
+        return $this->hasMany(Product::class, ['race_id' => 'id']);
     }
 
     ##########################
@@ -231,6 +229,17 @@ class Race extends ActiveRecord
             [
                 'class' => SaveRelationsBehavior::class,
                 'relations' => ['userAssignments', 'template'],
+            ],
+            [
+                'class' => '\yiidreamteam\upload\ImageUploadBehavior',
+                'attribute' => 'photo',
+                'thumbs' => [
+                    'thumb' => ['width' => 400, 'height' => 400],
+                ],
+                'filePath' => \Yii::getAlias('@uploadsRoot') . '/origin/race/[[pk]]-[[basename]]',
+                'fileUrl' => \Yii::$app->get('frontendUrlManager')->baseUrl . '/uploads/origin/race/[[pk]]-[[basename]]',
+                'thumbPath' => \Yii::getAlias('@uploadsRoot') . '/thumb/race/[[pk]]-[[basename]]',
+                'thumbUrl' => \Yii::$app->get('frontendUrlManager')->baseUrl . '/uploads/thumb/race/[[pk]]-[[basename]]',
             ],
         ];
     }

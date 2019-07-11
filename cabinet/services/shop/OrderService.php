@@ -114,6 +114,7 @@ class OrderService
         return $order;
     }
 
+    // Рассчет при активации промокода
     public function calcPromoCode($code, $size): float
     {
         $discount = $this->discounts->getByCode($code);

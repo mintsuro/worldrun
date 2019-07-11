@@ -70,19 +70,23 @@ class PdfGeneratorController extends Controller
 
         try {
             if($race->type == Race::TYPE_MULTIPLE){
+                // Многозагрузочный забег
                 $sql = "SELECT SUM(distance) AS sum_distance, user_id FROM cabinet_tracks WHERE race_id = $race->id 
               AND status = '". Track::STATUS_ACTIVE ."' GROUP BY user_id ORDER BY sum_distance DESC";
             }else{
-                $sql = "SELECT SUM(elapsed_time) AS time, user_id FROM cabinet_tracks WHERE race_id = $race->id
+                // Однозагрузочный забег
+                $sql = "SELECT SUM(elapsed_time) AS time, SUM(distance) AS sum_distance, user_id FROM cabinet_tracks WHERE race_id = $race->id
                 AND status = '". Track::STATUS_ACTIVE ."' GROUP BY user_id ORDER BY time ASC";
             }
 
             $query = \Yii::$app->db->createCommand($sql)->queryAll();
 
+            // Определяем победителя из топ-3
             for ($i = 0, $j = 0; $i < count($query); $i++, $j++) {
                 if ($query[$j]['user_id'] == Yii::$app->user->getId()) {
                     $position = $j + 1;
-                    $result = ($race->type == Race::TYPE_MULTIPLE) ? $query[$j]['sum_distance'] : $query[$j]['time'];
+                    //$result = ($race->type == Race::TYPE_MULTIPLE) ? $query[$j]['sum_distance'] : $query[$j]['time'];
+                    $result = $query[$j];
                     break;
                 }
             }
@@ -96,17 +100,16 @@ class PdfGeneratorController extends Controller
                 'position' => $position,
                 'user' => $user,
             ]);
+
+            if(Yii::$app->request->isGet) {
+                if(!empty($content)){
+                    $this->service->generatePDF($content, $orientationPDF, $formatPDF);
+                }
+            }
+
         }catch (\DomainException $e){
             Yii::$app->errorHandler->logException($e);
             Yii::$app->session->getFlash('error', $e->getMessage());
-        }
-
-        if(Yii::$app->request->isGet) {
-            if(!empty($content)){
-                $this->service->generatePDF($content, $orientationPDF, $formatPDF);
-            }else{
-                throw new NotFoundException('Файл для генерации шаблона не найден.');
-            }
         }
     }
 }

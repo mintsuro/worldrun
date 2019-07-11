@@ -4,7 +4,6 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 use cabinet\entities\cabinet\Race;
 use cabinet\helpers\RaceHelper;
-use zxbodya\yii2\galleryManager\GalleryManager;
 
 /* @var $this yii\web\View */
 /* @var $race \cabinet\entities\cabinet\Race */
@@ -49,4 +48,38 @@ $this->params['breadcrumbs'][] = $this->title;
             ]) ?>
         </div>
     </div>
+
+    <?php if($products = $race->products){ ?>
+        <div class="box">
+            <div class="box-header with-border">Товары</div>
+            <div class="box-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" style="margin-bottom: 0">
+                        <thead>
+                        <tr>
+                            <th width="150" class="text-left">Изображение</th>
+                            <th class="text-left">Название</th>
+                            <th class="text-left">Стоимость</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php foreach ($products as $product): ?>
+                            <tr>
+                                <td class="text-left">
+                                    <?= Html::img($product->getThumbFileUrl('photo', 'thumb'), ['class' => 'img-responsive']); ?>
+                                </td>
+                                <td class="text-left">
+                                    <?= $product->name ?>
+                                </td>
+                                <td class="text-left">
+                                    <?= "$product->price руб." ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    <?php } ?>
 </div>

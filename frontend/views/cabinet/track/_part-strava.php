@@ -22,7 +22,7 @@ use yii\helpers\Url;
             ['class' => 'btn btn-success', 'id' => 'btn-download']
         ); ?>
         <?= Html::a(Html::encode('Сменить аккаунт Strava'),
-            Url::to('#'),
+            Url::to($urlOAuth),
             ['class' => 'btn btn-success']
         ); ?>
     <?php endif; ?>
@@ -30,6 +30,7 @@ use yii\helpers\Url;
 </div>
 
 <?php $this->registerJs("
+    // Ajax загрузка треков из Strava
     $('#btn-download').click(function(event){
         event.preventDefault();
         var url = $(this).attr('href');

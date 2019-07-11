@@ -6,10 +6,6 @@ use cabinet\entities\shop\product\Product;
 use cabinet\entities\cabinet\Race;
 use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
-use yii\imagine\Image;
-use Imagine\Gd\Imagine;
-use Imagine\Image\Box;
-use Imagine\Image\ImageInterface;
 
 class ProductForm extends Model
 {
@@ -73,24 +69,5 @@ class ProductForm extends Model
         return ArrayHelper::map(
             Race::find()->where(['>', 'date_end', date('Y-m-d H:i:s')])->orderBy('name')->asArray()->all(), 'id', 'name'
         );
-    }
-
-    public function upload(Product $model)
-    {
-        $imagine = new Imagine();
-        $width = 500;
-        $height = 500;
-        $size = new Box($width, $height);
-        $mode = ImageInterface::THUMBNAIL_OUTBOUND;
-        $file = $this->photo->baseName . '.' . $this->photo->extension;
-        $originPath = \Yii::getAlias('@uploadsRoot') . '/origin/product/' . "$model->id-" . $file;
-        $thumbPath = \Yii::getAlias('@uploadsRoot') . '/thumb/product/' . "$model->id-{$width}x{$height}-" . $file;
-        if ($this->validate()) {
-            $this->photo->saveAs($originPath);
-            $imagine->open($originPath)->thumbnail($size, $mode)->save($thumbPath, ['quantity' => 100]);
-            return true;
-        } else {
-            return false;
-        }
     }
 }

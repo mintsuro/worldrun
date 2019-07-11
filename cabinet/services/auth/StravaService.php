@@ -33,14 +33,13 @@ class StravaService
     public function attach($id, $token): void
     {
         $user = $this->users->get($id);
-        $user->attachStrava($token);
-        $this->users->save($user);
-    }
 
-    public function change($id, $token): void
-    {
-        $user = $this->users->get($id);
-        $user->changeStrava($token);
+        if(!$user->strava){
+            $user->attachStrava($token);
+            $this->users->save($user);
+        }else{
+            $user->changeStrava($token);
+        }
     }
 
     /**

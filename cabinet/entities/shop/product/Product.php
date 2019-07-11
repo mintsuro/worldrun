@@ -2,11 +2,9 @@
 namespace cabinet\entities\shop\product;
 
 use cabinet\entities\EventTrait;
-use cabinet\entities\gallery\Gallery;
 use cabinet\entities\shop\product\queries\ProductQuery;
 use cabinet\entities\shop\product\events\ProductAppearedInStock;
 use cabinet\entities\cabinet\Race;
-use zxbodya\yii2\galleryManager\GalleryBehavior;
 use yii\db\ActiveRecord;
 use yii\db\ActiveQuery;
 use yii\db\Exception;
@@ -24,7 +22,6 @@ use yii\db\Exception;
  * @property integer $race_id
  *
  * @property Race $race
- * @property Gallery $gallery
  **/
 
 class Product extends ActiveRecord
@@ -124,12 +121,24 @@ class Product extends ActiveRecord
         return $this->hasOne(Race::class, ['id' => 'race_id']);
     }
 
-    public function getGallery(): ActiveQuery
-    {
-        return $this->hasOne(Gallery::class, ['ownerId' => 'id'])->andWhere(['type' => 'product']);
-    }
-
     ##########################
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => '\yiidreamteam\upload\ImageUploadBehavior',
+                'attribute' => 'photo',
+                'thumbs' => [
+                    'thumb' => ['width' => 400, 'height' => 400],
+                ],
+                'filePath' => \Yii::getAlias('@uploadsRoot') . '/origin/product/[[pk]]-[[basename]]',
+                'fileUrl' => \Yii::$app->get('frontendUrlManager')->baseUrl . '/uploads/origin/product/[[pk]]-[[basename]]',
+                'thumbPath' => \Yii::getAlias('@uploadsRoot') . '/thumb/product/[[pk]]-[[basename]]',
+                'thumbUrl' => \Yii::$app->get('frontendUrlManager')->baseUrl . '/uploads/thumb/product/[[pk]]-[[basename]]',
+            ],
+        ];
+    }
 
     public function attributeLabels(){
         return [

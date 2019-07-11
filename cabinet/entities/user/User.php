@@ -144,9 +144,8 @@ class User extends ActiveRecord
 
     public function attachStrava($token): void
     {
-        $strava = $this->strava;
-
-        /*if($strava->isFor($token)){
+        /* $strava = $this->strava;
+        /if($strava->isFor($token)){
             throw new \DomainException('Профиль Strava уже был привязан.');
         } */
 
@@ -159,7 +158,7 @@ class User extends ActiveRecord
         $strava = $this->strava;
 
         $strava->edit($token);
-        $strava->save(false);
+        $strava->update(false);
     }
 
     public function confirmSignup(): void

@@ -6,7 +6,6 @@ use cabinet\forms\manage\shop\product\ProductForm;
 use cabinet\services\manage\shop\ProductManageService;
 use cabinet\entities\shop\product\Product;
 use backend\forms\shop\ProductSearch;
-use zxbodya\yii2\galleryManager\GalleryManagerAction;
 use Yii;
 use yii\web\Controller;
 use yii\data\ActiveDataProvider;
@@ -75,10 +74,6 @@ class ProductController extends Controller
             try {
                 $product = $this->service->create($form);
 
-                if(!empty($form->photo)){
-                    $form->upload($product);
-                }
-
                 return $this->redirect(['view', 'id' => $product->id]);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
@@ -104,10 +99,6 @@ class ProductController extends Controller
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $this->service->edit($product->id, $form);
-
-                if(!empty($form->photo)){
-                    $form->upload($product);
-                }
 
                 return $this->redirect(['view', 'id' => $product->id]);
             } catch (\DomainException $e) {

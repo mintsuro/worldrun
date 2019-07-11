@@ -60,6 +60,7 @@ class TrackController extends Controller
     }
 
     /**
+     * Страница треков пользователя
      * @param  integer $raceId
      * @return string|\yii\web\Response || void
      * @throws NotFoundHttpException
@@ -126,44 +127,6 @@ class TrackController extends Controller
 
     /**
      * @param $raceId
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException
-     * @throws \League\OAuth2\Client\Provider\Exception\IdentityProviderException
-     */
-    public function actionChangeStravaAccount($raceId)
-    {
-        $race = $this->findRace($raceId);
-        $options = [
-            'clientId'     => Yii::$app->params['stravaClientId'],
-            'clientSecret' => Yii::$app->params['stravaClientSecret'],
-            'redirectUri'  => Url::to(['/cabinet/track/index', 'raceId' => $race->id])
-        ];
-        $oAuth = new OAuth($options);
-
-        try{
-            if(!isset($_GET['code'])){
-                $urlOAuth = $oAuth->getAuthorizationUrl([
-                    'scope' => [
-                        'public',
-                    ]
-                ]);
-            }else{
-                $token = $oAuth->getAccessToken('authorization_code', [
-                    'code' => $_GET['code']
-                ]);
-
-                $this->stravaService->change(\Yii::$app->user->identity->getId(), $token->getToken());
-
-                return $this->redirect(['index', 'raceId' => $race->id]);
-            }
-        }catch(Exception $e){
-            Yii::$app->errorHandler->logException($e);
-            Yii::$app->session->setFlash('error', $e->getMessage());
-        }
-    }
-
-    /**
-     * @param $raceId
      * @throws NotFoundHttpException
      */
     public function actionAdd($raceId){
@@ -187,6 +150,7 @@ class TrackController extends Controller
     }
 
     /**
+     * Загрузка трека из Strava
      * @param $raceId
      * @throws NotFoundHttpException
      * Download tracks from Strava
@@ -214,7 +178,9 @@ class TrackController extends Controller
         return $this->redirect(['index', 'raceId' => $race->id]);
     }
 
-    public function actionAll(){
+
+    public function actionAll()
+    {
         $dataProvider = new ActiveDataProvider([
             'query' => Track::find(),
         ]);

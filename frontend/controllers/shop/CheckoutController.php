@@ -2,6 +2,7 @@
 
 namespace frontend\controllers\shop;
 
+use cabinet\entities\shop\Discount;
 use cabinet\entities\shop\product\Product;
 use cabinet\forms\shop\order\OrderForm;
 use cabinet\forms\shop\order\PromoCodeForm;
@@ -83,6 +84,11 @@ class CheckoutController extends Controller
 
         $form = new OrderForm();
         $formCode = new PromoCodeForm();
+        $discountCode = Discount::find()->active()
+            ->where(['type' => Discount::TYPE_PROMO_CODE])
+            ->andWhere(['<=', 'from_date', date('Y-m-d H:i:s')])
+            ->andWhere(['>=', 'to_date', date('Y-m-d H:i:s')])
+            ->all();
 
         /* @var Product[] $dataProvider */
         $dataProvider = $this->products->getAll($race->id);
@@ -106,28 +112,44 @@ class CheckoutController extends Controller
             'dataProvider' => $dataProvider,
             'user' => $user,
             'modelCode' => $formCode,
+            'discountCode' => $discountCode,
         ]);
     }
 
     // Активация промокода
     public function actionCode()
     {
+        $session = Yii::$app->session;
         $code = Yii::$app->request->post('code');
+        $discount = Discount::find()->where(['type' => Discount::TYPE_PROMO_CODE])
+            ->andWhere(['code' => $code])->active();
+        // Промокод из сессии
+        $code_session = ($session->has('code')) ? $session->get('code') : null;
 
-        if (Yii::$app->request->isAjax) {
-            try {
-                Yii::$app->response->format = Response::FORMAT_JSON;
-                return Json::decode($this->service->calcPromoCode($code, $this->cart->getAmount()));
-            } catch (\DomainException $e) {
-                Yii::$app->session->setFlash('error', $e->getMessage());
-                Yii::$app->errorHandler->logException($e);
+        if (Yii::$app->request->isPost) {
+            if(!$discount){
+                $session->setFlash('error', 'Такой промокод не зарегистрирован.');
+                return $this->redirect(['index']);
+            }
+
+            if($code != $code_session){
+                try {
+                    Yii::$app->response->format = Response::FORMAT_JSON;
+                    return Json::decode($this->service->calcPromoCode($code, $this->cart->getAmount()));
+                } catch (\DomainException $e) {
+                    Yii::$app->session->setFlash('error', $e->getMessage());
+                    Yii::$app->errorHandler->logException($e);
+                }
+            }else{
+                $session->set('error', 'Такой промокод уже активирвоан');
+                return $this->redirect(['index']);
             }
         }
 
         return false;
     }
 
-    public function beforeAction($action)
+    /* public function beforeAction($action)
     {
         if (!parent::beforeAction($action)) {
             return false;
@@ -136,13 +158,5 @@ class CheckoutController extends Controller
         if(Yii::$app->session->has('promo_code')) Yii::$app->session->remove('promo_code');
 
         return true;
-    }
-
-    public function afterAction($action, $result)
-    {
-       /*$product = $this->products->getFreeAll();
-       $this->cartService->add($product[0]->id);
-       $this->cartService->add($product[1]->id); */
-       return parent::afterAction($action, $result);
-    }
+    } */
 }

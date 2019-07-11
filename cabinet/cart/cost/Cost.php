@@ -37,6 +37,7 @@ final class Cost
     }
 
     /**
+     * Провести рассчет по скидке на кол-во выбранных товаров
      * @param int $size
      * @return float
      * Calculate Discount to select products
@@ -76,16 +77,16 @@ final class Cost
     }
 
     /**
+     * Рассчет скидки при активации промокода
      * @param string $code
      * @param integer $size
      * @return string
-     * Calculate Discount to activate promo code
      */
     public function getTotalDiscCode($code, $size)
     {
         /** @var $discount EntityDiscount */
         try{
-            if($discount = EntityDiscount::find()->active()
+            if($discount = EntityDiscount::find()->active() // Рассчет в процентном соотношении
                 ->andWhere(['AND',
                     'type' => EntityDiscount::TYPE_PROMO_CODE,
                     'type_value' => EntityDiscount::TYPE_VALUE_PERCENT])
@@ -97,7 +98,7 @@ final class Cost
                 \Yii::$app->session->set('promo_code', $sum);
                 return Json::encode($sum);
 
-            }else if($discount = EntityDiscount::find()->active()
+            }else if($discount = EntityDiscount::find()->active()  // Рассчет в числовом соотношении
                 ->andWhere(['AND',
                     'type' => EntityDiscount::TYPE_PROMO_CODE,
                     'type_value' => EntityDiscount::TYPE_VALUE_NUMBER])
@@ -121,10 +122,11 @@ final class Cost
         return $this->discounts;
     }
 
+    // Получить все скидки на товары при выборе n-ых чисел товаров
     public function getEntityDiscounts(): array
     {
         if($discounts = EntityDiscount::find()->active()
-            ->andWhere(['AND', // ? where
+            ->andWhere(['AND',
                 'type' => EntityDiscount::TYPE_SIZE_PROD,
                 'type_value' => EntityDiscount::TYPE_VALUE_NUMBER
             ])->all())

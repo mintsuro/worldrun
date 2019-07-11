@@ -85,25 +85,6 @@ class RaceForm extends CompositeForm
         return false;
     }
 
-    public function upload(Race $model)
-    {
-        $imagine = new Imagine();
-        $width = 500;
-        $height = 500;
-        $size = new Box($width, $height);
-        $mode = ImageInterface::THUMBNAIL_OUTBOUND;
-        $file = $this->photo->baseName . '.' . $this->photo->extension;
-        $originPath = \Yii::getAlias('@uploadsRoot') . '/origin/race/' . "$model->id-" . $file;
-        $thumbPath = \Yii::getAlias('@uploadsRoot') . '/thumb/race/' . "$model->id-{$width}x{$height}-" . $file;
-        if ($this->validate()) {
-            $this->photo->saveAs($originPath);
-            $imagine->open($originPath)->thumbnail($size, $mode)->save($thumbPath, ['quantity' => 100]);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     protected function internalForms(): array
     {
         return ['template'];

@@ -60,8 +60,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     [
                         'value' => function (Product $model) {
-                            return $model->photo ? Html::img(\Yii::$app->get('frontendUrlManager')->baseUrl . '/uploads/origin/product/' . $model->photo,
-                                ['style' => ['width' => '100px', 'height' => '100px']]) : null;
+                            return Html::img($model->getThumbFileUrl('photo', 'thumb'), ['class' => 'img-responsive']);
                         },
                         'format' => 'raw',
                         'contentOptions' => ['style' => 'width: 100px'],

@@ -6,6 +6,8 @@
  * @var $intervalDate integer
  * @var $position integer
  */
+
+use cabinet\helpers\TrackHelper;
 ?>
 <!doctype html>
 <html lang="ru">
@@ -63,8 +65,11 @@
                 <div class="title2">ДИПЛОМ<br><span style="font-size:40px;margin-left:160px;">УЧАСТНИКА</span></div>
                     <div class="name"><?= $user->profile->first_name . "\n" . $user->profile->last_name ?></div>
                     <div class="result">ЗАНЯВШЕГО <span class="red"><?= $position ?> МЕСТО</span></div>
-                    <?php if($result): ?>
-                    <div class="distance">НА ДИСТАНЦИИ <span class="red"><?= $result ?></span></div>
+                    <?php if($race->type == $race::TYPE_MULTIPLE): ?>
+                    <div class="distance">НА ДИСТАНЦИИ <span class="red"><?= $result['sum_distance'] ?></span></div>
+                    <?php endif; ?>
+                    <?php if($race->type == $race::TYPE_SIMPLE): ?>
+                        <div class="distance">ЗА ВРЕМЯ <span class="red"><?= TrackHelper::convertTime($result['time']) ?></span></div>
                     <?php endif; ?>
                 <div class="time">ВРЕМЯ: <span class="red">ЗА <?= $intervalDate ?> ДНЕЙ</span></div>
                 <div class="date">ДАТА: <span class="red"><?= date('d.m.Y', strtotime($race->date_end)) ?></span></div>

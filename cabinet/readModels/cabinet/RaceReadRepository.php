@@ -55,13 +55,21 @@ class RaceReadRepository
         return $this->getProvider($query);
     }
 
+    public function getAll(): DataProviderInterface
+    {
+        $query = Race::find()->alias('r');
+        $query->orderBy(['status' => SORT_ASC]);
+        $query->all();
+        return $this->getProvider($query);
+    }
+
     private function getProvider(ActiveQuery $query): ActiveDataProvider
     {
         return new ActiveDataProvider([
             'query' => $query,
             'sort'  => false,
             'pagination' => [
-                'pageSize' => 5,
+                'pageSize' => 3,
             ]
         ]);
     }

@@ -15,10 +15,8 @@ $url = Url::to(['race', 'id' => $model->id]);
     <h4 class="tit"><?= Html::a(Html::encode($model->name), Url::to(['/cabinet/participation/view', 'id' => $model->id])) ?></h4>
     <div class="thumbnail">
         <?php if ($model->photo):
-            $file = '/uploads/thumb/race/' . "$model->id-500x500-$model->photo"; ?>
-            <?= Html::img(\Yii::$app->get('frontendUrlManager')->baseUrl . $file,
-                ['class' => 'img-responsive']) ?>
-        <?php endif; ?>
+            echo Html::img($model->getThumbFileUrl('photo', 'thumb'), ['class' => 'img-responsive']);
+        endif; ?>
     </div>
     <div class="info-race">
         <div class="info-text">

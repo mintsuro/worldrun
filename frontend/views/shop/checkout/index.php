@@ -8,6 +8,7 @@
 /* @var $dataProvider \yii\data\DataProviderInterface */
 /* @var $user \cabinet\entities\user\User */
 /* @var $products \cabinet\entities\shop\product\Product[] */
+/* @var $discountCode \cabinet\entities\shop\Discount */
 
 use cabinet\helpers\PriceHelper;
 use cabinet\helpers\ProfileHelper;
@@ -65,21 +66,24 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 
+    <?php if($discountCode){ ?>
     <div class="panel panel-default">
         <div class="panel-heading">Купон на скидку</div>
         <div class="panel-body">
             <div class="row">
                 <div class="col-sm-4">
-                    <?php $disabled = $items ? false : true; ?>
-                    <?= Html::activeTextInput($modelCode, 'code', [
+                    <?php $disabled = $items ? false : true;
+                    echo Html::activeTextInput($modelCode, 'code', [
                         'class' => 'form-control',
                         'id' => 'input-value-code',
                         'disabled' => $disabled
-                    ]); ?>
+                    ]);  ?>
                 </div>
                 <div class="col-sm-3">
-                    <?php $class = $items ? 'show' : 'hidden'; ?>
-                    <?php echo Html::button('Активировать', ['class' => 'active-promocode btn btn-success ' . $class]) ?>
+                    <?php  $class = $items ? 'show' : 'hidden';
+                     echo Html::button('Активировать', [
+                        'class' => 'active-promocode btn btn-success ' . $class,
+                        'id' => 'active-promocode']); ?>
                 </div>
                 <div class="col-sm-4">
                     <div class="code-status">Неверный промокод или он уже активирован.</div>
@@ -88,7 +92,9 @@ $this->params['breadcrumbs'][] = $this->title;
             <p style="padding-top: 10px">Для активации промокода выберите подарок</p>
         </div>
     </div>
+    <?php } ?>
 
+    <!-- значение по умолчанию для отправки формы заказа -->
     <?= $form->field($model, 'note')->hiddenInput(['value' => 'text'])->label(false) ?>
 
     <table class="table table-bordered">
@@ -136,31 +142,15 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php
 
 $this->registerJs('
-    // Активация промокода
-     jQuery(".active-promocode").click(function(e){
+    // Активация промокода 
+     jQuery("#active-promocode-test").click(function(e){
        var path = "'. (string) Url::to(['/shop/checkout/code']) .'";
        var element = this;
        var valueCode = jQuery("#input-value-code").val(); 
         
-        $.ajax({
-            url: path,
-            type: "POST",
-            data: { code: valueCode },
-            dataType: "json",
-            success: function(data){
-                if(data == null){
-                    $(".code-status").addClass("show bg-danger");
-                }else{
-                    $(".code-status").addClass("show bg-success").removeClass("bg-danger").text("Промокод активирован.");
-                    $(".total-info .numb").text(parseFloat($(".total-info .numb").text())) - parseFloat(data);   
-                }
-                
-                console.log(data);
-            },
-            error: function(err){
-               console.log("Ошибка запроса активации.");
-            }
-        });
+        $.post(path, {code: valueCode}, function( data ) {
+          console.log( "Data Loaded: " + data );
+        }, "json");
     });    
 ', $this::POS_END);
 ?>

@@ -81,7 +81,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     [
                         'value' => function(Race $model){
-                            if(strtotime($model->date_reg_to) < time() && $model->status !== Race::STATUS_WAIT) :
+                            if(strtotime($model->date_end) < time() && $model->status !== Race::STATUS_WAIT) :
                                 return Html::a('Диплом', Url::to(['/cabinet/pdf-generator/generate-diploma', 'raceId' => $model->id]), [
                                     'target' => '_blank',
                                 ]);

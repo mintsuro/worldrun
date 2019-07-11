@@ -44,8 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'attribute' => 'photo',
                         'value' => function(Race $model){
-                            return $model->photo ? Html::img(\Yii::$app->get('frontendUrlManager')->baseUrl . '/uploads/origin/race/' . "$model->id-$model->photo",
-                                ['style' => ['width' => '100px', 'height' => '70px']]) : null;
+                            return Html::img($model->getThumbFileUrl('photo', 'thumb'), ['class' => 'img-responsive']);
                         },
                         'format' => 'raw',
                         'contentOptions' => ['style' => 'width: 100px'],

@@ -18,7 +18,7 @@ class Email
     }
 
     /**
-     * Sends confirmation email to user
+     * Отправка почты при регистрации
      * @param User $user user model to with email should be send
      * @param string generate password
      * @return bool whether the email was sent
@@ -37,7 +37,7 @@ class Email
     }
 
     /**
-     * Sends registration race to user
+     * Отправка почты зарегистривованному пользователю
      * @param User $user user model to with email should be send
      * @param Race $race user participation in the race
      * @return bool whether the email was sent
@@ -56,6 +56,7 @@ class Email
     }
 
     /**
+     * Отправка почты о напоминании оплаты
      * @param User $user
      * @param Order $order
      * @return \yii\mail\MessageInterface
@@ -74,6 +75,7 @@ class Email
 
 
     /**
+     * Отправка почты об отправке заказа
      * @param User $user
      * @param Order $order
      * @return bool whether the email was sent
@@ -92,6 +94,7 @@ class Email
     }
 
     /**
+     * Отправка почты о напоминаиии старта забега
      * @param User $user
      * @param Race $race
      * @return \yii\mail\MessageInterface
@@ -109,6 +112,7 @@ class Email
     }
 
     /**
+     * Отправка почты о напоминании скорого завершения забега (до n часов)
      * @param User $user
      * @param Race $race
      * @return \yii\mail\MessageInterface
@@ -126,6 +130,7 @@ class Email
     }
 
     /**
+     * Отправка почты о завершении забега
      * @param User $user
      * @param Race $race
      * @return \yii\mail\MessageInterface
@@ -143,10 +148,10 @@ class Email
     }
 
     /**
+     * Отправка почты при проверке скриншота
      * @param User $user
      * @param Track $track
      * @return bool whether the email was sent
-     * Send email about checking track screenshots
      */
     public function sendEmailNotifyResModTrack(User $user, Track $track)
     {
