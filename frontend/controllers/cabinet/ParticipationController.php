@@ -6,6 +6,7 @@ use cabinet\entities\cabinet\Race;
 use cabinet\readModels\cabinet\RaceReadRepository;
 use cabinet\services\cabinet\RaceService;
 use cabinet\readModels\UserReadRepository;
+use common\mail\services\Email;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -19,6 +20,7 @@ class ParticipationController extends Controller
     private $races;
     private $users;
     private $service;
+    private $email;
 
     public function __construct(
         $id,
@@ -26,6 +28,7 @@ class ParticipationController extends Controller
         RaceReadRepository $races,
         UserReadRepository $users,
         RaceService $service,
+        Email $email,
         $config = []
     )
     {
@@ -33,6 +36,7 @@ class ParticipationController extends Controller
         $this->races = $races;
         $this->users = $users;
         $this->service = $service;
+        $this->email = $email;
     }
 
     public function behaviors(){
@@ -101,6 +105,7 @@ class ParticipationController extends Controller
     }
 
     /**
+     * Регистрация пользователя на забег
      * @param integer $raceId
      * @return mixed
      */

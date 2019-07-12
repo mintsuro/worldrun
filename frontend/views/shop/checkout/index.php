@@ -1,5 +1,4 @@
 <?php
-
 /* @var $this  yii\web\View */
 /* @var $cart  \cabinet\cart\Cart */
 /* @var $model \cabinet\forms\Shop\Order\OrderForm */
@@ -100,9 +99,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <table class="table table-bordered">
         <tr>
             <td class="text-right"><strong>Скидка:</strong></td>
-            <?php if($session->has('promo_code') && $items) : ?>
+            <?php if(isset($session['promo_code']) && $items) : ?>
                 <td class="text-right"><span class="discount-info">
-                    <span class="numb"><?= PriceHelper::format($cost->getValueDisc($cart->getAmount()) + $session->get('promo_code')) ?></span> руб.
+                    <span class="numb"><?= PriceHelper::format($cost->getValueDisc($cart->getAmount()) + $session['promo_code']['value']) ?></span> руб.
                 </span></td>
             <?php  elseif($items) : ?>
                 <td class="text-right"><span class="discount-info">
@@ -114,9 +113,9 @@ $this->params['breadcrumbs'][] = $this->title;
         </tr>
         <tr>
             <td class="text-right"><strong>Итого:</strong></td>
-            <?php if($session->has('promo_code') && $items) : ?>
+            <?php if(isset($session['promo_code']) && $items) : ?>
                 <td class="text-right"><span class="total-info">
-                    <span class="numb"><?= PriceHelper::format($cost->getTotalDiscSizeProd($cart->getAmount()) - $session->get('promo_code')) ?></span> руб.
+                    <span class="numb"><?= PriceHelper::format($cost->getTotalDiscSizeProd($cart->getAmount()) - $session['promo_code']['value']) ?></span> руб.
                 </span></td>
             <?php elseif($items) : ?>
                 <td class="text-right"><span class="total-info">
@@ -140,17 +139,32 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 
 <?php
-
 $this->registerJs('
     // Активация промокода 
-     jQuery("#active-promocode-test").click(function(e){
-       var path = "'. (string) Url::to(['/shop/checkout/code']) .'";
-       var element = this;
-       var valueCode = jQuery("#input-value-code").val(); 
-        
-        $.post(path, {code: valueCode}, function( data ) {
-          console.log( "Data Loaded: " + data );
-        }, "json");
-    });    
+     jQuery("#active-promocode").click(function(e){
+    var path = "'. Url::to(['/shop/checkout/code']) . '";
+    var element = this;
+    var valueCode = jQuery("#input-value-code").val();
+
+    $.ajax({
+        url: path,
+        type: "POST",
+        data: { code: valueCode },
+        dataType: "json",
+        success: function(data){
+            if(data.flag == false){
+                $(".code-status").addClass("show bg-danger");
+                $(".code-status").text(data.text);
+            }else{
+                $(".code-status").addClass("show bg-success").removeClass("bg-danger").text(data.text);
+                $(".total-info .numb").text(parseFloat($(".total-info .numb").text())) - parseFloat(data.value);
+            } 
+            console.log(data);
+        },
+        error: function(err){
+            console.log(err);
+        }
+    });
+});    
 ', $this::POS_END);
 ?>

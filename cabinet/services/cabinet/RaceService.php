@@ -40,6 +40,6 @@ class RaceService
         $user = $this->users->get($userId);
 
         $race->assignUser($user->id, $race->id);
-        // $this->email->sendEmailRegRace($user, $race);
+        $this->email->sendEmailRegRace($user, $race);
     }
 }

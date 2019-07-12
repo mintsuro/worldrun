@@ -23,8 +23,10 @@ class NotifyRaceController extends Controller
         $this->service = $service;
     }
 
+    // Уведомление о старте забега
     public function actionStart()
     {
+        $result = 'Не найдено новых забегов по поиску';
         $races = $this->repository->getByStartDate()->all();
 
         if($races){
@@ -40,16 +42,16 @@ class NotifyRaceController extends Controller
 
         /** @var $result string */
         $this->stdout($result . PHP_EOL);
-        return true;
     }
 
+    // Уведомление о скором окончании забега (многозагрузочный) забега за 24 часа
     public function actionEnd()
     {
+        $result = 'Не найдено новых забегов по поиску';
         $races =  $this->repository->find()
             ->where(['<=', 'date_start', date('Y-m-d H:i:s')])
-            ->andWhere(['>=', 'date_end', date('Y-m-d H:i:s'), time() - 3600 * 24])
+            ->andWhere(['>=', 'date_end', date('Y-m-d H:i:s', time() - 3600 * 24)])
             ->andWhere(['type' => Race::TYPE_MULTIPLE])
-            ->orderBy(['r.date_start', SORT_ASC])
             ->all();
 
         if($races){
@@ -65,11 +67,12 @@ class NotifyRaceController extends Controller
 
         /** @var $result string */
         $this->stdout($result . PHP_EOL);
-        return true;
     }
 
+    // Уведомление о завершении забега
     public function actionFinish()
     {
+        $result = 'Не найдено новых забегов по поиску';
         $races = $this->repository->getByFinishDate()->all();
 
         if($races){
@@ -85,6 +88,5 @@ class NotifyRaceController extends Controller
 
         /** @var $result string */
         $this->stdout($result . PHP_EOL);
-        return true;
     }
 }

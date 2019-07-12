@@ -97,11 +97,11 @@ class RaceManageService
             $race->save();
         endforeach;
 
-        $res = 'Notifications all sent out';
+        $res = 'Новых уведомлений нет';
 
         if($messages){
             $this->email->mailer->sendMultiple($messages);
-            $res = 'Sent start race notification';
+            $res = 'Уведомление отправлено';
         }
 
         return $res;
@@ -128,11 +128,11 @@ class RaceManageService
             }
         endforeach;
 
-        $res = 'Notifications all sent out';
+        $res = 'Новых уведомлений нет';
 
         if($messages){
             $this->email->mailer->sendMultiple($messages);
-            $res = 'Sent end race notification';
+            $res = 'Уведомление отправлено';
         }
 
         return $res;
@@ -161,11 +161,11 @@ class RaceManageService
             $race->save();
         endforeach;
 
-        $res = 'Notifications all sent out';
+        $res = 'Новых уведомлений нет';
 
         if($messages){
             $this->email->mailer->sendMultiple($messages);
-            $res = 'Sent end race notification';
+            $res = 'Уведомление отправлено';
         }
 
         return $res;

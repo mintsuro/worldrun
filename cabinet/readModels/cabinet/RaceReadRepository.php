@@ -22,7 +22,6 @@ class RaceReadRepository
         $query->where(['<=', 'date_start', date('Y-m-d H:i:s')]);
         $query->andWhere(['>=', 'date_end', date('Y-m-d H:i:s')]);
         //$query->andWhere(['status' => Race::STATUS_REGISTRATION]);
-        $query->orderBy(['date_start', SORT_ASC]);
         return $query;
     }
 
@@ -31,7 +30,6 @@ class RaceReadRepository
         $query = Race::find()->active();
         $query->where(['<=', 'date_end', date('Y-m-d H:i:s')]);
         //$query->andWhere(['status' => Race::STATUS_WAIT]);
-        $query->orderBy(['date_start', SORT_ASC]);
         return $query;
     }
 
@@ -41,7 +39,6 @@ class RaceReadRepository
         //$query->join('INNER JOIN', 'cabinet_user_participation us', 'us.user_id != :user_id', [':user_id' => $user->id]);
         $query->where(['<=', 'date_reg_from', date('Y-m-d H:i:s')]);
         $query->andWhere(['>=', 'date_reg_to', date('Y-m-d H:i:s')]);
-        $query->orderBy('date_end');
         $query->all();
         return $this->getProvider($query);
     }

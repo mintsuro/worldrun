@@ -53,23 +53,22 @@ final class Cost
             if($size == $discount->size_products){
                 return $this->getOrigin() - $discount->value;
             }
-            /*elseif($size <= $discount->size_products){
-                return $this->getOrigin() - $discount->value;
-            }*/
         }
 
-        //return $this->getOrigin() - 300;
         return $this->getOrigin();
     }
 
+    /**
+     * Значение скидки
+     * @param int $size
+     * @return float
+     */
     public function getValueDisc(int $size): float
     {
         /** @var EntityDiscount $discount */
         foreach($this->getEntityDiscounts() as $discount){
             if($size == $discount->size_products){
                 return $discount->value;
-            }elseif($size > 3){
-                return 300; // временная загушка (добавить поле скидка по умолчанию)
             }
         }
 
@@ -84,6 +83,8 @@ final class Cost
      */
     public function getTotalDiscCode($code, $size)
     {
+        $session = \Yii::$app->session;
+
         /** @var $discount EntityDiscount */
         try{
             if($discount = EntityDiscount::find()->active() // Рассчет в процентном соотношении
@@ -93,10 +94,14 @@ final class Cost
                 ->andWhere(['code' => $code])
                 ->one())
             {
-                $sum = ceil($this->getTotalDiscSizeProd($size) * $discount->value / 100); // (int) 35
+                $session['promo_code'] = [
+                    'code'  => $code,
+                    'value' => $discount->value,
+                    'type'  => $discount->type_value,
+                ];
+                $sum = ceil($this->getTotalDiscSizeProd($size) * $discount->value / 100);
                 $total = $this->getTotalDiscSizeProd($size) - $sum;
-                \Yii::$app->session->set('promo_code', $sum);
-                return Json::encode($sum);
+                return $sum;
 
             }else if($discount = EntityDiscount::find()->active()  // Рассчет в числовом соотношении
                 ->andWhere(['AND',
@@ -105,9 +110,13 @@ final class Cost
                 ->andWhere(['code' => $code])
                 ->one())
             {
+                $session['promo_code'] = [
+                    'code'  => $code,
+                    'value' => $discount->value,
+                    'type'  => $discount->type_value,
+                ];
                 $sum = ceil($this->getTotalDiscSizeProd($size) - $discount->value);
-                \Yii::$app->session->set('promo_code', $sum);
-                return Json::encode($sum);
+                return $sum;
             }
         }catch(\DomainException $e){
             throw new \DomainException('Такой промокод не найден.');
@@ -122,7 +131,7 @@ final class Cost
         return $this->discounts;
     }
 
-    // Получить все скидки на товары при выборе n-ых чисел товаров
+    // Получить автоматические скидки на выборку n-ое число товаров
     public function getEntityDiscounts(): array
     {
         if($discounts = EntityDiscount::find()->active()

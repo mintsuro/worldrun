@@ -27,7 +27,7 @@ class NotifyOrderController extends Controller
     public function actionReminderPay(): bool
     {
         $orders = $this->repository->getNewAll();
-        $result = 'Not new orders';
+        $result = 'Не найдено новых заказов';
 
         /** @var $order Order */
         if($orders){
@@ -43,6 +43,5 @@ class NotifyOrderController extends Controller
 
         /** @var $result string */
         $this->stdout($result . PHP_EOL);
-        return true;
     }
 }

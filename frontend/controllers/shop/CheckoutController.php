@@ -67,7 +67,7 @@ class CheckoutController extends Controller
                 'actions' => [
                     'code' => ['POST'],
                 ],
-            ]
+            ],
         ];
     }
 
@@ -119,44 +119,25 @@ class CheckoutController extends Controller
     // Активация промокода
     public function actionCode()
     {
-        $session = Yii::$app->session;
         $code = Yii::$app->request->post('code');
-        $discount = Discount::find()->where(['type' => Discount::TYPE_PROMO_CODE])
-            ->andWhere(['code' => $code])->active();
-        // Промокод из сессии
-        $code_session = ($session->has('code')) ? $session->get('code') : null;
 
-        if (Yii::$app->request->isPost) {
-            if(!$discount){
-                $session->setFlash('error', 'Такой промокод не зарегистрирован.');
-                return $this->redirect(['index']);
-            }
-
-            if($code != $code_session){
-                try {
-                    Yii::$app->response->format = Response::FORMAT_JSON;
-                    return Json::decode($this->service->calcPromoCode($code, $this->cart->getAmount()));
-                } catch (\DomainException $e) {
-                    Yii::$app->session->setFlash('error', $e->getMessage());
-                    Yii::$app->errorHandler->logException($e);
-                }
-            }else{
-                $session->set('error', 'Такой промокод уже активирвоан');
-                return $this->redirect(['index']);
-            }
+        if (Yii::$app->request->isAjax){
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return Json::decode($this->service->resultPromoCode($code));
         }
-
-        return false;
     }
 
-    /* public function beforeAction($action)
+    public function beforeAction($action)
     {
         if (!parent::beforeAction($action)) {
             return false;
         }
 
-        if(Yii::$app->session->has('promo_code')) Yii::$app->session->remove('promo_code');
+        /* if($action->id === 'index') {
+            $session = Yii::$app->session;
+            if (isset($session['promo_code'])) unset($session['promo_code']);
+        } */
 
         return true;
-    } */
+    }
 }

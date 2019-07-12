@@ -4,6 +4,8 @@ namespace cabinet\services\shop;
 
 use cabinet\cart\Cart;
 use cabinet\cart\CartItem;
+use cabinet\cart\cost\Discount;
+use cabinet\entities\shop\Discount as DiscountEntity;
 use cabinet\entities\shop\order\CustomerData;
 use cabinet\entities\shop\order\DeliveryData;
 use cabinet\entities\shop\order\Order;
@@ -16,6 +18,8 @@ use cabinet\repositories\shop\ProductRepository;
 use cabinet\repositories\UserRepository;
 use cabinet\services\TransactionManager;
 use phpDocumentor\Reflection\DocBlock\Tags\Throws;
+use Yii;
+use yii\helpers\Json;
 
 class OrderService
 {
@@ -57,21 +61,29 @@ class OrderService
     {
         $user = $this->users->get($userId);
         $session = \Yii::$app->session;
-
         $products = [];
-        $cost = function() use ($session){
-            if(!$session->has('promo_code')) {
-                if ($this->cart->getItems() > 1) {
-                    return (int) $this->cart->getCost()->getTotalDiscSizeProd($this->cart->getAmount());
-                } else {
-                    return (int) $this->cart->getCost()->getOrigin();
-                }
+
+        if(!isset($session['promo_code'])) {
+            if($this->cart->getItems() > 1){
+                $cost = $this->cart->getCost()->getTotalDiscSizeProd($this->cart->getAmount());
             }else{
-                $valuePromoCode = (int) $session->get('promo_code');
-                $discountValue = (int) $this->cart->getCost()->getTotalDiscSizeProd($this->cart->getAmount());
-                return $discountValue - $valuePromoCode;
+                $cost = $this->cart->getCost()->getOrigin();
             }
-        };
+        }else{
+            $valuePromoCode = $session['promo_code']['value'];
+            if($session['promo_code']['type'] == DiscountEntity::TYPE_VALUE_NUMBER){
+                // Рассчет скидки при числовом коэффиценте значения промокода
+                $discountValue = $this->cart->getCost()->getTotalDiscSizeProd($this->cart->getAmount());
+                $cost = $discountValue - $valuePromoCode;
+            }elseif($session['promo_code']['type'] == DiscountEntity::TYPE_VALUE_PERCENT){
+                // Рассчет скидки при процентном коэффиценте значения промокода
+                $discountValue = $this->cart->getCost()->getTotalDiscSizeProd($this->cart->getAmount());
+                $cost = $discountValue - $discountValue * $valuePromoCode / 100;
+            }else{
+                $discountValue = $this->cart->getCost()->getTotalDiscSizeProd($this->cart->getAmount());
+                $cost = $discountValue - $valuePromoCode;
+            }
+        }
 
         $items = array_map(function (CartItem $item){
             $product = $item->getProduct();
@@ -90,9 +102,7 @@ class OrderService
                 $form->customer->phone
             ),
             $items,
-            ($this->cart->getItems() > 1) ?
-                $this->cart->getCost()->getTotalDiscSizeProd($this->cart->getAmount()) :
-                $this->cart->getCost()->getOrigin() // $this->cart->getCost()->getTotal()
+            $cost
         );
 
         $order->setDeliveryInfo(
@@ -106,8 +116,8 @@ class OrderService
         $this->transaction->wrap(function() use ($order, $session){
             $this->orders->save($order);
             $this->cart->clear();
-            if($session->has('promo_code')){
-                $session->remove('promo_code');
+            if(isset($session['promo_code'])){
+                unset($session['promo_code']);
             }
         });
 
@@ -115,14 +125,43 @@ class OrderService
     }
 
     // Рассчет при активации промокода
-    public function calcPromoCode($code, $size): float
+    public function calcPromoCode(string $code, $size)
     {
-        $discount = $this->discounts->getByCode($code);
-        $session = \Yii::$app->session;
-        if(!$session->has('promo_code')) {
-            return $this->cart->getCost()->getTotalDiscCode($discount->code, $size);
+        return $this->cart->getCost()->getTotalDiscCode($code, $size);
+    }
+
+    // Проверка и обработка промокода
+    public function resultPromoCode(string $code)
+    {
+        $data = [];
+        $session = Yii::$app->session;
+        $discount = DiscountEntity::find()->active()->where(['type' => DiscountEntity::TYPE_PROMO_CODE])
+            ->andWhere(['code' => $code])->one();
+
+        if(is_null($discount)){
+            $data['flag'] = false;
+            $data['text'] = 'Такой промокод не зарегистрирован.';
+            return Json::encode($data);
         }else{
-            throw new \DomainException('Такой промокод уже активирован.');
+            $code_session = $session['promo_code']['code'];
+        }
+
+        if($code != $code_session){
+            try {
+                $data['value'] = $this->calcPromoCode($code, $this->cart->getAmount());
+                $data['flag'] = true;
+                $data['text'] = 'Промокод активирован';
+                return Json::encode($data);
+            } catch (\DomainException $e) {
+                Yii::$app->errorHandler->logException($e);
+                $data['flag'] = false;
+                $data['text'] = 'Не удалось выполнить активацию.';
+                return Json::encode($data);
+            }
+        }else{
+            $data['flag'] = false;
+            $data['text'] = 'Такой промокод уже активирован.';
+            return Json::encode($data);
         }
     }
 

@@ -137,18 +137,18 @@ class OrderManageService
     }
 
     /**
-     * Уведомление о напоминании об оплате
+     * Уведомление о напоминании об оплате заказа после 6 часов
      * @param Order[] $orders
      * @return string
      */
     public function notifyPay(array $orders): string
     {
         $messages = [];
-        $res = 'Unpaid orders not found';
+        $res = 'Неоплаченный заказ не найден';
 
         try{
             foreach($orders as $order):
-                if($order->created_at  < time()){
+                if($order->created_at + 3600 * 6  < time()){
                     $messages[] = $this->email->emailNotifyPay($order->user, $order);
                     $order->notify_send = 1;
                     $order->update(false);
@@ -157,7 +157,7 @@ class OrderManageService
 
             if($messages){
                 $this->email->mailer->sendMultiple($messages);
-                $res = 'Send email for notify pay';
+                $res = 'Уведомление об оплате отправлено';
             }
         }catch(\DomainException $e){
             \Yii::$app->errorHandler->logException($e);

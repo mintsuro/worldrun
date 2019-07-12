@@ -4,6 +4,8 @@ namespace cabinet\services\shop;
 
 use cabinet\cart\Cart;
 use cabinet\cart\CartItem;
+use cabinet\cart\cost\Discount;
+use cabinet\entities\shop\Discount as EntityDiscount;
 use cabinet\repositories\shop\ProductRepository;
 use cabinet\helpers\PriceHelper;
 use yii\helpers\Json;
@@ -46,21 +48,34 @@ class CartService
         $this->cart->clear();
     }
 
-    public function ajaxCalculateTotal($id = null){
+    // Рассчет общей стоимости выбранных товаров при добавлении товара
+    public function ajaxCalculateTotal($id = null)
+    {
         $session = \Yii::$app->session;
         $cart = $this->cart;
         $cost = $cart->getCost();
         $items = $cart->getItems();
         $flag = $items ? true : false;
         $data = [];
-        $data['url'] = Url::to(['/shop/cart/add', 'id' => $id]); // дополнить параметр id
+        $data['url'] = Url::to(['/shop/cart/add', 'id' => $id]);
         $data['flag'] = $flag;
         $data['amount'] = $cart->getAmount();
 
-        if($session->has('promo_code') && $items){
-            $data['discount'] = PriceHelper::format($cost->getValueDisc($cart->getAmount()) + $session->get('promo_code'));
-            $data['total'] = PriceHelper::format($cost->getTotalDiscSizeProd($cart->getAmount()) - $session->get('promo_code'));
-        }elseif ($items){
+        if(isset($session['promo_code']) && $items){
+            if($session['promo_code']['type'] == EntityDiscount::TYPE_VALUE_NUMBER){
+                $data['discount'] = PriceHelper::format($cost->getValueDisc($cart->getAmount()) + $session['promo_code']['value']);
+                $data['total'] = PriceHelper::format($cost->getTotalDiscSizeProd($cart->getAmount()) - $session['promo_code']['value']);
+            }elseif($session['promo_code']['type'] == EntityDiscount::TYPE_VALUE_PERCENT){
+                $data['discount'] = PriceHelper::format(ceil($cost->getValueDisc($cart->getAmount())
+                    + $cost->getValueDisc($cart->getAmount()) * $session['promo_code']['value'] / 100));
+                $data['total'] = PriceHelper::format(ceil($cost->getTotalDiscSizeProd($cart->getAmount())
+                    - $cost->getTotalDiscSizeProd($cart->getAmount()) * $session['promo_code']['value'] / 100));
+            }else{
+                $data['discount'] = PriceHelper::format($cost->getValueDisc($cart->getAmount()) + $session['promo_code']['value']);
+                $data['total'] = PriceHelper::format($cost->getTotalDiscSizeProd($cart->getAmount()) - $session['promo_code']['value']);
+            }
+
+        }elseif($items){
             $data['discount'] = PriceHelper::format($cost->getValueDisc($cart->getAmount()));
             $data['total'] = PriceHelper::format($cost->getTotalDiscSizeProd($cart->getAmount()));
         }else{
@@ -71,7 +86,6 @@ class CartService
         foreach($cart->getItems() as $item){
             if($item->getProductId() == $id){
                 $data['url'] = Url::to(['/shop/cart/remove', 'id' => $item->getId()]);
-                //break;
             }
         }
 

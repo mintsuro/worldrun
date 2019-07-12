@@ -28,8 +28,6 @@ use cabinet\helpers\ProductHelper;
 </div>
 
 <?php $this->registerJs("
-   
-    
     // Добавление товара в корзину без перезагрузки страницы
     jQuery('.btn-choice').click(function(e){
        e.preventDefault();
