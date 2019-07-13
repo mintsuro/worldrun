@@ -8,6 +8,7 @@ use cabinet\readModels\cabinet\UserAssignmentReadRepository;
 use cabinet\repositories\NotFoundException;
 use cabinet\services\cabinet\PdfTemplateService;
 use cabinet\repositories\cabinet\RaceRepository;
+use cabinet\services\cabinet\TrackService;
 use Yii;
 use yii\db\Query;
 use yii\web\Controller;
@@ -15,17 +16,20 @@ use yii\web\Controller;
 class PdfGeneratorController extends Controller
 {
     private $service;
+    private $trackService;
     private $repository;
     private $assignmentRepository;
 
     public function __construct($id, $module,
         PdfTemplateService $service,
+        TrackService $trackService,
         RaceRepository $repository,
         UserAssignmentReadRepository $assignmentRepository,
         array $config = [])
     {
         parent::__construct($id, $module, $config);
         $this->service = $service;
+        $this->trackService = $trackService;
         $this->repository = $repository;
         $this->assignmentRepository = $assignmentRepository;
     }
@@ -69,19 +73,9 @@ class PdfGeneratorController extends Controller
         $user = $assignment->user;
 
         try {
-            if($race->type == Race::TYPE_MULTIPLE){
-                // Многозагрузочный забег
-                $sql = "SELECT SUM(distance) AS sum_distance, user_id FROM cabinet_tracks WHERE race_id = $race->id 
-              AND status = '". Track::STATUS_ACTIVE ."' GROUP BY user_id ORDER BY sum_distance DESC";
-            }else{
-                // Однозагрузочный забег
-                $sql = "SELECT SUM(elapsed_time) AS time, SUM(distance) AS sum_distance, user_id FROM cabinet_tracks WHERE race_id = $race->id
-                AND status = '". Track::STATUS_ACTIVE ."' GROUP BY user_id ORDER BY time ASC";
-            }
+            $query = $this->trackService->sumResult($race);
 
-            $query = \Yii::$app->db->createCommand($sql)->queryAll();
-
-            // Определяем победителя из топ-3
+            // Определяем место пользователя в забеге
             for ($i = 0, $j = 0; $i < count($query); $i++, $j++) {
                 if ($query[$j]['user_id'] == Yii::$app->user->getId()) {
                     $position = $j + 1;
@@ -92,7 +86,9 @@ class PdfGeneratorController extends Controller
             }
 
             $intervalDate = $race->getIntervalDate();
+            // Определяем находится ли пользователь в топ-3
             $template = ($position <= 3) ? $race->template->diploma_top : $race->template->diploma;
+
             $content = $this->renderFile(Yii::getAlias('@common') . "/pdf_template/html/diploma/{$template}", [
                 'race' => $race,
                 'result' => $result,

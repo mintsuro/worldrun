@@ -74,11 +74,11 @@ class Track extends ActiveRecord
         return $item;
     }
 
-    public static function createFromScreen(string $file, int $distance, string $date_start,
+    public static function createFromScreen(string $file_screen, int $distance, string $date_start,
         int $time, int $raceId): self
     {
         $item = new static();
-        $item->file_screen = $file;
+        $item->file_screen = $file_screen;
         $item->distance = $distance;
         $item->date_start = date('Y-m-d', strtotime($date_start)) . ' 00:00:00';
         $item->elapsed_time = $time;

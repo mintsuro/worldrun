@@ -22,6 +22,7 @@ use DateTime;
  * @property integer $date_start
  * @property integer $date_end
  * @property string  $photo
+ * @property boolean $strava_only
  * @property string  $date_reg_from
  * @property string  $date_reg_to
  * @property integer $type
@@ -31,6 +32,7 @@ use DateTime;
  * @property Order $order
  * @property User $user
  * @property User[] $users
+ * @property Track[] $tracks
  * @property Product[] $products
  */
 class Race extends ActiveRecord
@@ -42,13 +44,14 @@ class Race extends ActiveRecord
     const TYPE_MULTIPLE = 1;
     const TYPE_SIMPLE = 2;
 
-    public static function create(string $name, string $description, int $status,
+    public static function create(string $name, string $description, int $status, int $strava_only,
         string $date_start, string $date_end, string $date_reg_from, string $date_reg_to, int $type): self
     {
         $item = new static();
         $item->name = $name;
         $item->description = $description;
         $item->status = $status;
+        $item->strava_only = $strava_only;
         $item->date_start = date('Y-m-d', strtotime($date_start)) . ' 00:00:00';
         $item->date_end = date('Y-m-d', strtotime($date_end)) . '  23:59:59';
         $item->date_reg_from = date('Y-m-d', strtotime($date_reg_from)) . ' 00:00:00';
@@ -58,12 +61,13 @@ class Race extends ActiveRecord
         return $item;
     }
 
-    public function edit(string $name, string $description, int $status,
+    public function edit(string $name, string $description, int $status, int $strava_only,
          string $date_start, string $date_end, string $date_reg_from, string $date_reg_to, int $type): void
     {
         $this->name = $name;
         $this->description = $description;
         $this->status = $status;
+        $this->strava_only = $strava_only;
         $this->date_start = date('Y-m-d', strtotime($date_start)) . ' 00:00:00';
         $this->date_end = date('Y-m-d', strtotime($date_end)) . ' 23:59:59';
         $this->date_reg_from = date('Y-m-d', strtotime($date_reg_from)) . ' 00:00:00';
@@ -154,9 +158,9 @@ class Race extends ActiveRecord
     {
         $flag = true;
 
-        if($this->type === self::TYPE_SIMPLE):
+        if($this->type == self::TYPE_SIMPLE):
             $count = $this->getTracks()->andWhere(['user_id' => $userId, 'race_id' => $this->id])->count();
-            if($count < 2){
+            if($count >= 1){
                 $flag = false;
                 return $flag;
             }
@@ -215,6 +219,7 @@ class Race extends ActiveRecord
             'date_end' => 'Дата завершения',
             'date_reg_from' => 'Дата начала регистрации',
             'date_reg_to' => 'Дата окончания регистрации',
+            'strava_only' => 'Загрузка только для Strava',
         ];
     }
 

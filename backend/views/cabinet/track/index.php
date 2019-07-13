@@ -21,13 +21,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 'dataProvider' => $dataProvider,
                 'filterModel' => $searchModel,
                 'columns' => [
-                    /*[
+                    [
                         'label' => 'Название забега',
                         'value' => function(Track $model){
                             return $model->race->name;
                         },
-                        'contentOptions' => ['width' => '100px'],
-                    ], */
+                        'contentOptions' => ['style'=>'white-space: normal;width: 200px']
+                    ],
                     [
                         'label' => 'Автор забега',
                         'value' => function(Track $model){
@@ -40,18 +40,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         'value' => function(Track $model){
                             return date('d.m.Y H:i:s', strtotime($model->date_start));
                         },
-                         /*'filter' => DatePicker::widget([
-                            'model' => $searchModel,
-                            'attribute' => 'date_from',
-                            'attribute2' => 'date_to',
-                            'type' => DatePicker::TYPE_RANGE,
-                            'separator' => '-',
-                            'pluginOptions' => [
-                                'todayHighlight' => true,
-                                'autoclose'=>true,
-                                'format' => 'yyyy-mm-dd',
-                            ],
-                        ]), */
                     ],
                     [
                          'attribute' => 'created_at',

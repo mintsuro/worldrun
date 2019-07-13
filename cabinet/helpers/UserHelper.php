@@ -55,7 +55,7 @@ class UserHelper
                 ->andWhere(['status' => Track::STATUS_ACTIVE])
                 ->sum('distance');
 
-            return $distance . ' м.';
+            return ($distance) ? "$distance м." : "0 м.";
 
         }else if($race->type == Race::TYPE_SIMPLE){
             $elapsed_time = $tracks
@@ -63,7 +63,7 @@ class UserHelper
                 ->andWhere(['status' => Track::STATUS_ACTIVE])
                 ->sum('elapsed_time');
 
-            return date('H:i:s', strtotime($elapsed_time));
+            return ($elapsed_time) ? date('H:i:s', strtotime($elapsed_time)) : "00:00:00";
         }
 
         return '';

@@ -77,7 +77,7 @@ class TrackController extends Controller
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $this->service->edit($track->id, $form);
-                if($track->isScreenshots()){ // ! вынести модерацию скриншота в отдельный экшен и вьюху
+                if($track->isScreenshots()){
                     $this->service->isModeration($track->id);
                 }
                 return $this->redirect(['view', 'id' => $track->id]);

@@ -102,11 +102,6 @@ class TrackController extends Controller
                     'code' => $_GET['code']
                 ]);
 
-                /*if($this->users->findByStrava($token)){
-                    \Yii::$app->session->setFlash('error', 'Такой пользователь Strava уже зарегистрирован.');
-                    return $this->redirect(['index', 'raceId' => $raceId]);
-                }*/
-
                 $this->stravaService->attach(\Yii::$app->user->identity->getId(), $token->getToken());
 
                 return $this->redirect(['index', 'raceId' => $raceId]);

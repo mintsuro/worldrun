@@ -24,7 +24,7 @@ class NotifyOrderController extends Controller
 
 
     // Уведомление о напоминании об оплате
-    public function actionReminderPay(): bool
+    public function actionReminderPay()
     {
         $orders = $this->repository->getNewAll();
         $result = 'Не найдено новых заказов';

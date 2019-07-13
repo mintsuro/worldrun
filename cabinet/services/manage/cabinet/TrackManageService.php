@@ -51,7 +51,7 @@ class TrackManageService
     public function isModeration($id): void
     {
         $track = $this->repository->get($id);
-        if($track->isCancel() && $track->isActive()){
+        if($track->isCancel() || $track->isActive()){
             $this->email->sendEmailNotifyResModTrack($track->user, $track);
         }
     }

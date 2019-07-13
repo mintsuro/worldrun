@@ -6,6 +6,7 @@ use cabinet\forms\cabinet\DownloadScreenForm;
 use cabinet\repositories\cabinet\TrackRepository;
 use cabinet\readModels\cabinet\TrackReadRepository;
 use cabinet\entities\cabinet\Track;
+use cabinet\entities\cabinet\Race;
 use Yii;
 
 class TrackService
@@ -84,8 +85,30 @@ class TrackService
     public function addFromScreen($raceId, DownloadScreenForm $form): void
     {
         $time = $this->convertTimeToSeconds($form->elapsed_time);
-        $track = Track::createFromScreen($form->file, $form->distance, $form->date_start, $time, $raceId);
-        $form->upload();
+        $track = Track::createFromScreen($form->file_screen, $form->distance, $form->date_start, $time, $raceId);
         $this->tracks->save($track);
+        $form->upload($track);
+    }
+
+    /**
+     * Возвращение результата позициии пользователя в забеге
+     * @param Race $race
+     * @return array
+     */
+    public function sumResult(Race $race): array
+    {
+        if($race->type == Race::TYPE_MULTIPLE){
+            // Многозагрузочный забег
+            $sql = "SELECT SUM(distance) AS sum_distance, user_id FROM cabinet_tracks WHERE race_id = $race->id 
+              AND status = '". Track::STATUS_ACTIVE ."' GROUP BY user_id ORDER BY sum_distance DESC";
+        }else{
+            // Однозагрузочный забег
+            $sql = "SELECT SUM(elapsed_time) AS time, SUM(distance) AS sum_distance, user_id FROM cabinet_tracks WHERE race_id = $race->id
+                AND status = '". Track::STATUS_ACTIVE ."' GROUP BY user_id ORDER BY time ASC";
+        }
+
+        $query = \Yii::$app->db->createCommand($sql)->queryAll();
+
+        return $query;
     }
 }

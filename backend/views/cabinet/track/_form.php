@@ -6,13 +6,12 @@
 use cabinet\helpers\TrackHelper;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
-
 ?>
 <div class="user-update">
     <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'distance')->textInput() ?>
-    <?= $form->field($model, 'elapsed_time')->textInput(['value' => \Yii::$app->formatter->asTime($model->elapsed_time)]) ?>
+    <?= $form->field($model, 'elapsed_time')->textInput(['value' => date('H:i:s', $model->elapsed_time)]) ?>
     <?= $form->field($model, 'status')->dropDownList(TrackHelper::statusList()) ?>
 
     <?= $form->field($model, 'cancel_reason')->dropDownList(TrackHelper::cancelList()) ?>

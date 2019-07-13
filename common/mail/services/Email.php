@@ -101,7 +101,7 @@ class Email
      */
     public function emailNotifyStartRace(User $user, Race $race)
     {
-        $this->mailer
+        return $this->mailer
             ->compose(
                 ['html' => 'race/notify/startRace-html', 'text' => 'race/notify/startRace-text'],
                 ['user' => $user, 'race' => $race]
@@ -119,7 +119,7 @@ class Email
      */
     public function emailNotifyEndRace(User $user, Race $race)
     {
-        $this->mailer
+        return $this->mailer
             ->compose(
                 ['html' => 'race/notify/endRace-html', 'text' => 'race/notify/endRace-text'],
                 ['user' => $user, 'race' => $race]
@@ -133,14 +133,15 @@ class Email
      * Отправка почты о завершении забега
      * @param User $user
      * @param Race $race
+     * @param integer $position
      * @return \yii\mail\MessageInterface
      */
-    public function emailNotifyFinishRace(User $user, Race $race)
+    public function emailNotifyFinishRace(User $user, Race $race, int $position)
     {
-        $this->mailer
+        return $this->mailer
             ->compose(
                 ['html' => 'race/notify/finishRace-html', 'text' => 'race/notify/finishRace-text'],
-                ['user' => $user, 'race' => $race]
+                ['user' => $user, 'race' => $race, 'position' => $position]
             )
             ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name])
             ->setTo($user->email)
@@ -155,7 +156,7 @@ class Email
      */
     public function sendEmailNotifyResModTrack(User $user, Track $track)
     {
-        $this->mailer
+        return $this->mailer
             ->compose(
                 ['html' => 'track/notify/moderationTrack-html', 'text' => 'track/notify/moderationTrack-text'],
                 ['user' => $user, 'track' => $track]

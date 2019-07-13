@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] =  $this->title;
             <?= $form->field($model, 'age')->textInput(['maxLength' => true]) ?>
             <?= $form->field($model, 'city')->textInput(['maxLength' => true]) ?>
             <?= $form->field($model, 'phone')->widget(MaskedInput::class,[
-            'mask' => '+7(999)999-99-99',
+                'mask' => '+7(999)999-99-99',
             ]); ?>
             <?= $form->field($model, 'postal_code')->textInput() ?>
             <?= $form->field($model, 'address_delivery')->textInput(['maxLength' => true]) ?>

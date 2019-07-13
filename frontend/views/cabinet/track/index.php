@@ -95,7 +95,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'active' => true,
                         ],
                         [
-                            'label' => 'Загрузка скриншота',
+                            'label' => (!$race->strava_only) ? 'Загрузка скриншота' : null,
                             'content' => $this->render('_part-screenshot', [
                                 'screenForm' => $screenForm,
                             ]),

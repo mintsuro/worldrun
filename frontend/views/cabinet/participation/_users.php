@@ -39,7 +39,7 @@ use cabinet\helpers\UserHelper;
                 <tr>
                     <td class="text-left"><?= $startNumber ?></td>
                     <td class="text-left">
-                        <?= Html::encode($user->profile->first_name . ' ' . $user->profile->last_name) ?>
+                        <?= Html::encode("{$user->profile->first_name}  {$user->profile->last_name}") ?>
                     </td>
                     <td class="text-left">
                         <?= Html::encode($user->profile->age) ?>

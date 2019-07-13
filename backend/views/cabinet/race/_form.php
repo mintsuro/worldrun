@@ -54,6 +54,9 @@ use kartik\file\FileInput;
 
     <?= $form->field($model, 'type')->dropDownList(RaceHelper::typeList()) ?>
 
+    <p><strong>Ограничение</strong></p>
+    <?= $form->field($model, 'strava_only')->checkbox() ?>
+
     <div class="box box-default">
         <div class="box-header with-border">Фотография</div>
         <div class="box-body">

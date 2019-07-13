@@ -21,6 +21,7 @@ class RaceForm extends CompositeForm
     public $name;
     public $description;
     public $status;
+    public $strava_only;
     public $temp_start_number;
     public $temp_diploma;
     public $date_start;
@@ -37,6 +38,7 @@ class RaceForm extends CompositeForm
         if($race){
             $this->name = $race->name;
             $this->status = $race->status;
+            $this->strava_only = $race->strava_only;
             $this->date_start = date('d.m.Y', strtotime($race->date_start));
             $this->date_end = date('d.m.Y', strtotime($race->date_end));
             $this->date_reg_from = date('d.m.Y', strtotime($race->date_reg_from));
@@ -56,7 +58,7 @@ class RaceForm extends CompositeForm
             [['name', 'status', 'date_start', 'date_end', 'date_reg_from', 'date_reg_to'], 'required'],
             [['date_start', 'date_end', 'date_reg_from', 'date_reg_to'], 'date', 'format' => 'php:d.m.Y'],
             [['name', 'description'], 'string'],
-            [['status', 'type'], 'integer'],
+            [['status', 'type', 'strava_only'], 'integer'],
             [['photo'], 'file', 'extensions' => 'jpeg, png, jpg'],
         ];
     }
@@ -67,6 +69,7 @@ class RaceForm extends CompositeForm
             'name' => 'Название забега',
             'status' => 'Статус',
             'photo' => 'Фото',
+            'strava_only' => 'Загрузка только для Strava',
             'date_start' => 'Дата начала',
             'date_end' => 'Дата завершения',
             'date_reg_from' => 'Дата начала регистрации',

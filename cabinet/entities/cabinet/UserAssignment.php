@@ -5,6 +5,7 @@ namespace cabinet\entities\cabinet;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use cabinet\entities\user\User;
+use cabinet\entities\cabinet\Race;
 
 /**
  * @property integer $race_id;
@@ -15,6 +16,7 @@ use cabinet\entities\user\User;
  * @property bool $notify_finish
  *
  * @property User $user
+ * @property Race $race
  */
 class UserAssignment extends ActiveRecord
 {
@@ -42,5 +44,10 @@ class UserAssignment extends ActiveRecord
     public function getUser(): ActiveQuery
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
+    }
+
+    public function getRace(): ActiveQuery
+    {
+        return $this->hasOne(Race::class, ['id' => 'race_id']);
     }
 }

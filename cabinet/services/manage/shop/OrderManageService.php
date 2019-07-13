@@ -146,22 +146,22 @@ class OrderManageService
         $messages = [];
         $res = 'Неоплаченный заказ не найден';
 
-        try{
-            foreach($orders as $order):
-                if($order->created_at + 3600 * 6  < time()){
-                    $messages[] = $this->email->emailNotifyPay($order->user, $order);
-                    $order->notify_send = 1;
-                    $order->update(false);
-                }
-            endforeach;
-
-            if($messages){
-                $this->email->mailer->sendMultiple($messages);
-                $res = 'Уведомление об оплате отправлено';
+        foreach($orders as $order):
+            if($order->created_at + 3600 * 6  < time()){
+                $messages[] = $this->email->emailNotifyPay($order->user, $order);
             }
-        }catch(\DomainException $e){
-            \Yii::$app->errorHandler->logException($e);
-            $res = $e->getMessage();
+        endforeach;
+
+        if($messages){
+            if($this->email->mailer->sendMultiple($messages)){
+                foreach($orders as $order):
+                    if($order->created_at + 3600 * 6  < time()){
+                        $order->notify_send = 1;
+                        $order->update(false);
+                    }
+                endforeach;
+            }
+            $res = 'Уведомление об оплате отправлено';
         }
 
         return $res;

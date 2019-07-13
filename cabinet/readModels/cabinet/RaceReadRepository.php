@@ -21,7 +21,6 @@ class RaceReadRepository
         $query = Race::find()->active();
         $query->where(['<=', 'date_start', date('Y-m-d H:i:s')]);
         $query->andWhere(['>=', 'date_end', date('Y-m-d H:i:s')]);
-        //$query->andWhere(['status' => Race::STATUS_REGISTRATION]);
         return $query;
     }
 
@@ -29,7 +28,6 @@ class RaceReadRepository
     {
         $query = Race::find()->active();
         $query->where(['<=', 'date_end', date('Y-m-d H:i:s')]);
-        //$query->andWhere(['status' => Race::STATUS_WAIT]);
         return $query;
     }
 

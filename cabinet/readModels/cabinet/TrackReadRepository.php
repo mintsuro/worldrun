@@ -17,9 +17,7 @@ class TrackReadRepository
 
     public function getByTrackId($id): ?Track
     {
-        if(!$track = Track::findOne(['id_strava_track' => $id])){
-            throw new NotFoundException('Трек пользователя не найден.');
-        }
+        $track = Track::findOne(['id_strava_track' => $id]);
         return $track;
     }
 }

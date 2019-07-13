@@ -1,7 +1,7 @@
 <?php
 return [
-    'adminEmail' => 'ziggrun@gmail.com',
-    'supportEmail' => 'mintsuro@gmail.com',
+    'adminEmail' => 'admin@worldrun.online',
+    'supportEmail' => 'admin@worldrun.online',
     'senderEmail' => 'noreply@example.com',
     'senderName' => 'Example.com mailer',
     'user.passwordResetTokenExpire' => 3600,
@@ -10,5 +10,4 @@ return [
     'frontendHostInfo' => 'http://localhost/worldrun',
     'backendHostInfo' => 'http://localhost/worldrun/backend/web',
     'uploadsRoot' => \Yii::getAlias('@uploadsRoot'),
-    //'uploadsPath' => \Yii::getAlias('@uploadsPath'),
 ];

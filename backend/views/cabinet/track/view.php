@@ -97,13 +97,20 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 
     <?php if(!empty($track->file_screen)): ?>
-        <?php $fileUrl = \Yii::$app->get('frontendUrlManager')->baseUrl . '/uploads/origin/screen/' . $track->file_screen; ?>
+        <?php
+        $width = 300;
+        $height = 300;
+        $fileUrl = \Yii::$app->get('frontendUrlManager')->baseUrl . '/uploads/origin/screen/'
+            . "{$track->id}-{$track->file_screen}";
+        $fileThumb = \Yii::$app->get('frontendUrlManager')->baseUrl . '/uploads/thumb/screen/'
+            . "$width-$height-{$track->id}-{$track->file_screen}";
+        ?>
         <div class="box" id="photos">
             <div class="box-header with-border">Фотографии</div>
             <div class="box-body">
                 <div class="row">
                     <div class="col-sm-4">
-                        <?= Html::a(Html::img($fileUrl,
+                        <?= Html::a(Html::img($fileThumb,
                             ['class' => 'img-responsive']),
                             $fileUrl,
                         ['class' => 'thumbnail', 'target' => '_blank']); ?>

@@ -5,20 +5,24 @@ use cabinet\repositories\cabinet\RaceRepository;
 use cabinet\entities\cabinet\Race;
 use cabinet\entities\cabinet\UserAssignment;
 use cabinet\forms\manage\cabinet\RaceForm;
+use cabinet\services\cabinet\TrackService;
 use common\mail\services\Email;
 
 class RaceManageService
 {
     private $repository;
     private $email;
+    private $trackService;
 
     public function __construct(
         RaceRepository $repository,
+        TrackService $trackService,
         Email $email
     )
     {
         $this->repository = $repository;
         $this->email = $email;
+        $this->trackService = $trackService;
     }
 
     public function create(RaceForm $form): Race
@@ -27,6 +31,7 @@ class RaceManageService
             $form->name,
             $form->description,
             $form->status,
+            $form->strava_only,
             $form->date_start,
             $form->date_end,
             $form->date_reg_from,
@@ -52,6 +57,7 @@ class RaceManageService
             $form->name,
             $form->description,
             $form->status,
+            $form->strava_only,
             $form->date_start,
             $form->date_end,
             $form->date_reg_from,
@@ -82,6 +88,7 @@ class RaceManageService
     public function notifyStart(array $races): string
     {
         $messages = [];
+        $res = 'Новых уведомлений нет';
 
         /** @var Race $race */
         foreach($races as $race):
@@ -89,19 +96,24 @@ class RaceManageService
             foreach($race->userAssignments as $assignment){
                 if($assignment->notify_start == 0){
                     $messages[] = $this->email->emailNotifyStartRace($assignment->user, $race);
-                    $assignment->notify_start = 1;
-                    $assignment->save();
                 }
             }
             $race->status = Race::STATUS_WAIT;
             $race->save();
         endforeach;
 
-        $res = 'Новых уведомлений нет';
-
         if($messages){
-            $this->email->mailer->sendMultiple($messages);
-            $res = 'Уведомление отправлено';
+            if($this->email->mailer->sendMultiple($messages)){
+                foreach($races as $race):
+                    foreach($race->userAssignments as $assignment){
+                        if($assignment->notify_start == 0){
+                            $assignment->notify_start = 1;
+                            $assignment->update(false);
+                        }
+                    }
+                endforeach;
+            }
+            $res = 'Уведомления отправлены';
         }
 
         return $res;
@@ -110,11 +122,12 @@ class RaceManageService
     /**
      * @param Race[] $races
      * @return string
-     * Уведомление об скором окончании забега за 6 часов до окончания
+     * Уведомление об скором окончании забега
      */
     public function notifyEnd(array $races): string
     {
         $messages = [];
+        $res = 'Новых уведомлений нет';
 
         /** @var Race $race */
         foreach($races as $race):
@@ -122,17 +135,22 @@ class RaceManageService
             foreach($race->userAssignments as $assignment){
                 if($assignment->notify_end == 0){
                     $messages[] = $this->email->emailNotifyEndRace($assignment->user, $race);
-                    $assignment->notify_end = 1;
-                    $assignment->save();
                 }
             }
         endforeach;
 
-        $res = 'Новых уведомлений нет';
-
         if($messages){
-            $this->email->mailer->sendMultiple($messages);
-            $res = 'Уведомление отправлено';
+            if($this->email->mailer->sendMultiple($messages)){
+                foreach($races as $race):
+                    foreach($race->userAssignments as $assignment){
+                        if($assignment->notify_end == 0){
+                            $assignment->notify_end = 1;
+                            $assignment->update(false);
+                        }
+                    }
+                endforeach;
+            }
+            $res = 'Уведомления отправлены';
         }
 
         return $res;
@@ -146,25 +164,44 @@ class RaceManageService
     public function notifyFinish(array $races): string
     {
         $messages = [];
+        $res = 'Новых уведомлений нет';
+        $position = 0;
 
         /** @var Race $race */
         foreach($races as $race):
             /** @var UserAssignment $assignment */
             foreach($race->userAssignments as $assignment){
                 if($assignment->notify_finish == 0){
-                    $messages[] = $this->email->emailNotifyFinishRace($assignment->user, $race);
-                    $assignment->notify_finish = 1;
-                    $assignment->save();
+                    $tracks = $race->getTracks()->andWhere(['user_id' => $assignment->user_id])->count();
+
+                    if($tracks > 0){
+                        $query = $this->trackService->sumResult($race);
+                        // Определяем место пользователя в забеге
+                        for ($i = 0, $j = 0; $i < count($query); $i++, $j++) {
+                            if ($query[$j]['user_id'] == $assignment->user->id) {
+                                $position = $j + 1;
+                                break;
+                            }
+                        }
+                        $messages[] = $this->email->emailNotifyFinishRace($assignment->user, $race, $position);
+                    }
                 }
             }
             $race->status = Race::STATUS_COMPLETE;
             $race->save();
         endforeach;
 
-        $res = 'Новых уведомлений нет';
-
         if($messages){
-            $this->email->mailer->sendMultiple($messages);
+            if($this->email->mailer->sendMultiple($messages)){
+                foreach($races as $race):
+                    foreach($race->userAssignments as $assignment){
+                        if($assignment->notify_finish == 0){
+                            $assignment->notify_finish = 1;
+                            $assignment->update(false);
+                        }
+                    }
+                endforeach;
+            }
             $res = 'Уведомление отправлено';
         }
 

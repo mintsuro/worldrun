@@ -2,6 +2,7 @@
 /* @var $this yii\web\View
  * @var $user \cabinet\entities\user\User
  * @var $race \cabinet\entities\cabinet\Race
+ * @var $position integer
  */
 
 use yii\helpers\Html;
@@ -13,7 +14,7 @@ $diplomaLink = Yii::$app->get('frontendUrlManager')->createAbsoluteUrl(['/cabine
 
     <p>Забег завершен: <?= $race->name ?></p>
 
-    <p>Ваше место в забеге: 1</p>
+    <p>Ваше место в забеге: <?= $position ?></p>
 
     <p><?= Html::a(Html::encode('Ссылка на диплом'), $diplomaLink) ?></p>
 </div>

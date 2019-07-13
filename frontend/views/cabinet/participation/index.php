@@ -81,10 +81,15 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     [
                         'value' => function(Race $model){
+                            $tracks = $model->getTracks()->andWhere(['user_id' => Yii::$app->user->getId()])->count();
                             if(strtotime($model->date_end) < time() && $model->status !== Race::STATUS_WAIT) :
-                                return Html::a('Диплом', Url::to(['/cabinet/pdf-generator/generate-diploma', 'raceId' => $model->id]), [
-                                    'target' => '_blank',
-                                ]);
+                                if($tracks > 0){
+                                    return Html::a('Диплом', Url::to(['/cabinet/pdf-generator/generate-diploma', 'raceId' => $model->id]), [
+                                        'target' => '_blank',
+                                    ]);
+                                }else{
+                                    return Html::tag('span', 'Диплом');
+                                }
                             else :
                                 return Html::tag('span', 'Диплом') .
                                     Html::tag('span', 'Будет доступен после забега', ['class' => 'label alt label-default']);
