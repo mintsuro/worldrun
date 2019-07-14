@@ -13,6 +13,7 @@ use yii\web\Controller;
 use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\helpers\Json;
+use yii\filters\AccessControl;
 
 class YandexkassaController extends Controller
 {
@@ -33,6 +34,20 @@ class YandexkassaController extends Controller
         $this->service = $service;
         $this->orders = $orders;
         $this->client = $client;
+    }
+
+    public function behaviors(){
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['participant', 'admin'],
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**

@@ -55,7 +55,16 @@ class TrackController extends Controller
                     'add' => ['post'],
                     'download' => ['post'],
                 ],
-            ]
+            ],
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['participant', 'admin'],
+                    ],
+                ],
+            ],
         ];
     }
 

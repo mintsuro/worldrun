@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] =  $this->title;
 <div class="user-update">
     <div class="row">
         <div class="col-sm-9">
-            <?php if(!Yii::$app->user->can(Rbac::ROLE_PARTICIPANT)): ?>
+            <?php if(!Yii::$app->user->can(Rbac::ROLE_PARTICIPANT) && !Yii::$app->user->can(Rbac::ROLE_ADMIN)) : ?>
                 <p style="padding: 10px" class="bg-danger"><b>Сначала заполните профиль.</b></p>
             <?php endif; ?>
             <h3 style="margin-top: 0px"><?= Html::encode($this->title) ?></h3>

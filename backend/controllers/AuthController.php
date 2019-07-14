@@ -4,9 +4,11 @@ namespace backend\controllers;
 use common\auth\Identity;
 use cabinet\services\auth\AuthService;
 use Yii;
+use yii\rbac\Role;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use cabinet\forms\auth\LoginForm;
+use cabinet\access\Rbac;
 
 class AuthController extends Controller
 {
@@ -48,8 +50,10 @@ class AuthController extends Controller
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $user = $this->authService->auth($form);
+
                 Yii::$app->user->login(new Identity($user), $form->rememberMe ? 3600 * 24 * 30 : 0);
                 return $this->goBack();
+
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
                 Yii::$app->session->setFlash('error', $e->getMessage());

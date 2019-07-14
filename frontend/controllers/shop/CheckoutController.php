@@ -58,7 +58,7 @@ class CheckoutController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'roles' => ['participant'],
+                        'roles' => ['participant', 'admin'],
                     ],
                 ],
             ],

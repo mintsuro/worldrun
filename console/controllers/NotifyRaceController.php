@@ -44,7 +44,7 @@ class NotifyRaceController extends Controller
         $this->stdout($result . PHP_EOL);
     }
 
-    // Уведомление о скором окончании забега (многозагрузочный) забега за 24 часа
+    // Уведомление о скором окончании забега (многозагрузочный) за 24 часа
     public function actionEnd()
     {
         $result = 'Не найдено новых забегов по поиску';

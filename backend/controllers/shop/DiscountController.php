@@ -10,6 +10,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
 class DiscountController extends Controller
 {
@@ -30,6 +31,15 @@ class DiscountController extends Controller
                     'delete' => ['POST'],
                     'activate' => ['POST'],
                     'draft' => ['POST'],
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        //'roles' => ['admin'],
+                    ],
                 ],
             ],
         ];
